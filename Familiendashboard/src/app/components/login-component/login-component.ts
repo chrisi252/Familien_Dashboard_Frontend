@@ -1,12 +1,28 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, viewChild } from '@angular/core';
+import { Router } from '@angular/router';
+import { ThemeSwitchComponent } from "../theme-switch-component/theme-switch-component";
 
 @Component({
   selector: 'app-login-component',
-  imports: [],
+  imports: [ThemeSwitchComponent],
   templateUrl: './login-component.html',
   styleUrl: './login-component.css',
 })
 export class LoginComponent {
+@ViewChild('email') emailInput: any;
+@ViewChild ('password') passwordInput: any;
+constructor(private router: Router) {}
 
+    login() {
+        // hier eig API Service aufrufen um sich anzumelden, aber erstmal nur die Werte aus den Inputs holen
+        const email = this.emailInput.nativeElement.value;
+        const password = this.passwordInput.nativeElement.value;
 
+            console.log('Email:', email);
+            console.log('Password:', password);
+      if(email =="test" && password =="test"){
+       this.router.navigate(['/widgets']);
+      }
+
+    }
 }

@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { ThemeService } from '../../services/theme-service';
+
 
 @Component({
   selector: 'app-theme-switch-component',
@@ -7,11 +9,9 @@ import { Component } from '@angular/core';
   styleUrl: './theme-switch-component.css',
 })
 export class ThemeSwitchComponent {
-isDarkMode = false;
+  constructor(public themeService: ThemeService) {}
 
   toggleTheme() {
-    this.isDarkMode = !this.isDarkMode;
-    const themeName = this.isDarkMode ? 'dark' : 'light';
-    document.documentElement.setAttribute('data-theme', themeName);
+    this.themeService.toggleTheme();
   }
 }
