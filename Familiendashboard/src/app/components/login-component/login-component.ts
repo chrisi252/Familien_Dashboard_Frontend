@@ -21,7 +21,7 @@ constructor(private router: Router) {}
             console.log('Email:', email);
             console.log('Password:', password);
       if(email =="test" && password =="test"){
-       this.router.navigate(['/widgets']);
+       this.router.navigate(['/dashboard']);
       }
 
     }

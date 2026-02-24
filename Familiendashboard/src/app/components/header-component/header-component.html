@@ -1,20 +1,27 @@
-<header class="p-4 flex items-center justify-between mb-6 fixed top-0 left-0 right-0 bg-base-100 z-50 ">
+<header class="p-4 flex items-center justify-between fixed top-0 left-0 right-0 bg-base-100 z-50 shadow-sm gap-4">
 
-    <app-theme-switch-component></app-theme-switch-component>
-
-    <p class="text-xl font-bold absolute left-1/2 -translate-x-1/2">Familien Dashboard</p>
-
-    <div class="dropdown dropdown-end">
-        <div tabindex="0" role="button" class="avatar">
-            <div class="rounded-full w-10">
-                <img src="https://img.daisyui.com/images/profile/demo/yellingcat@192.webp" alt="Profilbild" />
-            </div>
-        </div>
-
-        <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 mt-4 z-1">
-            <li><p>Profil</p></li>
-            <li><p>Einstellungen</p></li>
-            <li><p (click)="logout()">Abmelden</p></li>
-        </ul>
+    <div class="flex-1 flex justify-start">
+        <app-theme-switch-component></app-theme-switch-component>
     </div>
+
+    <p class="text-lg md:text-xl font-bold text-center truncate">
+        Familien Dashboard
+    </p>
+
+    <div class="flex-1 flex justify-end">
+        <div class="dropdown dropdown-end">
+            <div tabindex="0" role="button" class="avatar">
+                <div class="rounded-full w-10">
+                    <img src="https://img.daisyui.com/images/profile/demo/yellingcat@192.webp" alt="Profilbild" />
+                </div>
+            </div>
+
+            <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 mt-4 z-[50]">
+                <li><p>Profil</p></li>
+                <li><p>Einstellungen</p></li>
+                <li><p (click)="logout()">Abmelden</p></li>
+            </ul>
+        </div>
+    </div>
+
 </header>

@@ -1,0 +1,8 @@
+ <app-header-component></app-header-component>
+
+
+  <div class="pt-20 p-4 grid grid-cols-auto md:grid-cols-2 xl:grid-cols-3 gap-4 auto-rows-[300px]">
+    @for (item of store.widgets(); track item.id) {
+      <app-widget-component [data]="item"></app-widget-component>
+    }
+  </div>
