@@ -1,12 +1,20 @@
-<div class="card bg-base-100 border border-base-200 shadow-sm w-full rounded-xl">
+<div class="card bg-base-100 border border-base-200 shadow-sm w-full h-full rounded-xl">
   <div class="card-body p-6 gap-2 overflow-hidden">
 
     <div class="card-title text-lg font-medium text-base-content m-0">
       {{ data().label }}
     </div>
 
-    <div class="w-full text-base-content/80 text-sm mt-1">
-      <ng-container [ngComponentOutlet]="data().content"></ng-container>
+    <div class="w-full h-full text-base-content/80 text-sm mt-1">
+        <button class="btn btn-ghost btn-sm absolute top-2 right-2 opacity-50 hover:opacity-100 transition-opacity" (click)="showOptions.set(true)">
+            <span class="mr-1 text-lg">⚙️</span>
+        </button>
+
+        <ng-container [ngComponentOutlet]="data().content"></ng-container>
+
+        @if(showOptions()){
+           <app-widgets-options (closeOptions)="showOptions.set(false)" [(showOptions)]="showOptions" [widget]="data()"></app-widgets-options>
+        }
     </div>
 
   </div>

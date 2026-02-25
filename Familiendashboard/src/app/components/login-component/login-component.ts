@@ -10,17 +10,17 @@ import { ThemeSwitchComponent } from "../theme-switch-component/theme-switch-com
 })
 export class LoginComponent {
 @ViewChild('email') emailInput: any;
-@ViewChild ('password') passwordInput: any;
+@ViewChild ('username') usernameInput: any;
 constructor(private router: Router) {}
 
     login() {
         // hier eig API Service aufrufen um sich anzumelden, aber erstmal nur die Werte aus den Inputs holen
         const email = this.emailInput.nativeElement.value;
-        const password = this.passwordInput.nativeElement.value;
+        const username = this.usernameInput.nativeElement.value;
 
             console.log('Email:', email);
-            console.log('Password:', password);
-      if(email =="test" && password =="test"){
+            console.log('Username:', username);
+      if(email =="test" && username =="test"){
        this.router.navigate(['/dashboard']);
       }
 

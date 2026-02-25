@@ -1,0 +1,43 @@
+<button class="btn btn-ghost top-0 right-0 absolute" (click)="closeOptions.emit()">Schließen</button>
+
+<div class="flex items-center gap-2 mt-4">
+  <label class="label text-sm font-medium w-14">Breite:</label>
+  <div class="join">
+    @for (i of [1, 2, 3, 4]; track i) {
+      <input
+        type="radio"
+        name="widthOptions"
+        class="join-item btn btn-xs"
+        [attr.aria-label]="i"
+        [checked]="widget().cols === i"
+        (change)="changeWidth(i)" />
+    }
+  </div>
+</div>
+
+<div class="flex items-center gap-2 mt-2">
+  <label class="label text-sm font-medium w-14">Höhe:</label>
+  <div class="join">
+    @for (i of [1, 2, 3, 4]; track i) {
+      <input
+        type="radio"
+        name="heightOptions"
+        class="join-item btn btn-xs"
+        [attr.aria-label]="i"
+        [checked]="widget().rows === i"
+        (change)="changeHeight(i)" />
+    }
+  </div>
+
+<button class="btn btn-circle btn-ghost btn-sm absolute left-2 top-1/2 -translate-y-1/2 z-10 opacity-30 hover:opacity-100 transition-opacity" title="Nach links verschieben" (click)="store.moveWidgetToLeft(widget().id)">
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+  </svg>
+</button>
+
+<button class="btn btn-circle btn-ghost btn-sm absolute right-2 top-1/2 -translate-y-1/2 z-10 opacity-30 hover:opacity-100 transition-opacity" title="Nach rechts verschieben" (click)="store.moveWidgetToRight(widget().id )">
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+  </svg>
+</button>
+</div>

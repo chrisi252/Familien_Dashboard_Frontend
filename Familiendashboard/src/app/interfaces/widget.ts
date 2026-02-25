@@ -3,4 +3,6 @@ export interface Widget {
  label: string;
  content: any;
   permissions: any;
+  rows?: number;
+  cols?: number;
 }
