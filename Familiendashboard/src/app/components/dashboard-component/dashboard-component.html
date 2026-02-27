@@ -23,7 +23,7 @@
   </div>
 </div>
 
-<div class="p-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 auto-rows-[150px]">
+<div class="p-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 auto-rows-[150px]" appAutoAnimate>
   @for (item of store.addedWidgets(); track item.id) {
     <app-widget-component [data]="item"></app-widget-component>
   }

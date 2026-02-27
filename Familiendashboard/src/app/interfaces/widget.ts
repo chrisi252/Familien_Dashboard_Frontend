@@ -5,4 +5,6 @@ export interface Widget {
   permissions: any;
   rows?: number;
   cols?: number;
+  backgroundColor?: string;
+  color?: string;
 }

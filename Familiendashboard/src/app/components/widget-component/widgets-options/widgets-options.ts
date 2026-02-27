@@ -1,14 +1,16 @@
 import { Component, inject, input, model, output } from '@angular/core';
 import { Widget } from '../../../interfaces/widget';
 import { DashboardService } from '../../../services/dashboard-service';
+import { NgIcon } from '@ng-icons/core';
+
 
 @Component({
   selector: 'app-widgets-options',
-  imports: [],
+  imports: [NgIcon],
   templateUrl: './widgets-options.html',
   styleUrl: './widgets-options.css',
   host: {
-    class: 'absolute top-0 left-0 w-full h-full bg-base-300/90 backdrop-blur-sm flex items-center justify-center'
+    class: 'absolute top-0 left-0 w-full h-full bg-base-200/95 backdrop-blur-md flex flex-col items-center justify-center text-base-content z-50'
   }
 })
 export class WidgetsOptions {

@@ -15,11 +15,42 @@ export class DashboardService {
         write: false,
       },
       rows:2,
-      cols: 2
+      cols: 2,
+      backgroundColor: '#0035fc',
+      color: 'whitesmoke',
+
+
     },
      {
       id: 2,
       label: 'Second Test Widget',
+      content: ScheduleWidget,
+      permissions: {
+        read: true,
+        write: false,
+      },
+    },
+     {
+      id: 3,
+      label: 'Third Test Widget',
+      content: ScheduleWidget,
+      permissions: {
+        read: true,
+        write: false,
+      },
+    },
+     {
+      id: 4,
+      label: 'Fourth Test Widget',
+      content: ScheduleWidget,
+      permissions: {
+        read: true,
+        write: false,
+      },
+    },
+     {
+      id: 5,
+      label: 'Fifth Test Widget',
       content: ScheduleWidget,
       permissions: {
         read: true,
@@ -59,6 +90,10 @@ moveWidgetToLeft(id: number) {
   const newWidgets = [...this.addedWidgets()];
   [newWidgets[index], newWidgets[index - 1]] = [{...newWidgets[index - 1]}, {...newWidgets[index]}];
   this.addedWidgets.set(newWidgets);
+}
+
+removeWidget(id: number) {
+  this.addedWidgets.set(this.addedWidgets().filter(w => w.id !== id));
 }
   constructor() {}
 }

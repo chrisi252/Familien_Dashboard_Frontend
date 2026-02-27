@@ -2,11 +2,11 @@ import { Component, inject } from '@angular/core';
 import { HeaderComponent } from "../header-component/header-component";
 import { WidgetComponent } from "../widget-component/widget-component";
 import { DashboardService } from "../../services/dashboard-service";
-
+import { AutoAnimateDirective } from "../../directives/auto-animate-directive";
 
 @Component({
   selector: 'app-dashboard-component',
-  imports: [HeaderComponent, WidgetComponent],
+  imports: [HeaderComponent, WidgetComponent, AutoAnimateDirective],
   templateUrl: './dashboard-component.html',
   styleUrl: './dashboard-component.css',
   providers: [DashboardService],
