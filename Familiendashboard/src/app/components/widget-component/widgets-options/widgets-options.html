@@ -1,0 +1,43 @@
+<button class="btn btn-ghost top-0 right-0 absolute" (click)="closeOptions.emit()">Schließen</button>
+
+<div class="flex items-center gap-2 mt-4">
+  <label class="label text-sm font-medium w-14">Breite:</label>
+  <div class="join">
+    @for (i of [1, 2, 3]; track i) {
+      <input
+        type="radio"
+        name="widthOptions"
+        class="join-item btn btn-xs"
+        [attr.aria-label]="i"
+        [checked]="widget().cols === i"
+        (change)="changeWidth(i)" />
+    }
+  </div>
+</div>
+
+<div class="flex items-center gap-2 mt-2">
+  <label class="label text-sm font-medium w-14">Höhe:</label>
+  <div class="join">
+    @for (i of [1, 2, 3]; track i) {
+      <input
+        type="radio"
+        name="heightOptions"
+        class="join-item btn btn-xs"
+        [attr.aria-label]="i"
+        [checked]="widget().rows === i"
+        (change)="changeHeight(i)" />
+    }
+  </div>
+</div> <button class="btn btn-ghost top-0 right-0 absolute" (click)="closeOptions.emit()">Schließen</button>
+
+<button class="btn btn-circle btn-ghost btn-sm absolute left-2 top-1/2 -translate-y-1/2 z-10 opacity-70 hover:opacity-100 transition-opacity" title="Nach links verschieben" (click)="store.moveWidgetToLeft(widget().id)">
+  <ng-icon name="heroChevronLeft" class="text-xl"></ng-icon>
+</button>
+
+<button class="btn btn-circle btn-ghost btn-sm absolute right-2 top-1/2 -translate-y-1/2 z-10 opacity-70 hover:opacity-100 transition-opacity" title="Nach rechts verschieben" (click)="store.moveWidgetToRight(widget().id)">
+  <ng-icon name="heroChevronRight" class="text-xl"></ng-icon>
+</button>
+
+<button class="btn btn-ghost top-0 left-0 absolute hover:opacity-100 transition-opacity text-error hover:bg-error/20" title="Widget löschen" (click)="store.removeWidget(widget().id)">
+  <ng-icon name="heroTrash" class="text-xl"></ng-icon>
+</button>

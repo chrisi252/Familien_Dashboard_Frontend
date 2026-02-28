@@ -1,0 +1,30 @@
+<app-header-component></app-header-component>
+
+<div class="pt-24 p-4 flex justify-end">
+
+  <div class="dropdown dropdown-end">
+
+    <div tabindex="0" role="button" class="btn btn-primary shadow-sm">
+      <span class="mr-2 text-lg">+</span>
+      Neues Widget hinzufügen
+    </div>
+
+    <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-50 w-52 p-2 shadow-lg mt-2 border border-base-200">
+      @for (item of store.widgetsToAdd(); track item.id) {
+        <li>
+          <a (click)="store.addWidget(item)">{{ item.label }}</a>
+        </li>
+      }
+      @empty {
+        <li class="text-gray-500 p-2">Keine Widgets zum Hinzufügen verfügbar</li>
+      }
+    </ul>
+
+  </div>
+</div>
+
+<div class="p-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 auto-rows-[150px]" appAutoAnimate>
+  @for (item of store.addedWidgets(); track item.id) {
+    <app-widget-component [data]="item"></app-widget-component>
+  }
+</div>
