@@ -1,30 +1,45 @@
-<app-header-component></app-header-component>
+<div class="drawer drawer-end">
+  <input id="widget-drawer" type="checkbox" class="drawer-toggle" />
 
-<div class="pt-24 p-4 flex justify-end">
+  <div class="drawer-content">
 
-  <div class="dropdown dropdown-end">
+    <app-header-component></app-header-component>
 
-    <div tabindex="0" role="button" class="btn btn-primary shadow-sm">
-      <span class="mr-2 text-lg">+</span>
-      Neues Widget hinzufügen
+    <div class="pt-24 p-4 flex justify-end">
+      <label for="widget-drawer" class="btn btn-primary shadow-sm cursor-pointer">
+        <span class="mr-2 text-lg">+</span>
+        Neues Widget hinzufügen
+      </label>
     </div>
 
-    <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-50 w-52 p-2 shadow-lg mt-2 border border-base-200">
-      @for (item of store.widgetsToAdd(); track item.id) {
-        <li>
-          <a (click)="store.addWidget(item)">{{ item.label }}</a>
-        </li>
+    <div class="p-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 auto-rows-[150px]" appAutoAnimate>
+      @for (item of store.addedWidgets(); track item.id) {
+        <app-widget-component [data]="item"></app-widget-component>
       }
-      @empty {
-        <li class="text-gray-500 p-2">Keine Widgets zum Hinzufügen verfügbar</li>
-      }
-    </ul>
+    </div>
 
   </div>
-</div>
 
-<div class="p-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 auto-rows-[150px]" appAutoAnimate>
-  @for (item of store.addedWidgets(); track item.id) {
-    <app-widget-component [data]="item"></app-widget-component>
-  }
+  <div class="drawer-side z-60">
+    <label for="widget-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
+
+    <div class="bg-base-100 min-h-full w-72 p-6 flex flex-col gap-4">
+      <h2 class="text-lg font-bold">Widget hinzufügen</h2>
+
+      @for (item of store.widgetsToAdd(); track item.id) {
+        <div
+          class="card bg-base-200 hover:bg-base-300 cursor-pointer transition-colors"
+          (click)="store.addWidget(item)">
+          <div class="card-body p-4">
+            <h3 class="card-title text-sm">{{ item.label }}</h3>
+          </div>
+        </div>
+      }
+      @empty {
+        <p class="text-sm opacity-60">Keine Widgets zum Hinzufügen verfügbar</p>
+      }
+
+    </div>
+  </div>
+
 </div>
