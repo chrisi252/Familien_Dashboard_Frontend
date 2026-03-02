@@ -78,7 +78,12 @@ export class DashboardService {
   }
 
   removeWidget(id: number) {
-    this.addedWidgets.set(this.addedWidgets().filter(w => w.id !== id));
+    const removedWidget = this.addedWidgets().find(w => w.id === id);
+    if (removedWidget) {
+      this.addedWidgets.set(this.addedWidgets().filter(w => w.id !== id));
+       this.widgets.set(this.widgets().filter(w => w.id !== id));
+      this.widgets.set([...this.widgets(), { ...removedWidget }]);
+    }
   }
 
   constructor() {}
