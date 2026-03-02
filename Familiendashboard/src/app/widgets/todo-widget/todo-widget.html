@@ -1,1 +1,23 @@
-<p>todo-widget works!</p>
+<div class="flex flex-col h-full gap-2 overflow-hidden">
+
+  <div class="flex gap-2">
+    <input class="input input-sm flex-1" placeholder="Neue Aufgabe..." />
+    <button class="btn btn-sm btn-primary px-3">+</button>
+  </div>
+
+  <ul class="flex flex-col gap-1 overflow-y-auto flex-1">
+    <li class="flex items-center gap-2 p-1 rounded hover:bg-base-200 transition-colors">
+      <input type="checkbox" class="checkbox checkbox-sm" />
+      <span class="text-sm">Aufgabe 1</span>
+    </li>
+    <li class="flex items-center gap-2 p-1 rounded hover:bg-base-200 transition-colors">
+      <input type="checkbox" class="checkbox checkbox-sm" checked />
+      <span class="text-sm line-through opacity-50">Aufgabe 2</span>
+    </li>
+    <li class="flex items-center gap-2 p-1 rounded hover:bg-base-200 transition-colors">
+      <input type="checkbox" class="checkbox checkbox-sm" />
+      <span class="text-sm">Aufgabe 3</span>
+    </li>
+  </ul>
+
+</div>
