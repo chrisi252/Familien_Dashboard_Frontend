@@ -1,1 +1,27 @@
-<p>schedule-widget works!</p>
+<div class="flex flex-col h-full gap-2 overflow-y-auto">
+
+  @for (event of events(); track event.title) {
+    <div class="flex items-center gap-3 p-2 rounded-lg bg-base-200">
+
+      <div class="text-center min-w-10">
+        <div class="text-xs opacity-60">{{ event.dayName }}</div>
+        <div class="font-bold text-sm">{{ event.dayNumber }}</div>
+      </div>
+
+      <div class="flex-1">
+        <div class="font-medium text-sm">{{ event.title }}</div>
+        <div class="text-xs opacity-60">{{ event.timeRange }}</div>
+      </div>
+
+      @if (event.isToday) {
+        <div class="badge badge-primary badge-sm">Heute</div>
+      }
+
+    </div>
+  } @empty {
+    <div class="p-4 text-center text-sm opacity-60">
+      Keine Termine vorhanden.
+    </div>
+  }
+
+</div>

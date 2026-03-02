@@ -1,1 +1,23 @@
-<p>todo-widget works!</p>
+<div class="flex flex-col h-full gap-2 overflow-hidden">
+
+  <div class="flex gap-2">
+    <input class="input input-sm flex-1" placeholder="Neue Aufgabe..." #newTodoInput />
+    <button class="btn btn-sm btn-primary px-3" (click)="addTodoItem(newTodoInput.value); newTodoInput.value = '';">+</button>
+  </div>
+
+  <ul class="flex flex-col gap-1 overflow-y-auto flex-1">
+  @for (todo of todoItems(); track $index) {
+      <li class="flex items-center gap-2">
+        <input type="checkbox" [checked]="todo.completed" class="checkbox" (change)="todo.completed = !todo.completed"/>
+        <span [class.line-through]="todo.completed">{{ todo.text }}</span>
+        <button class="btn btn-xs btn-error ml-auto" (click)="removeTodoItem(todo.id)">entfernen</button>
+      </li>
+    } @empty {
+      <li class="text-center text-sm opacity-60">
+        Keine Aufgaben vorhanden.
+      </li>
+
+    }
+  </ul>
+
+</div>

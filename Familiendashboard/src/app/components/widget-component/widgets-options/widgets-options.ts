@@ -24,11 +24,11 @@ store=inject(DashboardService);
 
 
   changeWidth(newWidth: number) {
-    this.widget().cols = newWidth;
+    this.store.updateWidgetSize(this.widget().id, { cols: newWidth });
   }
 
   changeHeight(newHeight: number) {
-    this.widget().rows = newHeight;
+    this.store.updateWidgetSize(this.widget().id, { rows: newHeight });
   }
 selectedOption: any;
 
