@@ -10,6 +10,8 @@ import {
 } from '@ng-icons/heroicons/outline';
 
 import { routes } from './app.routes';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { authorizeInterceptor } from './authorize-interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -21,7 +23,8 @@ export const appConfig: ApplicationConfig = {
       heroChevronLeft,
       heroChevronRight,
       heroArrowsRightLeft
-    })
+    }),
+    provideHttpClient(withInterceptors([authorizeInterceptor])),
 
   ]
 };

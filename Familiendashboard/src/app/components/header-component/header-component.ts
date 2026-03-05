@@ -12,6 +12,7 @@ export class HeaderComponent {
     constructor(private router: Router) {}
 logout() {
 //hier logout mit apiService
+localStorage.removeItem('accessToken');
 this.router.navigate(['/login']);
 }
 
