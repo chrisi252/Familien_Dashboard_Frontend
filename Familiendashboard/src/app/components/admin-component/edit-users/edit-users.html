@@ -1,0 +1,16 @@
+<p>edit-users works!</p>
+<div class="">
+@for(user of users; track user.id){
+  <div class="card bg-base-100 shadow-xl mb-4">
+    <div class="card-body">
+      <h2 class="card-title">{{ user.username }}</h2>
+      <p>Rolle: {{ user.role }}</p>
+      <p>Email: {{ user.email }}</p>
+      <div class="card-actions justify-end">
+        <button class="btn btn-primary shadow-sm cursor-pointer">Bearbeiten</button>
+        <button class="btn btn-error shadow-sm cursor-pointer">Löschen</button>
+      </div>
+    </div>
+  </div>
+}
+</div>

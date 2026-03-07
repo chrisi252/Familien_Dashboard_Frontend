@@ -36,7 +36,7 @@ export class LoginComponent {
       this.loginForm.markAllAsTouched();
       return;
     }
-
+/*
     const payload={
       email: this.loginForm.controls.email.value,
       password: this.loginForm.controls.password.value
@@ -51,5 +51,6 @@ export class LoginComponent {
         alert('Login failed. Please check your credentials.');
       }
     });
+    */this.router.navigate(['/dashboard']);
   }
 }
