@@ -3,6 +3,7 @@ import { Widget } from '../../interfaces/widget';
 import { NgComponentOutlet } from '@angular/common';
 import { WidgetsOptions } from "./widgets-options/widgets-options";
 import { NgIcon } from '@ng-icons/core';
+import { CdkDrag, CdkDragPlaceholder } from '@angular/cdk/drag-drop';
 
 
 
@@ -13,7 +14,7 @@ import { NgIcon } from '@ng-icons/core';
     '[style.grid-column]': '"span " + (data().cols ?? 1)',
     '[style.grid-row]': '"span " + (data().rows ?? 1)'
   },
-  imports: [NgComponentOutlet, WidgetsOptions,NgIcon],
+  imports: [NgComponentOutlet, WidgetsOptions,NgIcon, CdkDrag,CdkDragPlaceholder],
   templateUrl: './widget-component.html',
   styleUrl: './widget-component.css',
 })

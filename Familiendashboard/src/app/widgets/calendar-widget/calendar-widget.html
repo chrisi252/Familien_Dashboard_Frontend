@@ -1,0 +1,43 @@
+<div class="flex flex-col h-full w-full">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="font-bold text-lg flex items-center gap-2">
+          <svg class="w-5 h-5 text-blue-500" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2zM7 12h5v5H7z"/>
+          </svg>
+          Google Kalender
+        </h3>
+        
+        @if (isAuthenticated()) {
+          <button class="btn btn-xs btn-ghost text-error" (click)="logout()">Logout</button>
+        }
+      </div>
+
+      <div class="flex-1 overflow-y-auto">
+        
+        @if (isLoading()) {
+          <div class="flex justify-center items-center h-full">
+            <span class="loading loading-spinner loading-md text-primary"></span>
+          </div>
+        } @else if (!isAuthenticated()) {
+          <div class="flex flex-col items-center justify-center h-full text-center gap-3">
+            <p class="text-sm opacity-70">Verbinde deinen Account, um Termine zu sehen.</p>
+            <button class="btn btn-primary btn-sm" (click)="loginWithGoogle()">
+              Mit Google anmelden
+            </button>
+          </div>
+        } @else {
+          <div class="flex flex-col gap-2">
+            @for (event of events(); track event.id) {
+              <div class="bg-base-200 p-3 rounded-lg border-l-4 border-blue-500 hover:bg-base-300 transition-colors">
+                <p class="font-semibold text-sm truncate">{{ event.title }}</p>
+                <p class="text-xs opacity-60">{{ event.date | date:'dd.MM.yyyy, HH:mm' }} Uhr</p>
+              </div>
+            } @empty {
+              <div class="text-center p-4 opacity-60 text-sm">
+                Keine anstehenden Termine gefunden.
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>

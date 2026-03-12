@@ -35,3 +35,8 @@
   --depth: 1;
   --noise: 0;
 }
+.cdk-drop-list-dragging{
+  opacity: 0.5;
+  border-left: 5px solid var(--color-primary);
+  padding-left: 8px;
+}

@@ -3,6 +3,7 @@ import { NotesWidget } from '../widgets/notes-widget/notes-widget';
 import { Widget } from '../interfaces/widget';
 import { ScheduleWidget } from '../widgets/schedule-widget/schedule-widget';
 import { TodoWidget } from '../widgets/todo-widget/todo-widget';
+import { CalendarWidget } from '../widgets/calendar-widget/calendar-widget';
 
 const MANDATORY_WIDGETS: Widget[] = [
   {
@@ -40,6 +41,14 @@ const OPTIONAL_WIDGETS: Widget[] = [
     rows: 1,
     cols: 1,
   },
+  {
+    id: 5,
+    label: 'Google Kalender',
+    content: CalendarWidget,
+    permissions: { read: true, write: false },
+    rows: 2,
+    cols: 2,
+  }
 ];
 
 @Injectable()
@@ -122,4 +131,24 @@ export class DashboardService {
     localStorage.setItem('dashboardWidgets', JSON.stringify(widgetsWithoutContent));
   })
   
+  updateWidgetPosition(sourceWidgetId: number, targetWidgetId: number) {
+  const sourceIndex = this.addedWidgets().findIndex(w => w.id === sourceWidgetId);
+  if (sourceIndex === -1) {
+    return;
+  }
+
+  const newWidgets = [...this.addedWidgets()];
+  const sourceWidget = newWidgets.splice(sourceIndex, 1)[0];
+
+  const targetIndex =newWidgets.findIndex(w => w.id === targetWidgetId);
+  if (targetIndex === -1) {
+    return;
+  }
+
+  const insertAt =targetIndex ===sourceIndex ? targetIndex +1 : targetIndex;
+
+  newWidgets.splice(insertAt, 0, sourceWidget);
+  this.addedWidgets.set(newWidgets);
+  
+  }
 }

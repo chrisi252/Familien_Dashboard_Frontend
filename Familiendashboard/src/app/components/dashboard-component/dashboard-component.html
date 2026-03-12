@@ -12,9 +12,9 @@
       </label>
     </div>
 
-    <div class="p-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 auto-rows-[150px]" appAutoAnimate>
+    <div  class="p-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-6 " appAutoAnimate cdkDropListGroup>
       @for (item of store.addedWidgets(); track item.id) {
-        <app-widget-component [data]="item"></app-widget-component>
+        <app-widget-component cdkDropList [data]="item" (cdkDropListDropped)="drop($event)" [cdkDropListData]="item.id"></app-widget-component>
       }
     </div>
 
@@ -26,7 +26,7 @@
     <div class="bg-base-100 min-h-full w-72 p-6 flex flex-col gap-4">
       <h2 class="text-lg font-bold">Widget hinzufügen</h2>
 
-      @for (item of store.widgetsToAdd(); track item.id) {
+      @for (item of store.widgetsToAdd(); track item.id ) {
         <div
           class="card bg-base-200 hover:bg-base-300 cursor-pointer transition-colors"
           (click)="store.addWidget(item)">
