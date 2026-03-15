@@ -1,29 +1,32 @@
-<div class="drawer drawer-end">
+<div class="drawer drawer-end min-h-screen overflow-x-hidden">
   <input id="widget-drawer" type="checkbox" class="drawer-toggle" />
 
-  <div class="drawer-content">
+  <div class="drawer-content min-h-screen overflow-x-hidden">
 
     <app-header-component></app-header-component>
 
-    <div class="pt-24 p-4 flex justify-end">
-      <label for="widget-drawer" class="btn btn-primary shadow-sm cursor-pointer">
+    <div class="pt-5 sm:pt-5 px-4 pb-2 sm:pb-4 flex justify-stretch sm:justify-end">
+      <label for="widget-drawer" class="btn btn-primary shadow-sm cursor-pointer w-full sm:w-auto">
         <span class="mr-2 text-lg">+</span>
         Neues Widget hinzufügen
       </label>
     </div>
 
-    <div  class="p-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-6 " appAutoAnimate cdkDropListGroup>
-      @for (item of store.addedWidgets(); track item.id) {
-        <app-widget-component cdkDropList [data]="item" (cdkDropListDropped)="drop($event)" [cdkDropListData]="item.id"></app-widget-component>
+    <div
+      class="px-4 pb-4 sm:pb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-6 auto-rows-[minmax(14rem,auto)] sm:auto-rows-[minmax(16rem,auto)] items-stretch"
+      appAutoAnimate
+      cdkDropListGroup
+    >@for (item of store.addedWidgets(); track item.id) {
+        <app-widget-component class="block min-w-0" cdkDropList [data]="item" (cdkDropListDropped)="drop($event)" [cdkDropListData]="item.id"></app-widget-component>
       }
     </div>
 
   </div>
 
-  <div class="drawer-side z-60">
+  <div class="drawer-side z-[60]">
     <label for="widget-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
 
-    <div class="bg-base-100 min-h-full w-72 p-6 flex flex-col gap-4">
+    <div class="bg-base-100 min-h-full w-full max-w-72 sm:max-w-80 p-4 sm:p-6 flex flex-col gap-4">
       <h2 class="text-lg font-bold">Widget hinzufügen</h2>
 
       @for (item of store.widgetsToAdd(); track item.id ) {
@@ -42,4 +45,3 @@
     </div>
   </div>
 
-</div>

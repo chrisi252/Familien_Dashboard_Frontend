@@ -1,9 +1,13 @@
-import { computed, effect, Injectable, signal } from '@angular/core';
+import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { NotesWidget } from '../widgets/notes-widget/notes-widget';
 import { Widget } from '../interfaces/widget';
 import { ScheduleWidget } from '../widgets/schedule-widget/schedule-widget';
 import { TodoWidget } from '../widgets/todo-widget/todo-widget';
 import { CalendarWidget } from '../widgets/calendar-widget/calendar-widget';
+
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs';
 
 const MANDATORY_WIDGETS: Widget[] = [
   {
@@ -53,6 +57,14 @@ const OPTIONAL_WIDGETS: Widget[] = [
 
 @Injectable()
 export class DashboardService {
+  private breakpointObserver = inject(BreakpointObserver);
+  isMobile = toSignal(
+    this.breakpointObserver
+      .observe(Breakpoints.Handset)
+      .pipe(map(r => r.matches)),
+    { initialValue: false }
+  );
+
   widgets = signal<Widget[]>([...MANDATORY_WIDGETS, ...OPTIONAL_WIDGETS]);
 
   addedWidgets = signal<Widget[]>([]);
@@ -151,4 +163,8 @@ export class DashboardService {
   this.addedWidgets.set(newWidgets);
   
   }
+
+  
+
+
 }
