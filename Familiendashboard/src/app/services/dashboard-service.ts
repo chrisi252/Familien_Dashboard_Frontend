@@ -131,15 +131,19 @@ export class DashboardService {
   fetchWidgets() {
     const WidgetsAsString = localStorage.getItem('dashboardWidgets');
     if (WidgetsAsString) {
-      const widgets = JSON.parse(WidgetsAsString) as Widget[];
-     widgets.forEach(widget => {
-      const content = this.widgets().find(w => w.id === widget.id)?.content ;
-      if(content){
-        widget.content = content;
+      try {
+        const widgets = JSON.parse(WidgetsAsString) as Widget[];
+        widgets.forEach(widget => {
+          const content = this.widgets().find(w => w.id === widget.id)?.content;
+          if (content) {
+            widget.content = content;
+          }
+        });
+        this.addedWidgets.set(widgets);
+      } catch {
+        localStorage.removeItem('dashboardWidgets');
       }
-    })
-      this.addedWidgets.set(widgets);
-  }
+    }
   }
 
   constructor() {
