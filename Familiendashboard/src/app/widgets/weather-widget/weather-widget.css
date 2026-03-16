@@ -1,0 +1,8 @@
+.cloud-animate {
+    animation: cloudMovement 10s ease-in-out infinite alternate;
+}
+
+@keyframes cloudMovement {
+    from { transform: translateX(-40px); }
+    to   { transform: translateX(40px); }
+}

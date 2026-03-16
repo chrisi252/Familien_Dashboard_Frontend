@@ -8,6 +8,7 @@ import { CalendarWidget } from '../widgets/calendar-widget/calendar-widget';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
+import { WeatherWidget } from '../widgets/weather-widget/weather-widget';
 
 const MANDATORY_WIDGETS: Widget[] = [
   {
@@ -34,6 +35,14 @@ const MANDATORY_WIDGETS: Widget[] = [
     rows: 2,
     cols: 1,
   },
+  {
+    id:6,
+    label: 'Wetter',
+    content: WeatherWidget,
+    permissions: { read: true, write: false },
+    rows: 2,
+    cols: 1,
+  }
 ];
 
 const OPTIONAL_WIDGETS: Widget[] = [
@@ -142,7 +151,7 @@ export class DashboardService {
     widgetsWithoutContent.forEach(w => {delete w.content});
     localStorage.setItem('dashboardWidgets', JSON.stringify(widgetsWithoutContent));
   })
-  
+
   updateWidgetPosition(sourceWidgetId: number, targetWidgetId: number) {
   const sourceIndex = this.addedWidgets().findIndex(w => w.id === sourceWidgetId);
   if (sourceIndex === -1) {
@@ -161,10 +170,10 @@ export class DashboardService {
 
   newWidgets.splice(insertAt, 0, sourceWidget);
   this.addedWidgets.set(newWidgets);
-  
+
   }
 
-  
+
 
 
 }
