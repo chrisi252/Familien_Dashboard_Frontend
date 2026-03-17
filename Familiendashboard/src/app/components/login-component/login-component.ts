@@ -1,28 +1,56 @@
-import { Component, ViewChild, viewChild } from '@angular/core';
-import { Router } from '@angular/router';
-import { ThemeSwitchComponent } from "../theme-switch-component/theme-switch-component";
+import { Component, inject } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ThemeSwitchComponent } from '../theme-switch-component/theme-switch-component';
+import { AuthService } from '../../services/auth-service';
 
 @Component({
   selector: 'app-login-component',
-  imports: [ThemeSwitchComponent],
+  standalone: true,
+  imports: [ThemeSwitchComponent, RouterLink, ReactiveFormsModule],
   templateUrl: './login-component.html',
   styleUrl: './login-component.css',
 })
 export class LoginComponent {
-@ViewChild('email') emailInput: any;
-@ViewChild ('username') usernameInput: any;
-constructor(private router: Router) {}
+  private router = inject(Router);
+  private authService = inject(AuthService);
+  private fb = inject(FormBuilder);
 
-    login() {
-        // hier eig API Service aufrufen um sich anzumelden, aber erstmal nur die Werte aus den Inputs holen
-        const email = this.emailInput.nativeElement.value;
-        const username = this.usernameInput.nativeElement.value;
 
-            console.log('Email:', email);
-            console.log('Username:', username);
-      if(email =="test" && username =="test"){
-       this.router.navigate(['/dashboard']);
-      }
 
+  loginForm = this.fb.nonNullable.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required, Validators.minLength(6)]]
+  });
+  ngOnInit() {
+    const token = localStorage.getItem('accessToken');
+    if (token) {
+      this.router.navigate(['/dashboard']);
     }
+  }
+
+
+  submit() {
+   
+    if (this.loginForm.invalid) {
+      this.loginForm.markAllAsTouched();
+      return;
+    }
+/*
+    const payload={
+      email: this.loginForm.controls.email.value,
+      password: this.loginForm.controls.password.value
+    }
+    this.authService.login(payload).subscribe({
+      next: (tokens) => {
+        this.authService.storeTokens(tokens);
+        this.router.navigate(['/dashboard']);
+      },
+      error: (error: any) => {
+        console.error('Login failed:', error);
+        alert('Login failed. Please check your credentials.');
+      }
+    });
+    */this.router.navigate(['/dashboard']);
+  }
 }

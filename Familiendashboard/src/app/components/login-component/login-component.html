@@ -1,16 +1,53 @@
-<div class="flex h-screen items-center justify-center">
+<div class="flex h-screen items-center justify-center bg-base-200">
+  
   <div class="absolute top-4 left-4">
-        <app-theme-switch-component ></app-theme-switch-component>
+    <app-theme-switch-component></app-theme-switch-component>
+  </div>
+
+  <form [formGroup]="loginForm" (ngSubmit)="submit()" class="card w-full max-w-sm bg-base-100 shadow-xl">
+    <div class="card-body">
+      <h2 class="card-title text-2xl font-bold mb-4 text-base-content">Login</h2>
+      
+      <div class="form-control mb-2">
+        <label class="label" for="email">
+          <span class="label-text font-bold">Email</span>
+        </label>
+        <input formControlName="email" id="email" type="email" placeholder="Enter your email" class="input input-bordered w-full" />
+        
+        @if(loginForm.controls.email.invalid && loginForm.controls.email.touched) {
+          <label class="label">
+            <span class="label-text-alt text-error italic">Please enter a valid email.</span>
+          </label>
+        }
+      </div>
+      
+      <div class="form-control mb-6">
+        <label class="label" for="password">
+          <span class="label-text font-bold">Password</span>
+        </label>
+        <input formControlName="password" id="password" type="password" placeholder="Enter your password" class="input input-bordered w-full" />
+        
+        @if(loginForm.controls.password.invalid && loginForm.controls.password.touched) {
+          <label class="label">
+            <span class="label-text-alt text-error italic">Please enter a valid password.</span>
+          </label>
+        }
+      </div>
+      
+      <div class="flex items-center justify-between mb-4">
+        <button type="submit" class="btn btn-primary">Login</button>
+        <a [routerLink]="['/forgot-password']" class="link link-hover text-sm text-primary font-bold">Forgot Password?</a>
+      </div>
+        
+      <div class="divider"></div> 
+      
+      <div class="text-center">
+        <p class="text-sm text-base-content">
+          Don't have an account? 
+          <a [routerLink]="['/register']" class="link link-primary font-bold">Register here</a>.
+        </p>
+      </div>
+      
     </div>
-  <fieldset class="fieldset bg-base-200 border-base-300 rounded-box w-full max-w-md h-xl border p-8">
-    <legend class="fieldset-legend text-lg font-bold">Login</legend>
-
-    <label class="label mt-2" >Email</label>
-    <input #email type="email" class="input w-full" placeholder="mail@familie.de" />
-
-    <label class="label mt-4" >Username</label>
-    <input #username  type="username" class="input w-xl" placeholder="Max Mustermann" />
-
-    <button class="btn btn-neutral mt-8 w-xl" (click)="login()">Login</button>
-  </fieldset>
+  </form>
 </div>

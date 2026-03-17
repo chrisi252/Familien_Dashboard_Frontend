@@ -24,6 +24,7 @@ store=inject(DashboardService);
 
 
   changeWidth(newWidth: number) {
+    if (this.store.isMobile()) return;
     this.store.updateWidgetSize(this.widget().id, { cols: newWidth });
   }
 

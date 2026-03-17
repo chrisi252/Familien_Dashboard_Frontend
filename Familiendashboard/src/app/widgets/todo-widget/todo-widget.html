@@ -9,8 +9,23 @@
   @for (todo of todoItems(); track $index) {
       <li class="flex items-center gap-2">
         <input type="checkbox" [checked]="todo.completed" class="checkbox" (change)="todo.completed = !todo.completed"/>
-        <span [class.line-through]="todo.completed">{{ todo.text }}</span>
-        <button class="btn btn-xs btn-error ml-auto" (click)="removeTodoItem(todo.id)">entfernen</button>
+        @if (editingId() === todo.id) {
+          <input class="input input-xs flex-1" [value]="editingText()" (input)="editingText.set($any($event.target).value)" (keyup.enter)="saveEdit(todo.id)" (keyup.escape)="cancelEdit()" />
+          <button class="btn btn-xs btn-success" title="Speichern" (click)="saveEdit(todo.id)">
+            <ng-icon name="heroCheck" class="text-base" />
+          </button>
+          <button class="btn btn-xs" title="Abbrechen" (click)="cancelEdit()">
+            <ng-icon name="heroXMark" class="text-base" />
+          </button>
+        } @else {
+          <span [class.line-through]="todo.completed" class="flex-1">{{ todo.text }}</span>
+          <button class="btn btn-xs btn-ghost" title="Bearbeiten" (click)="startEdit(todo.id, todo.text)">
+            <ng-icon name="heroPencil" class="text-base" />
+          </button>
+          <button class="btn btn-xs btn-ghost text-error" title="Entfernen" (click)="removeTodoItem(todo.id)">
+            <ng-icon name="heroTrash" class="text-base" />
+          </button>
+        }
       </li>
     } @empty {
       <li class="text-center text-sm opacity-60">
