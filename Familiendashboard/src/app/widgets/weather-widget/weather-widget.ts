@@ -19,7 +19,7 @@ export class WeatherWidget implements OnInit {
     }
 
     getWeatherData() {
-        const apiKey = 'f85ff55aeee01962a495b164e75c3db2';
+    
         const city = 'London';
         const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`;
 
