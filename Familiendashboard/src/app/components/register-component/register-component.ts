@@ -1,46 +1,52 @@
 import { Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { ThemeSwitchComponent } from '../theme-switch-component/theme-switch-component';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth-service';
-
 
 @Component({
   selector: 'app-register-component',
-  imports: [ThemeSwitchComponent,RouterLink,ReactiveFormsModule],
+  imports: [ThemeSwitchComponent, RouterLink, ReactiveFormsModule],
   templateUrl: './register-component.html',
   styleUrl: './register-component.css',
 })
-export class RegisterComponent{
+export class RegisterComponent {
   private router = inject(Router);
   private authService = inject(AuthService);
   private fb = inject(FormBuilder);
 
+  errorMessage = '';
+
   registerForm = this.fb.nonNullable.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]]
+    username: ['', [Validators.required, Validators.minLength(3)]],
+    first_name: ['', [Validators.required]],
+    last_name: ['', [Validators.required]],
+    password: ['', [Validators.required, Validators.minLength(6)]],
   });
 
   register() {
-    if (this.registerForm.valid) {
-      const credentials = this.registerForm.getRawValue();  
-      
-     /* this.authService.register(credentials).subscribe({
-        next: (response: any) => {
-          console.log('Registration successful', response);
-          this.router.navigate(['/login']); 
-        },
-        error: (error: any) => {
-          console.error('Registration failed:', error);
-        }
-      });
-    } else {
+    if (this.registerForm.invalid) {
       this.registerForm.markAllAsTouched();
-     */
-      // Da die Register-Methode im AuthService noch nicht implementiert ist, navigieren wir einfach zum Login
-      this.router.navigate(['/login']);
+      return;
     }
-     
-  }
 
+    this.errorMessage = '';
+    const credentials = this.registerForm.getRawValue();
+
+    this.authService.register(credentials).subscribe({
+      next: (response) => {
+        console.log('Registration successful', response);
+        this.authService.storeToken(response.access_token);
+        this.router.navigate(['/dashboard']);
+      },
+      error: (error) => {
+        console.error('Registration failed:', error);
+        if (error.error?.error) {
+          this.errorMessage = error.error.error;
+        } else {
+          this.errorMessage = 'Registration failed. Please try again.';
+        }
+      },
+    });
+  }
 }

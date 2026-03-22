@@ -1,4 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
+const apiKey = ""
 
 @Component({
   selector: 'app-weather-widget',
