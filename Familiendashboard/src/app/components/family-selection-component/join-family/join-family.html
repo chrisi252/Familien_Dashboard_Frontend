@@ -21,12 +21,17 @@
             <div class="flex flex-col gap-4">
                 <input
                     id="familyCode"
-                    type="string"
+                    type="text"
                     placeholder="Enter your family code"
+                    [(ngModel)]="familyCode"
                     class="input input-bordered w-full" />
                     <button
                         (click)="tryJoinFamily()"
+                        [disabled]="isLoading"
                         class="btn btn-primary">
+                        @if(isLoading) {
+                            <span class="loading loading-spinner loading-sm"></span>
+                        }
                         Familie beitreten
                     </button>
 

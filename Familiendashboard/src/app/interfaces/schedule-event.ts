@@ -1,4 +1,4 @@
-export interface CalendarEvent {
+export interface ScheduleEvent {
     dayName: string;
   dayNumber: string;
   title: string;

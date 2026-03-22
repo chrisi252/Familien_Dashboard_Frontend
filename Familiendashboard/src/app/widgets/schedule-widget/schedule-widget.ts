@@ -1,5 +1,5 @@
 import { Component, signal } from '@angular/core';
-import { CalendarEvent } from '../../interfaces/calendar-event';
+import { ScheduleEvent } from '../../interfaces/schedule-event';
 
 @Component({
   selector: 'app-schedule-widget',
@@ -9,7 +9,7 @@ import { CalendarEvent } from '../../interfaces/calendar-event';
 })
 export class ScheduleWidget {
 
-    events = signal<CalendarEvent[]>([
+    events = signal<ScheduleEvent[]>([
     {
       dayName: 'Mo',
       dayNumber: '03',

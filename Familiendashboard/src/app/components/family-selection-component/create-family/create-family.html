@@ -18,12 +18,17 @@
             <div class="flex flex-col gap-4">
                 <input
                     id="createFamily"
-                    type="string"
+                    type="text"
                     placeholder="Enter your family name"
+                    [(ngModel)]="familyName"
                     class="input input-bordered w-full" />
                     <button
                         (click)="tryCreateFamily()"
+                        [disabled]="isLoading"
                         class="btn btn-primary">
+                        @if(isLoading) {
+                            <span class="loading loading-spinner loading-sm"></span>
+                        }
                         Familie erstellen
                     </button>
 

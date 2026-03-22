@@ -53,6 +53,7 @@ export const routes: Routes = [
       component: FamilySelectionComponent,
       children: [
         { path: 'join', component: JoinFamily },
+        { path: 'join/:familyId', component: JoinFamily },
         { path: 'create', component: CreateFamily }
       ]
     },
