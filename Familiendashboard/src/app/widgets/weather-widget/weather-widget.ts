@@ -1,59 +1,97 @@
-import { Component, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
-const apiKey = ""
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { DecimalPipe, SlicePipe, DatePipe } from '@angular/common';
+import { WeatherService } from '../../services/weather-service';
+import { FamilyService } from '../../services/family-service';
+import { WeatherResponse } from '../../interfaces/weather';
 
 @Component({
   selector: 'app-weather-widget',
-  imports: [],
+  imports: [DecimalPipe, SlicePipe, DatePipe],
   templateUrl: './weather-widget.html',
   styleUrl: './weather-widget.css',
 })
 export class WeatherWidget implements OnInit {
-    WeatherData: any = null; // ← null statt leerem Objekt!
+  WeatherData: WeatherResponse | null = null;
+  isDayTime = true;
+  error: string | null = null;
+  private retries = 0;
 
-    constructor(
-        private cdr: ChangeDetectorRef,
-        private ngZone: NgZone
-    ) {}
+  constructor(
+    private weatherService: WeatherService,
+    private familyService: FamilyService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
-    ngOnInit() {
-        this.getWeatherData();
-    }
+  ngOnInit() {
+    this.loadWeather();
+  }
 
-    getWeatherData() {
-    
-        const city = 'London';
-        const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`;
-
-        fetch(url)
-            .then(response => {
-                if (!response.ok) throw new Error('Netzwerkantwort war nicht ok');
-                return response.json();
-            })
-            .then(data => {
-                // ↓ Änderungen zurück in die Angular-Zone bringen
-                this.ngZone.run(() => {
-                    this.setWeatherData(data);
-                    this.cdr.detectChanges(); // Angular explizit benachrichtigen
-                });
-            })
-            .catch(error => console.error('Error fetching weather data:', error));
-    }
-
-    setWeatherData(data: any) {
-        this.WeatherData = data;
-        const sunsetTime = new Date(this.WeatherData.sys.sunset * 1000);
-        this.WeatherData.sunsetTime = sunsetTime.toLocaleTimeString();
-        this.WeatherData.sunriseTime = new Date(this.WeatherData.sys.sunrise * 1000).toLocaleTimeString();
-
-        const currentTime = new Date();
-        this.WeatherData.isDayTime = currentTime.getTime() < sunsetTime.getTime();
-
-        this.WeatherData.temperatureCelsius = (this.WeatherData.main.temp - 273.15).toFixed(2);
-        this.WeatherData.temp_min = (this.WeatherData.main.temp_min - 273.15).toFixed(2);
-        this.WeatherData.temp_max = (this.WeatherData.main.temp_max - 273.15).toFixed(2);
-
-        if (this.WeatherData.main.feels_like) {
-            this.WeatherData.feels_like = (this.WeatherData.main.feels_like - 273.15).toFixed(2);
+  loadWeather() {
+    this.familyService.getFamilies().subscribe({
+      next: (response: any) => {
+        const families = Array.isArray(response) ? response : response?.families ?? [];
+        if (!families || families.length === 0) {
+          this.error = 'Keine Familie vorhanden – bitte erstelle oder tritt einer Familie bei';
+          this.cdr.detectChanges();
+          return;
         }
-    }
+        const familyId = families[0].family?.id ?? families[0].id;
+        this.fetchWeather(familyId);
+      },
+      error: (err) => {
+        if (this.retries < 2) {
+          this.retries++;
+          setTimeout(() => this.loadWeather(), 1500);
+        } else {
+          console.error('Error fetching families:', err);
+          this.error = 'Familiendaten konnten nicht geladen werden';
+          this.cdr.detectChanges();
+        }
+      },
+    });
+  }
+
+  private fetchWeather(familyId: number) {
+    this.weatherService.getWeather(familyId).subscribe({
+      next: (data) => {
+        this.WeatherData = data;
+        this.isDayTime = this.checkDayTime();
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        // Kein Ort konfiguriert → Standardstadt setzen und nochmal versuchen
+        if (err.status === 400 || err.status === 500) {
+          this.weatherService.updateLocation(familyId, 'Wien').subscribe({
+            next: () => {
+              this.weatherService.getWeather(familyId).subscribe({
+                next: (data) => {
+                  this.WeatherData = data;
+                  this.isDayTime = this.checkDayTime();
+                },
+                error: (retryErr) => {
+                  console.error('Error fetching weather after setting default city:', retryErr);
+                  this.error = 'Wetterdaten konnten nicht geladen werden';
+          this.cdr.detectChanges();
+                },
+              });
+            },
+            error: (locErr) => {
+              console.error('Error setting default location:', locErr);
+              this.error = 'Standardort konnte nicht gesetzt werden';
+              this.cdr.detectChanges();
+            },
+          });
+        } else {
+          console.error('Error fetching weather data:', err);
+          this.error = 'Wetterdaten konnten nicht geladen werden';
+          this.cdr.detectChanges();
+        }
+      },
+    });
+  }
+
+  private checkDayTime(): boolean {
+    const hour = new Date().getHours();
+    return hour >= 6 && hour < 20;
+  }
 }

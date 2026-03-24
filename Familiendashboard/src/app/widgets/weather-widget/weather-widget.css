@@ -1,70 +1,8 @@
-.cloud-animate {
-    animation: cloudMovement 10s ease-in-out infinite alternate;
-}
-
-/* Compact widget: show only essential info to avoid clipping in 1x1 size. */
-@container (max-height: 15rem), (max-width: 14rem) {
-    .weather-details,
-    .weather-feels {
-        display: none;
-    }
-
-    .weather-temp {
-        font-size: clamp(1rem, 12cqh, 1.45rem) !important;
-    }
-
-    .weather-city {
-        font-size: clamp(0.75rem, 5cqh, 0.95rem) !important;
-    }
-}
-
-/* Large widget: fill extra space with stronger hierarchy and readable detail. */
-@container (min-height: 22rem) and (min-width: 18rem) {
-    .weather-sky {
-        height: clamp(4.2rem, 18cqh, 6.5rem);
-    }
-
-    .weather-main {
-        gap: 0.55rem;
-    }
-
-    .weather-temp {
-        font-size: clamp(2.4rem, 12cqh, 4.2rem) !important;
-        letter-spacing: -0.02em;
-    }
-
-    .weather-city {
-        font-size: clamp(1.35rem, 6.8cqh, 2.4rem) !important;
-    }
-
-    .weather-minmax,
-    .weather-feels,
-    .weather-humidity {
-        font-size: clamp(0.9rem, 3.8cqh, 1.25rem) !important;
-    }
-
-    .weather-details {
-        margin-top: 0.6rem;
-        padding-top: 0.6rem;
-        font-size: clamp(0.82rem, 3.2cqh, 1.08rem) !important;
-    }
-}
-
-@container (min-height: 28rem) and (min-width: 22rem) {
-    .weather-temp {
-        font-size: clamp(3rem, 13cqh, 4.8rem) !important;
-    }
-
-    .weather-city {
-        font-size: clamp(1.7rem, 7cqh, 2.8rem) !important;
-    }
-
-    .weather-details {
-        font-size: clamp(0.95rem, 3cqh, 1.2rem) !important;
-    }
-}
-
 @keyframes cloudMovement {
     from { transform: translateX(-40px); }
     to   { transform: translateX(40px); }
+}
+
+.cloud-animate {
+    animation: cloudMovement 10s ease-in-out infinite alternate;
 }
