@@ -44,7 +44,7 @@ export class LoginComponent {
 
     this.authService.login(payload).subscribe({
       next: (response) => {
-        this.authService.storeToken(response.access_token);
+   
         this.router.navigate(['/dashboard']);
       },
       error: (error: { error?: { error?: string } }) => {

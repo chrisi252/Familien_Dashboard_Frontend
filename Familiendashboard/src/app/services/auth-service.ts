@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { TokenResponse } from '../interfaces/token-response';
+import { Observable } from 'rxjs';
 import { RegisterResponse } from '../interfaces/register-response';
 import { LoginResponse } from '../interfaces/login-response';
 
@@ -26,38 +25,5 @@ export class AuthService {
     return this.http.post<RegisterResponse>(`${this.apiUrl}/users/register`, credentials);
   }
 
-  storeToken(token: string) {
-    localStorage.setItem('accessToken', token);
-  }
 
-  storeTokens(tokens: TokenResponse) {
-    localStorage.setItem('accessToken', tokens.accessToken);
-    localStorage.setItem('refreshToken', tokens.refreshToken);
-  }
-
-  clearToken() {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-  }
-
-  getAccessToken(): string | null {
-    return localStorage.getItem('accessToken');
-  }
-
-  isLoggedIn(): boolean {
-    return !!this.getAccessToken();
-  }
-
-  refreshToken(): Observable<TokenResponse | null> {
-    const refreshToken = localStorage.getItem('refreshToken');
-    const token = localStorage.getItem('accessToken');
-
-    if (!refreshToken || !token) {
-      return of(null);
-    }
-    return this.http.post<TokenResponse>(`${this.apiUrl}/refresh`, {
-      token: token,
-      refreshToken: refreshToken,
-    });
-  }
 }
