@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
+import { FamilyService } from '../../../services/family-service';
 
 @Component({
   selector: 'app-edit-users',
@@ -6,12 +7,17 @@ import { Component } from '@angular/core';
   templateUrl: './edit-users.html',
   styleUrl: './edit-users.css',
 })
-export class EditUsers {
+export class EditUsers implements OnInit {
+  private familyService = inject(FamilyService);
 
-  users = [
-    { id: 1, username: 'user1', role: 'Admin', email: 'user1@example.com' },
-    { id: 2, username: 'user2', role: 'Nutzer', email: 'user2@example.com' },
-    { id: 3, username: 'user3', role: 'Au-Pair', email: 'user3@example.com' }
-  ];
+  members: any[] = [];
 
+  ngOnInit() {
+    this.familyService.getFamilies().subscribe((res: any) => {
+      const familyId = res.families[0].family.id;
+      this.familyService.getFamilyById(familyId).subscribe((detail: any) => {
+        this.members = detail.members;
+      });
+    });
+  }
 }
