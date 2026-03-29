@@ -11,6 +11,7 @@ import { EditUsers } from './components/admin-component/edit-users/edit-users';
 import { EditDashboard } from './components/admin-component/edit-dashboard/edit-dashboard';
 import { EditWidgets } from './components/admin-component/edit-widgets/edit-widgets';
 import { ProfileComponent } from './components/profile-component/profile-component';
+import { authGuard } from './guards/auth.guard';
 
 
 
@@ -23,6 +24,7 @@ export const routes: Routes = [
     {
         path:'familyadmin',
         component:FamilyadminComponent,
+        canActivate: [authGuard],
 
         children: [
       {
@@ -51,6 +53,7 @@ export const routes: Routes = [
     {
       path: 'family-selection',
       component: FamilySelectionComponent,
+      canActivate: [authGuard],
       children: [
         { path: 'join', component: JoinFamily },
         { path: 'join/:familyId', component: JoinFamily },
@@ -60,10 +63,12 @@ export const routes: Routes = [
     {
         path:'dashboard',
         component:DashboardComponent,
+        canActivate: [authGuard]
     },
     {
       path:'profile',
       component:ProfileComponent,
+      canActivate: [authGuard]
     },
     {
         path:'widgets',

@@ -3,6 +3,7 @@ import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ThemeSwitchComponent } from '../theme-switch-component/theme-switch-component';
 import { AuthService } from '../../services/auth-service';
+import { ProfileService } from '../../services/profile-service';
 
 @Component({
   selector: 'app-login-component',
@@ -14,6 +15,7 @@ import { AuthService } from '../../services/auth-service';
 export class LoginComponent {
   private router = inject(Router);
   private authService = inject(AuthService);
+  private profileService = inject(ProfileService);
   private fb = inject(FormBuilder);
 
   errorMessage = '';
@@ -25,10 +27,10 @@ export class LoginComponent {
     password: ['', [Validators.required, Validators.minLength(6)]]
   });
   ngOnInit() {
-    const token = localStorage.getItem('accessToken');
-    if (token) {
-      this.router.navigate(['/dashboard']);
-    }
+    this.profileService.getProfile().subscribe({
+    next: () => this.router.navigate(['/dashboard']),
+    error: () => {}
+  });
   }
 
 

@@ -24,6 +24,9 @@ export class AuthService {
   }): Observable<RegisterResponse> {
     return this.http.post<RegisterResponse>(`${this.apiUrl}/users/register`, credentials);
   }
+logout(): Observable<void> {
+  return this.http.post<void>(`${this.apiUrl}/users/logout`, {});
+}
 
 
 }

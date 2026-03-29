@@ -3,6 +3,7 @@
         <div class="flex">
             <app-theme-switch-component></app-theme-switch-component>
         </div>
+        
 
     </div>
 
@@ -20,7 +21,11 @@
                 <li><button type="button" (click)="goToProfile()">Profil</button></li>
                 <li><button type="button">Einstellungen</button></li>
                 <li><button type="button" (click)="logout()">Abmelden</button></li>
+                @if (userStateService.isFamilyAdmin()) {
+            <li><button routerLink="/familyadmin">Admin</button></li>
+}
             </ul>
+            
         </div>
     </div>
 </header>

@@ -19,12 +19,6 @@ export class ProfileComponent implements OnInit {
   errorMessage = signal('');
 
   ngOnInit(): void {
-    if (!localStorage.getItem('accessToken')) {
-      this.isLoading.set(false);
-      this.errorMessage.set('Du bist nicht eingeloggt. Bitte melde dich zuerst an.');
-      return;
-    }
-
     this.loadProfile();
   }
 
