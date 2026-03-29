@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { User } from '../interfaces/user';
 import { Observable } from 'rxjs/internal/Observable';
 import { HttpClient } from '@angular/common/http';
+import { FamilyWidgetDetailed } from '../interfaces/widget';
 
 @Injectable({
   providedIn: 'root',
@@ -26,6 +27,10 @@ export class FamilyService {
 
   joinFamily(familyId: number): Observable<any> {
     return this.http.post(`${this.apiUrl}/families/${familyId}/join`, {});
+  }
+
+  getFamilyWidgets(familyId: number): Observable<{ widgets: FamilyWidgetDetailed[] }> {
+    return this.http.get<{ widgets: FamilyWidgetDetailed[] }>(`${this.apiUrl}/families/${familyId}/widgets`);
   }
 
 }

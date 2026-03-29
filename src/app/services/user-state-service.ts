@@ -10,6 +10,7 @@ export class UserStateService {
 
   currentUser = signal<User | null>(null);
   currentFamilyRole = signal<FamilyRoleName | null>(null);
+  currentFamilyId = signal<number | null>(null);
 
   loadCurrentUser() {
     this.profileService.getProfile().subscribe(u => this.currentUser.set(u));
@@ -17,8 +18,9 @@ export class UserStateService {
 
   loadFamilyRole() {
     this.familyService.getFamilies().subscribe((res: any) => {
-      const role = res.families?.[0]?.role?.name ?? null;
-      this.currentFamilyRole.set(role);
+      const first = res.families?.[0];
+      this.currentFamilyRole.set(first?.role?.name ?? null);
+      this.currentFamilyId.set(first?.family?.id ?? null);
     });
   }
 
