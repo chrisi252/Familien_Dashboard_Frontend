@@ -1,0 +1,38 @@
+<div class="w-72 min-h-full bg-base-200 text-base-content flex flex-col shadow-2xl z-50">
+
+  <div class="p-6 flex items-center gap-4 border-b border-base-300">
+    <div>
+      <h2 class="font-bold text-lg leading-tight">System Admin</h2>
+      <span class="text-xs opacity-70 font-medium tracking-wide uppercase">Systemverwaltung</span>
+    </div>
+  </div>
+
+  <ul class="menu flex-1 px-4 py-6 gap-2 text-base">
+
+    <li class="rounded-lg" routerLinkActive="bg-primary text-primary-content" [routerLinkActiveOptions]="{ exact: true }">
+      <p routerLink="/systemadmin/families" class="flex items-center gap-2">
+        Familien verwalten
+      </p>
+    </li>
+
+    <li class="rounded-lg" routerLinkActive="bg-primary text-primary-content" [routerLinkActiveOptions]="{ exact: true }">
+      <p routerLink="/systemadmin/users" class="flex items-center gap-2">
+        Alle Benutzer verwalten
+      </p>
+    </li>
+
+    <li class="rounded-lg" routerLinkActive="bg-primary text-primary-content" [routerLinkActiveOptions]="{ exact: true }">
+      <p routerLink="/systemadmin/settings" class="flex items-center gap-2">
+        System-Einstellungen
+      </p>
+    </li>
+
+  </ul>
+
+  <div class="p-4 border-t border-base-300 bg-base-200/50">
+    <a routerLink="/dashboard" class="btn btn-ghost btn-block justify-start text-error hover:bg-error/10">
+      Dashboard vorschau
+    </a>
+  </div>
+
+</div>
