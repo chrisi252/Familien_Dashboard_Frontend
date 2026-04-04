@@ -1,8 +1,15 @@
+import { Type } from '@angular/core';
+
+export interface WidgetPermissions {
+  read: boolean;
+  write: boolean;
+}
+
 export interface Widget {
   id: number;
- label: string;
- content: any;
-  permissions: any;
+  label: string;
+  content: Type<unknown>;
+  permissions: WidgetPermissions;
   rows?: number;
   cols?: number;
   backgroundColor?: string;

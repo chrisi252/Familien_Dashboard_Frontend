@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { User } from '../interfaces/user';
+import { FamiliesResponse, FamilyDetailResponse } from '../interfaces/user';
 import { Observable } from 'rxjs/internal/Observable';
 import { HttpClient } from '@angular/common/http';
 import { FamilyWidgetDetailed } from '../interfaces/widget';
@@ -13,20 +13,20 @@ export class FamilyService {
 
   constructor(private http: HttpClient) {}
 
-  createFamily(name: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/families`, { name });
+  createFamily(name: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/families`, { name });
   }
 
-  getFamilies(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/families`);
+  getFamilies(): Observable<FamiliesResponse> {
+    return this.http.get<FamiliesResponse>(`${this.apiUrl}/families`);
   }
 
-  getFamilyById(id: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/families/${id}`);
+  getFamilyById(id: number): Observable<FamilyDetailResponse> {
+    return this.http.get<FamilyDetailResponse>(`${this.apiUrl}/families/${id}`);
   }
 
-  joinFamily(familyId: number): Observable<any> {
-    return this.http.post(`${this.apiUrl}/families/${familyId}/join`, {});
+  joinFamily(familyId: number): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/families/${familyId}/join`, {});
   }
 
   getFamilyWidgets(familyId: number): Observable<{ widgets: FamilyWidgetDetailed[] }> {
