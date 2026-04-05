@@ -1,18 +1,15 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { forkJoin, switchMap } from 'rxjs';
-import { FamilyWidgetDetailed } from '../../../interfaces/widget';
+import { FamilyWidgetDetailed, WidgetUserPermission } from '../../../interfaces/widget';
 import { FamilyMember } from '../../../interfaces/user';
 import { FamilyService } from '../../../services/family-service';
 import { UserStateService } from '../../../services/user-state-service';
 import { FormsModule } from '@angular/forms';
 
-const KNOWN_WIDGET_KEYS = [
-  { key: 'todo', label: 'Aufgaben' },
-  { key: 'weather', label: 'Wetter' },
-  { key: 'notes', label: 'Notizen' },
-  { key: 'schedule', label: 'Termine' },
-  { key: 'calendar', label: 'Kalender' },
-];
+interface PermissionState {
+  canView: boolean;
+  canEdit: boolean;
+}
 
 @Component({
   selector: 'app-edit-widgets',
@@ -29,14 +26,12 @@ export class EditWidgets implements OnInit {
   isLoading = signal(true);
   errorMessage = signal('');
   actionError = signal('');
+  successMessage = signal('');
 
-  newWidgetKey = signal('todo');
-  activating = signal(false);
-
-  deactivatingId = signal<number | null>(null);
   savingPermission = signal<string | null>(null);
 
-  readonly knownWidgetKeys = KNOWN_WIDGET_KEYS;
+  // Speichert den aktuellen Zustand der Berechtigungen: key = "widgetId-userId"
+  permissionStates = signal<Map<string, PermissionState>>(new Map());
 
   private familyId: number | null = null;
 
@@ -55,7 +50,7 @@ export class EditWidgets implements OnInit {
         next: ({ widgetsRes, familyRes }) => {
           this.widgets.set(widgetsRes.widgets);
           this.members.set(familyRes.members);
-          this.isLoading.set(false);
+          this.loadAllPermissions(widgetsRes.widgets);
         },
         error: () => {
           this.errorMessage.set('Daten konnten nicht geladen werden.');
@@ -64,60 +59,83 @@ export class EditWidgets implements OnInit {
       });
   }
 
-  activateWidget() {
-    if (!this.familyId) return;
-    const key = this.newWidgetKey().trim();
-    if (!key) return;
+  private loadAllPermissions(widgets: FamilyWidgetDetailed[]) {
+    if (!this.familyId || widgets.length === 0) {
+      this.isLoading.set(false);
+      return;
+    }
 
-    this.actionError.set('');
-    this.activating.set(true);
+    const permissionRequests = widgets.map(widget => 
+      this.familyService.getWidgetPermissions(this.familyId!, widget.id)
+    );
 
-    this.familyService.activateWidget(this.familyId, key).subscribe({
-      next: (widget) => {
-        this.widgets.set([...this.widgets(), widget]);
-        this.activating.set(false);
+    forkJoin(permissionRequests).subscribe({
+      next: (responses) => {
+        const states = new Map<string, PermissionState>();
+        
+        responses.forEach((response, index) => {
+          const widgetId = widgets[index].id;
+          for (const perm of response.permissions) {
+            const key = `${widgetId}-${perm.user_id}`;
+            states.set(key, {
+              canView: perm.can_view,
+              canEdit: perm.can_edit,
+            });
+          }
+        });
+        
+        this.permissionStates.set(states);
+        this.isLoading.set(false);
       },
-      error: (err) => {
-        this.actionError.set(err?.error?.error ?? 'Widget konnte nicht aktiviert werden.');
-        this.activating.set(false);
-      },
-    });
-  }
-
-  deactivateWidget(widgetId: number) {
-    if (!this.familyId) return;
-    this.actionError.set('');
-    this.deactivatingId.set(widgetId);
-
-    this.familyService.deactivateWidget(this.familyId, widgetId).subscribe({
-      next: () => {
-        this.widgets.set(this.widgets().filter((w) => w.id !== widgetId));
-        this.deactivatingId.set(null);
-      },
-      error: (err) => {
-        this.actionError.set(err?.error?.error ?? 'Widget konnte nicht deaktiviert werden.');
-        this.deactivatingId.set(null);
+      error: () => {
+        this.errorMessage.set('Berechtigungen konnten nicht geladen werden.');
+        this.isLoading.set(false);
       },
     });
   }
 
-  savePermission(widgetId: number, userId: number, canView: boolean, canEdit: boolean) {
-    if (!this.familyId) return;
+  getPermission(widgetId: number, userId: number): PermissionState {
     const key = `${widgetId}-${userId}`;
-    this.savingPermission.set(key);
+    return this.permissionStates().get(key) ?? { canView: true, canEdit: false };
+  }
 
-    this.familyService.updateWidgetUserPermission(this.familyId, widgetId, userId, canView, canEdit).subscribe({
-      next: () => this.savingPermission.set(null),
+  updateLocalPermission(widgetId: number, userId: number, field: 'canView' | 'canEdit', value: boolean) {
+    const key = `${widgetId}-${userId}`;
+    const current = this.getPermission(widgetId, userId);
+    const updated = { ...current, [field]: value };
+    
+    const newStates = new Map(this.permissionStates());
+    newStates.set(key, updated);
+    this.permissionStates.set(newStates);
+  }
+
+  savePermission(widgetId: number, userId: number) {
+    if (!this.familyId) return;
+    
+    const permission = this.getPermission(widgetId, userId);
+    const key = `${widgetId}-${userId}`;
+    
+    this.savingPermission.set(key);
+    this.actionError.set('');
+    this.successMessage.set('');
+
+    this.familyService.updateWidgetUserPermission(
+      this.familyId, 
+      widgetId, 
+      userId, 
+      permission.canView, 
+      permission.canEdit
+    ).subscribe({
+      next: () => {
+        this.savingPermission.set(null);
+        this.successMessage.set('Berechtigung gespeichert!');
+        setTimeout(() => this.successMessage.set(''), 2000);
+      },
       error: (err) => {
         this.actionError.set(err?.error?.error ?? 'Berechtigung konnte nicht gespeichert werden.');
         this.savingPermission.set(null);
       },
     });
-  }
-
-  availableWidgetKeys() {
-    const activeKeys = new Set(this.widgets().map((w) => w.widget_key));
-    return this.knownWidgetKeys.filter((k) => !activeKeys.has(k.key));
   }
 
   private resolveFamilyId() {

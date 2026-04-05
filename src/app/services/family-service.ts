@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { FamiliesResponse, FamilyDetailResponse } from '../interfaces/user';
 import { Observable } from 'rxjs/internal/Observable';
 import { HttpClient } from '@angular/common/http';
-import { FamilyWidgetDetailed, WidgetUserPermission } from '../interfaces/widget';
+import { FamilyWidgetDetailed, WidgetLayoutItem, WidgetLayoutResponse, WidgetUserPermission } from '../interfaces/widget';
 
 @Injectable({
   providedIn: 'root',
@@ -37,12 +37,10 @@ export class FamilyService {
     return this.http.get<{ widgets: FamilyWidgetDetailed[] }>(`${this.apiUrl}/families/${familyId}/widgets`);
   }
 
-  activateWidget(familyId: number, widgetKey: string): Observable<FamilyWidgetDetailed> {
-    return this.http.post<FamilyWidgetDetailed>(`${this.apiUrl}/families/${familyId}/widgets`, { widget_key: widgetKey });
-  }
-
-  deactivateWidget(familyId: number, widgetId: number): Observable<{ message: string }> {
-    return this.http.delete<{ message: string }>(`${this.apiUrl}/families/${familyId}/widgets/${widgetId}`);
+  getWidgetPermissions(familyId: number, widgetId: number): Observable<{ permissions: WidgetUserPermission[] }> {
+    return this.http.get<{ permissions: WidgetUserPermission[] }>(
+      `${this.apiUrl}/families/${familyId}/widgets/${widgetId}/permissions`
+    );
   }
 
   updateWidgetUserPermission(
@@ -58,15 +56,10 @@ export class FamilyService {
     );
   }
 
-  updateWidgetLayout(
-    familyId: number,
-    widgetId: number,
-    layout: { grid_col?: number; grid_row?: number; grid_pos_x?: number; grid_pos_y?: number },
-  ): Observable<FamilyWidgetDetailed> {
-    return this.http.put<FamilyWidgetDetailed>(
-      `${this.apiUrl}/families/${familyId}/widgets/${widgetId}/layout`,
-      layout,
+  saveWidgetLayout(familyId: number, layout: WidgetLayoutItem[]): Observable<WidgetLayoutResponse> {
+    return this.http.put<WidgetLayoutResponse>(
+      `${this.apiUrl}/families/${familyId}/widgets/layout`,
+      { layout },
     );
   }
-
 }

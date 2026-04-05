@@ -21,6 +21,9 @@ export interface FamiliesResponse {
 
 export interface FamilyMember {
   id: number;
+  user_id: number;
+  family_id: number;
+  role_id: number;
   user_username: string;
   role_name: FamilyRoleName;
 }

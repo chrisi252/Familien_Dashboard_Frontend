@@ -16,15 +16,6 @@ export interface Widget {
   color?: string;
 }
 
-export interface WidgetRolePermission {
-  id: number;
-  family_widget_id: number;
-  role_id: number;
-  role_name: string | null;
-  can_view: boolean;
-  can_edit: boolean;
-}
-
 export interface WidgetUserPermission {
   id: number;
   family_widget_id: number;
@@ -40,12 +31,26 @@ export interface FamilyWidgetDetailed {
   widget_key: string | null;
   display_name: string | null;
   description: string | null;
-  is_enabled: boolean;
+  position: number | null;
+  grid_col: number | null;
+  grid_row: number | null;
+  can_edit: boolean;
+}
+
+export interface WidgetLayoutItem {
+  family_widget_id: number;
+  position: number;
   grid_col: number;
   grid_row: number;
-  grid_pos_x: number;
-  grid_pos_y: number;
-  can_view: boolean;
-  can_edit: boolean;
-  permissions: WidgetRolePermission[];
+}
+
+export interface WidgetLayoutResponse {
+  configs: Array<{
+    id: number;
+    user_id: number;
+    family_widget_id: number;
+    position: number;
+    grid_col: number;
+    grid_row: number;
+  }>;
 }
