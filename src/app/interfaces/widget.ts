@@ -45,6 +45,7 @@ export interface FamilyWidgetDetailed {
   grid_row: number;
   grid_pos_x: number;
   grid_pos_y: number;
+  can_view: boolean;
   can_edit: boolean;
   permissions: WidgetRolePermission[];
 }

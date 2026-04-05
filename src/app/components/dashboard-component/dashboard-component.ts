@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { HeaderComponent } from "../header-component/header-component";
 import { WidgetComponent } from "../widget-component/widget-component";
 import { DashboardService } from "../../services/dashboard-service";
@@ -10,10 +10,12 @@ import { CdkDropList, CdkDropListGroup, CdkDragDrop } from "@angular/cdk/drag-dr
   imports: [HeaderComponent, WidgetComponent, AutoAnimateDirective, CdkDropList, CdkDropListGroup],
   templateUrl: './dashboard-component.html',
   styleUrl: './dashboard-component.css',
-  providers: [DashboardService],
-
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
+ngOnInit(): void {
+    this.store.loadWidgetsFromBackend();
+}
+
 
 store = inject(DashboardService);
 
