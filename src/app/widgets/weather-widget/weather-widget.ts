@@ -2,9 +2,8 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inje
 import { DecimalPipe, SlicePipe, DatePipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
-import { EMPTY, Observable, catchError, map, of, retry, switchMap } from 'rxjs';
+import { EMPTY, Observable, catchError, retry, switchMap } from 'rxjs';
 import { WeatherService } from '../../services/weather-service';
-import { FamilyService } from '../../services/family-service';
 import { WeatherResponse } from '../../interfaces/weather';
 import { UserStateService } from '../../services/user-state-service';
 
@@ -28,7 +27,6 @@ export class WeatherWidget implements OnInit {
 
   constructor(
     private weatherService: WeatherService,
-    private familyService: FamilyService,
     private changeDetectorRef: ChangeDetectorRef,
   ) {}
 
@@ -70,85 +68,7 @@ export class WeatherWidget implements OnInit {
   }
 
   private resolveFamilyId(): Observable<number> {
-    const currentFamilyId = this.userState.currentFamilyId();
-    if (currentFamilyId) {
-      return of(currentFamilyId);
-    }
-
-    return this.familyService.getFamilies().pipe(
-      map((res) => {
-        const familyId = this.extractFamilyId(res);
-        if (!familyId) {
-          throw new Error('Keine Familie gefunden');
-        }
-
-        const roleName = this.extractRoleName(res);
-        this.userState.currentFamilyId.set(familyId);
-        this.userState.currentFamilyRole.set(roleName);
-        return familyId;
-      }),
-    );
-  }
-
-  private extractFamilyId(response: unknown): number | null {
-    const firstMembership = this.extractFirstMembership(response);
-    if (!firstMembership) {
-      return null;
-    }
-
-    const candidate =
-      firstMembership['family']?.id ??
-      firstMembership['family_id'] ??
-      firstMembership['familyId'] ??
-      firstMembership['id'];
-
-    if (typeof candidate === 'number' && Number.isFinite(candidate) && candidate > 0) {
-      return candidate;
-    }
-
-    if (typeof candidate === 'string') {
-      const parsed = Number(candidate);
-      if (Number.isFinite(parsed) && parsed > 0) {
-        return parsed;
-      }
-    }
-
-    return null;
-  }
-
-  private extractRoleName(response: unknown): 'Familyadmin' | 'Guest' | 'SystemAdmin' | null {
-    const firstMembership = this.extractFirstMembership(response);
-    const roleCandidate = firstMembership?.['role']?.name;
-
-    if (roleCandidate === 'Familyadmin' || roleCandidate === 'Guest' || roleCandidate === 'SystemAdmin') {
-      return roleCandidate;
-    }
-
-    return null;
-  }
-
-  private extractFirstMembership(response: unknown): Record<string, any> | null {
-    if (!response || typeof response !== 'object') {
-      return null;
-    }
-
-    const typedResponse = response as { families?: unknown };
-
-    if (Array.isArray(typedResponse.families) && typedResponse.families.length > 0) {
-      const first = typedResponse.families[0];
-      if (first && typeof first === 'object') {
-        return first as Record<string, any>;
-      }
-    }
-
-    if (Array.isArray(response) && response.length > 0) {
-      const first = response[0];
-      if (first && typeof first === 'object') {
-        return first as Record<string, any>;
-      }
-    }
-
-    return null;
+    return this.userState.resolveCurrentFamilyId$();
   }
 
   private mapLoadError(error: HttpErrorResponse | Error): string {

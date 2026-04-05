@@ -76,8 +76,7 @@ export class ProfileComponent implements OnInit {
   }
 
   selectFamily(membership: FamilyMembership) {
-    this.userState.currentFamilyId.set(membership.family.id);
-    this.userState.currentFamilyRole.set(membership.role.name);
+    this.userState.selectFamily(membership.family.id, membership.role.name);
     this.router.navigate(['/dashboard']);
   }
 

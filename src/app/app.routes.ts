@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth.guard';
+import { familyAdminGuard } from './guards/familyadmin.guard';
 
 export const routes: Routes = [
     {
@@ -9,7 +10,7 @@ export const routes: Routes = [
     {
         path: 'familyadmin',
         loadComponent: () => import('./components/admin-component/familyadmin-component').then(m => m.FamilyadminComponent),
-        canActivate: [authGuard],
+        canActivate: [authGuard, familyAdminGuard],
         children: [
             {
                 path: 'editusers',

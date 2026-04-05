@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ThemeSwitchComponent } from "../theme-switch-component/theme-switch-component";
 import { Router } from "@angular/router";
@@ -11,14 +11,10 @@ import { UserStateService } from '../../services/user-state-service';
   templateUrl: './header-component.html',
   styleUrl: './header-component.css',
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent {
   private router = inject(Router);
   private authService = inject(AuthService);
   userStateService = inject(UserStateService);
-
-  ngOnInit() {
-    this.userStateService.loadFamilyRole();
-  }
 
   goToProfile() {
     this.router.navigate(['/profile']);

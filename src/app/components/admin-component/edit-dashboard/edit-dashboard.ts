@@ -1,8 +1,7 @@
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { map, of, switchMap } from 'rxjs';
-import { FamilyService } from '../../../services/family-service';
+import { switchMap } from 'rxjs';
 import { UserStateService } from '../../../services/user-state-service';
 import { WeatherService } from '../../../services/weather-service';
 
@@ -14,7 +13,6 @@ import { WeatherService } from '../../../services/weather-service';
 })
 export class EditDashboard {
   private readonly weatherService = inject(WeatherService);
-  private readonly familyService = inject(FamilyService);
   private readonly userState = inject(UserStateService);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -96,24 +94,7 @@ export class EditDashboard {
   }
 
   private resolveFamilyId() {
-    const currentFamilyId = this.userState.currentFamilyId();
-    if (currentFamilyId) {
-      return of(currentFamilyId);
-    }
-
-    return this.familyService.getFamilies().pipe(
-      map((res) => {
-        const first = res.families?.[0];
-        const resolvedId = first?.family?.id;
-        if (!resolvedId) {
-          throw new Error('Keine Familie gefunden');
-        }
-
-        this.userState.currentFamilyId.set(resolvedId);
-        this.userState.currentFamilyRole.set(first?.role?.name ?? null);
-        return resolvedId;
-      }),
-    );
+    return this.userState.resolveCurrentFamilyId$();
   }
 
   private mapUnknownError(error: HttpErrorResponse | Error): string {

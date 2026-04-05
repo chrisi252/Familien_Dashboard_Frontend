@@ -16,12 +16,16 @@ export const authorizeInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(requestWithCredentials).pipe(
     catchError((error) => {
-      if (error.status === 401) {
-        if (isLoginRequest || isRegisterRequest) {
-          return throwError(() => error);
-        }
+      if (isLoginRequest || isRegisterRequest) {
+        return throwError(() => error);
+      }
 
+      if (error.status === 401) {
         router.navigate(['/login']);
+      }
+
+      if (error.status === 403) {
+        router.navigate(['/dashboard']);
       }
 
       return throwError(() => error);

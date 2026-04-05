@@ -25,13 +25,26 @@ export interface WidgetRolePermission {
   can_edit: boolean;
 }
 
+export interface WidgetUserPermission {
+  id: number;
+  family_widget_id: number;
+  user_id: number;
+  can_view: boolean;
+  can_edit: boolean;
+}
+
 export interface FamilyWidgetDetailed {
   id: number;
   family_id: number;
   widget_type_id: number;
   widget_key: string | null;
-  is_enabled: boolean;
   display_name: string | null;
   description: string | null;
+  is_enabled: boolean;
+  grid_col: number;
+  grid_row: number;
+  grid_pos_x: number;
+  grid_pos_y: number;
+  can_edit: boolean;
   permissions: WidgetRolePermission[];
 }
