@@ -31,6 +31,10 @@ export class ProfileComponent implements OnInit {
   joinLoading = signal(false);
   joinSuccess = signal(false);
 
+  deletingFamilyId = signal<number | null>(null);
+  deleteError = signal('');
+  deleteLoading = signal(false);
+
   ngOnInit(): void {
     this.loadProfile();
     this.loadFamilies();
@@ -111,6 +115,43 @@ export class ProfileComponent implements OnInit {
 
   goToDashboard() {
     this.router.navigate(['/dashboard']);
+  }
+
+  // Delete family methods
+  deleteFamily(familyId: number) {
+    this.deletingFamilyId.set(familyId);
+    this.deleteError.set('');
+  }
+
+  confirmDeleteFamily() {
+    const familyId = this.deletingFamilyId();
+    if (!familyId) return;
+
+    this.deleteLoading.set(true);
+    this.deleteError.set('');
+
+    this.familyService.deleteFamily(familyId).subscribe({
+      next: () => {
+        this.deleteLoading.set(false);
+        this.deletingFamilyId.set(null);
+        this.userState.currentFamilyId.set(null);
+        this.userState.currentFamilyRole.set(null);
+        this.loadFamilies();
+      },
+      error: (error: { error?: { error?: string } }) => {
+        this.deleteLoading.set(false);
+        this.deleteError.set(error.error?.error ?? 'Familie konnte nicht gelöscht werden.');
+      }
+    });
+  }
+
+  cancelDelete() {
+    this.deletingFamilyId.set(null);
+    this.deleteError.set('');
+  }
+
+  isAdmin(membership: FamilyMembership): boolean {
+    return membership.role.name === 'Familyadmin';
   }
 
   formatDate(dateAsString: string): string {

@@ -98,12 +98,22 @@
 										Rolle: {{ membership.role.name }} &middot; Beigetreten: {{ formatDate(membership.family.created_at) }}
 									</p>
 								</div>
-								<button
-									type="button"
-									class="btn btn-sm btn-primary"
-									(click)="selectFamily(membership)">
-									Auswählen
-								</button>
+								<div class="flex gap-2">
+									<button
+										type="button"
+										class="btn btn-sm btn-primary"
+										(click)="selectFamily(membership)">
+										Auswählen
+									</button>
+									@if (isAdmin(membership)) {
+										<button
+											type="button"
+											class="btn btn-sm btn-error btn-outline"
+											(click)="deleteFamily(membership.family.id)">
+											Löschen
+										</button>
+									}
+								</div>
 							</div>
 						} @empty {
 							<p class="text-sm opacity-60">Du bist noch keiner Familie beigetreten.</p>
@@ -151,3 +161,32 @@
 
 	</main>
 </div>
+
+<!-- Bestätigungsdialog Familie löschen -->
+@if (deletingFamilyId()) {
+	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+		<div class="card bg-base-100 shadow-xl w-full max-w-sm">
+			<div class="card-body gap-4">
+				<h3 class="card-title text-lg">Familie wirklich löschen?</h3>
+				<p class="text-sm opacity-70">Diese Aktion löscht die Familie samt aller Mitglieder, Widgets und Todos. Dies kann nicht rückgängig gemacht werden.</p>
+
+				@if (deleteError()) {
+					<div class="alert alert-error text-sm">{{ deleteError() }}</div>
+				}
+
+				<div class="card-actions justify-end gap-2">
+					<button type="button" class="btn btn-ghost" (click)="cancelDelete()" [disabled]="deleteLoading()">
+						Abbrechen
+					</button>
+					<button type="button" class="btn btn-error" (click)="confirmDeleteFamily()" [disabled]="deleteLoading()">
+						@if (deleteLoading()) {
+							<span class="loading loading-spinner loading-sm"></span>
+						} @else {
+							Löschen
+						}
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+}

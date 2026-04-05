@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { switchMap } from 'rxjs';
@@ -11,7 +11,7 @@ import { WeatherService } from '../../../services/weather-service';
   templateUrl: './edit-dashboard.html',
   styleUrl: './edit-dashboard.css',
 })
-export class EditDashboard {
+export class EditDashboard implements OnInit {
   private readonly weatherService = inject(WeatherService);
   private readonly userState = inject(UserStateService);
   private readonly destroyRef = inject(DestroyRef);
