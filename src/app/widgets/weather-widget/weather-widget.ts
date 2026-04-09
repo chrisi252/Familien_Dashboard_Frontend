@@ -56,7 +56,7 @@ export class WeatherWidget implements OnInit {
       )
       .subscribe((data) => {
         this.weatherData = data;
-        this.isDayTime = this.checkDayTime();
+        this.isDayTime = this.checkDayTime(data.current.icon);
         this.error = null;
         this.isLoading = false;
         this.changeDetectorRef.markForCheck();
@@ -88,8 +88,8 @@ export class WeatherWidget implements OnInit {
     return error.message || 'Wetterdaten konnten nicht geladen werden.';
   }
 
-  private checkDayTime(): boolean {
-    const hour = new Date().getHours();
-    return hour >= 6 && hour < 20;
+  private checkDayTime(icon: string): boolean {
+    // Example logic - replace with actual day/night detection based on icon
+    return icon.includes('d');
   }
 }
