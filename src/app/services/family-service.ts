@@ -34,7 +34,11 @@ export class FamilyService {
   }
 
   getFamilyWidgets(familyId: number): Observable<{ widgets: FamilyWidgetDetailed[] }> {
-    return this.http.get<{ widgets: FamilyWidgetDetailed[] }>(`${this.apiUrl}/families/${familyId}/widgets`);
+    // Cache-Buster um sicherzustellen dass immer aktuelle Daten geladen werden
+    const timestamp = Date.now();
+    return this.http.get<{ widgets: FamilyWidgetDetailed[] }>(
+      `${this.apiUrl}/families/${familyId}/widgets?_t=${timestamp}`
+    );
   }
 
   getWidgetPermissions(familyId: number, widgetId: number): Observable<{ permissions: WidgetUserPermission[] }> {

@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, inject, input, OnInit, signal } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { heroPencil, heroCheck, heroXMark, heroTrash } from '@ng-icons/heroicons/outline';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -17,6 +17,9 @@ export class TodoWidget implements OnInit {
   private todoService = inject(TodoService);
   private userState = inject(UserStateService);
   private destroyRef = inject(DestroyRef);
+
+  widgetId = input<number>(0);
+  canEdit = input<boolean>(false);
 
   todos = signal<Todo[]>([]);
   isLoading = signal(true);

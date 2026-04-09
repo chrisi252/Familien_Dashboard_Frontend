@@ -17,8 +17,8 @@ export class UserStateService {
   currentFamilyId = signal<number | null>(null);
   isSessionInitialized = signal(false);
 
-  async initializeSession(): Promise<void> {
-    if (this.isSessionInitialized()) {
+  async initializeSession(forceRefresh = false): Promise<void> {
+    if (this.isSessionInitialized() && !forceRefresh) {
       return;
     }
 

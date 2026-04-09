@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ThemeSwitchComponent } from '../theme-switch-component/theme-switch-component';
@@ -17,6 +17,7 @@ export class LoginComponent {
   private authService = inject(AuthService);
   private userState = inject(UserStateService);
   private fb = inject(FormBuilder);
+  private cdr = inject(ChangeDetectorRef);
 
   errorMessage = '';
 
@@ -38,12 +39,13 @@ export class LoginComponent {
 
     this.authService.login(payload).subscribe({
       next: async () => {
-        await this.userState.initializeSession();
+        await this.userState.initializeSession(true);
         this.router.navigate(['/dashboard']);
       },
       error: (error: { error?: { error?: string } }) => {
         console.error('Login failed:', error);
         this.errorMessage = error.error?.error ?? 'Login fehlgeschlagen. Bitte pruefe deine Daten.';
+        this.cdr.markForCheck();
       }
     });
   }

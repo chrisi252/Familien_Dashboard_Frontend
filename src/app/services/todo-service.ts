@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
@@ -15,8 +15,7 @@ export interface Todo {
 @Injectable({ providedIn: 'root' })
 export class TodoService {
   private apiUrl = '/api';
-
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
 
   getTodos(familyId: number): Observable<{ todos: Todo[] }> {
     return this.http.get<{ todos: Todo[] }>(`${this.apiUrl}/families/${familyId}/todos`);

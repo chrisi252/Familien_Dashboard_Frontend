@@ -114,6 +114,7 @@ export class DashboardService {
   // Lädt Widgets vom Backend und teilt sie in addedWidgets und widgetsToAdd
   loadWidgetsFromBackend() {
     const familyId = this.userState.currentFamilyId();
+    
     if (!familyId) {
       this.errorMessage.set('Keine Familie ausgewählt');
       return;
@@ -133,14 +134,12 @@ export class DashboardService {
 
           allWidgets.push(widget);
 
-          // Widgets mit position !== null sind auf dem Dashboard
           if (backendWidget.position !== null) {
             dashboardWidgets.push(widget);
           }
         }
 
         this.widgets.set(allWidgets);
-        // Backend liefert bereits sortiert nach position
         this.addedWidgets.set(dashboardWidgets);
         this.isLoading.set(false);
       },

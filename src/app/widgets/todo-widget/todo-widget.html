@@ -8,16 +8,18 @@
     <div class="alert alert-error text-sm">{{ errorMessage() }}</div>
   } @else {
 
-    <div class="flex gap-2">
-      <input class="input input-sm flex-1" placeholder="Neue Aufgabe..." #newTodoInput />
-      <button class="btn btn-sm btn-primary px-3" (click)="addTodoItem(newTodoInput.value); newTodoInput.value = '';">+</button>
-    </div>
+    @if (canEdit()) {
+      <div class="flex gap-2">
+        <input class="input input-sm flex-1" placeholder="Neue Aufgabe..." #newTodoInput />
+        <button class="btn btn-sm btn-primary px-3" (click)="addTodoItem(newTodoInput.value); newTodoInput.value = '';">+</button>
+      </div>
+    } 
 
     <ul class="flex flex-col gap-1 overflow-y-auto flex-1">
       @for (todo of todos(); track todo.id) {
         <li class="flex items-center gap-2">
-          <input type="checkbox" [checked]="todo.is_completed" class="checkbox" (change)="toggleComplete(todo)" />
-          @if (editingId() === todo.id) {
+          <input type="checkbox" [checked]="todo.is_completed" class="checkbox" [disabled]="!canEdit()" (change)="toggleComplete(todo)" />
+          @if (editingId() === todo.id && canEdit()) {
             <input class="input input-xs flex-1" [value]="editingText()" (input)="editingText.set($any($event.target).value)" (keyup.enter)="saveEdit(todo.id)" (keyup.escape)="cancelEdit()" />
             <button class="btn btn-xs btn-success" title="Speichern" (click)="saveEdit(todo.id)">
               <ng-icon name="heroCheck" class="text-base" />
@@ -27,12 +29,14 @@
             </button>
           } @else {
             <span [class.line-through]="todo.is_completed" class="flex-1">{{ todo.title }}</span>
-            <button class="btn btn-xs btn-ghost" title="Bearbeiten" (click)="startEdit(todo.id, todo.title)">
-              <ng-icon name="heroPencil" class="text-base" />
-            </button>
-            <button class="btn btn-xs btn-ghost text-error" title="Entfernen" (click)="removeTodoItem(todo.id)">
-              <ng-icon name="heroTrash" class="text-base" />
-            </button>
+            @if (canEdit()) {
+              <button class="btn btn-xs btn-ghost" title="Bearbeiten" (click)="startEdit(todo.id, todo.title)">
+                <ng-icon name="heroPencil" class="text-base" />
+              </button>
+              <button class="btn btn-xs btn-ghost text-error" title="Entfernen" (click)="removeTodoItem(todo.id)">
+                <ng-icon name="heroTrash" class="text-base" />
+              </button>
+            }
           }
         </li>
       } @empty {

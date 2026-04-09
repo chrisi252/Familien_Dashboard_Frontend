@@ -20,7 +20,7 @@
 
 
         <div class="h-full min-h-0 overflow-auto pr-1">
-          <ng-container [ngComponentOutlet]="data().content"></ng-container>
+          <ng-container [ngComponentOutlet]="data().content" [ngComponentOutletInputs]="widgetInputs()"></ng-container>
         </div>
 
        @if(showOptions()){

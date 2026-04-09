@@ -5,8 +5,12 @@
 
     <app-header-component></app-header-component>
 
-      <div class="pt-5 sm:pt-5 px-4 pb-2 sm:pb-4 flex justify-stretch sm:justify-end">
-        <label for="widget-drawer" class="btn btn-primary shadow-sm cursor-pointer w-full sm:w-auto">
+      <div class="pt-5 sm:pt-5 px-4 pb-2 sm:pb-4 flex justify-stretch sm:justify-end gap-2">
+        <button class="btn btn-ghost btn-sm sm:btn-md" (click)="store.loadWidgetsFromBackend()" title="Aktualisieren">
+          <span class="text-lg">↻</span>
+          <span class="hidden sm:inline">Aktualisieren</span>
+        </button>
+        <label for="widget-drawer" class="btn btn-primary shadow-sm cursor-pointer flex-1 sm:flex-none sm:w-auto">
           <span class="mr-2 text-lg">+</span>
           Neues Widget hinzufügen
         </label>
