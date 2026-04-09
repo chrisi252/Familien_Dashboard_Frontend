@@ -1,1 +1,53 @@
-<p>edit-dashboard works!</p>
+<section class="card bg-base-100 shadow border border-base-300 max-w-2xl">
+	<div class="card-body gap-4">
+		<h1 class="card-title text-xl">Dashboard anpassen</h1>
+		<p class="text-sm opacity-70">Lege den Wetter-Standort fuer deine Familie fest. Die Wetter-Kachel im Dashboard nutzt diesen Wert.</p>
+
+		@if (isLoading()) {
+			<div class="flex items-center gap-2 text-sm opacity-70">
+				<span class="loading loading-spinner loading-sm"></span>
+				Standort wird geladen...
+			</div>
+		} @else {
+			<label for="weather-location-city" class="label">
+				<span class="label-text">Ort</span>
+			</label>
+
+			<div class="flex flex-col sm:flex-row gap-2">
+				<input
+					id="weather-location-city"
+					type="text"
+					class="input input-bordered w-full"
+					[value]="city()"
+					[disabled]="isSaving()"
+					(input)="onCityInput($event)"
+					placeholder="z.B. Berlin"
+				/>
+
+				<button
+					type="button"
+					class="btn btn-primary"
+					[disabled]="isSaving()"
+					(click)="saveLocation()">
+					@if (isSaving()) {
+						<span class="loading loading-spinner loading-sm"></span>
+					} @else {
+						Speichern
+					}
+				</button>
+			</div>
+
+			@if (error(); as message) {
+				<div class="alert alert-error">
+					<span>{{ message }}</span>
+				</div>
+			}
+
+			@if (success(); as message) {
+				<div class="alert alert-success">
+					<span>{{ message }}</span>
+				</div>
+			}
+		}
+	</div>
+</section>

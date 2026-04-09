@@ -1,4 +1,4 @@
-import { computed, effect, inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal, Type } from '@angular/core';
 import { NotesWidget } from '../widgets/notes-widget/notes-widget';
 import { Widget } from '../interfaces/widget';
 import { ScheduleWidget } from '../widgets/schedule-widget/schedule-widget';
@@ -9,64 +9,25 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
 import { WeatherWidget } from '../widgets/weather-widget/weather-widget';
+import { FamilyService } from './family-service';
+import { UserStateService } from './user-state-service';
+import { FamilyWidgetDetailed, WidgetLayoutItem } from '../interfaces/widget';
 
-const MANDATORY_WIDGETS: Widget[] = [
-  {
-    id: 1,
-    label: 'Notizen',
-    content: NotesWidget,
-    permissions: { read: true, write: true },
-    rows: 2,
-    cols: 2,
-  },
-  {
-    id: 2,
-    label: 'Aufgaben',
-    content: TodoWidget,
-    permissions: { read: true, write: true },
-    rows: 2,
-    cols: 1,
-  },
-  {
-    id: 3,
-    label: 'Termine',
-    content: ScheduleWidget,
-    permissions: { read: true, write: true },
-    rows: 2,
-    cols: 1,
-  },
-  {
-    id:6,
-    label: 'Wetter',
-    content: WeatherWidget,
-    permissions: { read: true, write: false },
-    rows: 2,
-    cols: 1,
-  }
-];
+// Widget-Registry: Mappt widget_key vom Backend zu Angular Components
+const WIDGET_REGISTRY: Record<string, { content: Type<unknown>; label: string; defaultRows: number; defaultCols: number }> = {
+  notes: { content: NotesWidget, label: 'Notizen', defaultRows: 2, defaultCols: 2 },
+  todo: { content: TodoWidget, label: 'Aufgaben', defaultRows: 2, defaultCols: 1 },
+  schedule: { content: ScheduleWidget, label: 'Termine', defaultRows: 2, defaultCols: 1 },
+  weather: { content: WeatherWidget, label: 'Wetter', defaultRows: 2, defaultCols: 1 },
+  calendar: { content: CalendarWidget, label: 'Google Kalender', defaultRows: 2, defaultCols: 2 },
+};
 
-const OPTIONAL_WIDGETS: Widget[] = [
-  {
-    id: 4,
-    label: 'Test Widget',
-    content: ScheduleWidget,
-    permissions: { read: true, write: false },
-    rows: 1,
-    cols: 1,
-  },
-  {
-    id: 5,
-    label: 'Google Kalender',
-    content: CalendarWidget,
-    permissions: { read: true, write: false },
-    rows: 2,
-    cols: 2,
-  }
-];
-
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class DashboardService {
   private breakpointObserver = inject(BreakpointObserver);
+  private familyService = inject(FamilyService);
+  private userState = inject(UserStateService);
+
   isMobile = toSignal(
     this.breakpointObserver
       .observe(Breakpoints.Handset)
@@ -74,19 +35,25 @@ export class DashboardService {
     { initialValue: false }
   );
 
-  widgets = signal<Widget[]>([...MANDATORY_WIDGETS, ...OPTIONAL_WIDGETS]);
+  // Alle verfügbaren Widgets (vom Backend, inkl. solche ohne Position)
+  widgets = signal<Widget[]>([]);
 
+  // Widgets die der User auf seinem Dashboard hat (position !== null)
   addedWidgets = signal<Widget[]>([]);
 
+  // Widgets die noch hinzugefügt werden können (position === null im Backend)
   widgetsToAdd = computed(() => {
-    const addedIds = this.addedWidgets().map(w => w.id);
-    return this.widgets().filter(w => !addedIds.includes(w.id));
+    const addedIds = new Set(this.addedWidgets().map(w => w.id));
+    return this.widgets().filter(w => !addedIds.has(w.id));
   });
 
-
+  isLoading = signal(false);
+  isSaving = signal(false);
+  errorMessage = signal('');
 
   addWidget(widget: Widget) {
-    this.addedWidgets.set([...this.addedWidgets(), { ...widget }]);
+    this.addedWidgets.update(widgets => [...widgets, { ...widget }]);
+    this.saveLayoutToBackend();
   }
 
   updateWidgetSize(id: number, size: Pick<Widget, 'rows' | 'cols'>) {
@@ -97,87 +64,133 @@ export class DashboardService {
           : widget
       )
     );
+    this.saveLayoutToBackend();
   }
 
   moveWidgetToRight(id: number) {
-    const index = this.addedWidgets().findIndex(w => w.id === id);
-    if (index === this.addedWidgets().length - 1) {
-      return;
-    }
-    const newWidgets = [...this.addedWidgets()];
+    const widgets = this.addedWidgets();
+    const index = widgets.findIndex(w => w.id === id);
+    if (index === -1 || index === widgets.length - 1) return;
+
+    const newWidgets = [...widgets];
     [newWidgets[index], newWidgets[index + 1]] = [{ ...newWidgets[index + 1] }, { ...newWidgets[index] }];
     this.addedWidgets.set(newWidgets);
+    this.saveLayoutToBackend();
   }
 
   moveWidgetToLeft(id: number) {
-    const index = this.addedWidgets().findIndex(w => w.id === id);
-    if (index === 0) {
-      return;
-    }
-    const newWidgets = [...this.addedWidgets()];
+    const widgets = this.addedWidgets();
+    const index = widgets.findIndex(w => w.id === id);
+    if (index <= 0) return;
+
+    const newWidgets = [...widgets];
     [newWidgets[index], newWidgets[index - 1]] = [{ ...newWidgets[index - 1] }, { ...newWidgets[index] }];
     this.addedWidgets.set(newWidgets);
+    this.saveLayoutToBackend();
   }
 
   removeWidget(id: number) {
-    const removedWidget = this.addedWidgets().find(w => w.id === id);
-    if (removedWidget) {
-      this.addedWidgets.set(this.addedWidgets().filter(w => w.id !== id));
-       this.widgets.set(this.widgets().filter(w => w.id !== id));
-      this.widgets.set([...this.widgets(), { ...removedWidget }]);
-    }
+    this.addedWidgets.update(widgets => widgets.filter(w => w.id !== id));
+    this.saveLayoutToBackend();
   }
-
-  fetchWidgets() {
-    const WidgetsAsString = localStorage.getItem('dashboardWidgets');
-    if (WidgetsAsString) {
-      try {
-        const widgets = JSON.parse(WidgetsAsString) as Widget[];
-        widgets.forEach(widget => {
-          const content = this.widgets().find(w => w.id === widget.id)?.content;
-          if (content) {
-            widget.content = content;
-          }
-        });
-        this.addedWidgets.set(widgets);
-      } catch {
-        localStorage.removeItem('dashboardWidgets');
-      }
-    }
-  }
-
-  constructor() {
-      this.fetchWidgets();
-  }
-
-  saveWidgets = effect(()=>{
-    const widgetsWithoutContent:Partial<Widget>[] = this.addedWidgets().map(w => ({... w}));
-    widgetsWithoutContent.forEach(w => {delete w.content});
-    localStorage.setItem('dashboardWidgets', JSON.stringify(widgetsWithoutContent));
-  })
 
   updateWidgetPosition(sourceWidgetId: number, targetWidgetId: number) {
-  const sourceIndex = this.addedWidgets().findIndex(w => w.id === sourceWidgetId);
-  if (sourceIndex === -1) {
-    return;
+    const widgets = this.addedWidgets();
+    const sourceIndex = widgets.findIndex(w => w.id === sourceWidgetId);
+    if (sourceIndex === -1) return;
+
+    const newWidgets = [...widgets];
+    const sourceWidget = newWidgets.splice(sourceIndex, 1)[0];
+
+    const targetIndex = newWidgets.findIndex(w => w.id === targetWidgetId);
+    if (targetIndex === -1) return;
+
+    const insertAt = targetIndex >= sourceIndex ? targetIndex + 1 : targetIndex;
+    newWidgets.splice(insertAt, 0, sourceWidget);
+    this.addedWidgets.set(newWidgets);
+    this.saveLayoutToBackend();
   }
 
-  const newWidgets = [...this.addedWidgets()];
-  const sourceWidget = newWidgets.splice(sourceIndex, 1)[0];
+  // Lädt Widgets vom Backend und teilt sie in addedWidgets und widgetsToAdd
+  loadWidgetsFromBackend() {
+    const familyId = this.userState.currentFamilyId();
+    
+    if (!familyId) {
+      this.errorMessage.set('Keine Familie ausgewählt');
+      return;
+    }
 
-  const targetIndex =newWidgets.findIndex(w => w.id === targetWidgetId);
-  if (targetIndex === -1) {
-    return;
+    this.isLoading.set(true);
+    this.errorMessage.set('');
+
+    this.familyService.getFamilyWidgets(familyId).subscribe({
+      next: (response) => {
+        const allWidgets: Widget[] = [];
+        const dashboardWidgets: Widget[] = [];
+
+        for (const backendWidget of response.widgets) {
+          const widget = this.mapBackendWidget(backendWidget);
+          if (!widget) continue;
+
+          allWidgets.push(widget);
+
+          if (backendWidget.position !== null) {
+            dashboardWidgets.push(widget);
+          }
+        }
+
+        this.widgets.set(allWidgets);
+        this.addedWidgets.set(dashboardWidgets);
+        this.isLoading.set(false);
+      },
+      error: () => {
+        this.errorMessage.set('Widgets konnten nicht geladen werden.');
+        this.isLoading.set(false);
+      }
+    });
   }
 
-  const insertAt =targetIndex ===sourceIndex ? targetIndex +1 : targetIndex;
+  private mapBackendWidget(backendWidget: FamilyWidgetDetailed): Widget | null {
+    const key = backendWidget.widget_key;
+    if (!key || !WIDGET_REGISTRY[key]) {
+      return null;
+    }
 
-  newWidgets.splice(insertAt, 0, sourceWidget);
-  this.addedWidgets.set(newWidgets);
-
+    const registry = WIDGET_REGISTRY[key];
+    return {
+      id: backendWidget.id,
+      label: backendWidget.display_name ?? registry.label,
+      content: registry.content,
+      permissions: {
+        read: true,
+        write: backendWidget.can_edit
+      },
+      rows: backendWidget.grid_row ?? registry.defaultRows,
+      cols: backendWidget.grid_col ?? registry.defaultCols,
+    };
   }
 
+  // Speichert das aktuelle Layout atomar ans Backend
+  private saveLayoutToBackend() {
+    const familyId = this.userState.currentFamilyId();
+    if (!familyId) return;
 
+    const layout: WidgetLayoutItem[] = this.addedWidgets().map((widget, index) => ({
+      family_widget_id: widget.id,
+      position: index,
+      grid_col: widget.cols ?? 1,
+      grid_row: widget.rows ?? 1,
+    }));
 
-
+    this.isSaving.set(true);
+    this.familyService.saveWidgetLayout(familyId, layout).subscribe({
+      next: () => {
+        this.isSaving.set(false);
+      },
+      error: () => {
+        this.isSaving.set(false);
+        // Fehler ignorieren, lokales Layout bleibt
+      }
+    });
+  }
 }

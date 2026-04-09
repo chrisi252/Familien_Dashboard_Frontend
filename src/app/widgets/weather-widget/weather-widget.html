@@ -1,4 +1,4 @@
-@if (WeatherData?.current && WeatherData?.location) {
+@if (weatherData?.current && weatherData?.location) {
 <div
     class="weather-root [container-type:size] flex h-full w-full flex-col text-center p-2 sm:p-3 rounded-xl font-sans overflow-hidden"
     [style.background]="isDayTime ? 'linear-gradient(to bottom, #e6f6ff, #b9e6ff)' : 'linear-gradient(to bottom, #000000, #08072a)'"
@@ -38,33 +38,38 @@
 
     <div class="weather-main flex-1 min-h-0 w-full flex flex-col items-center justify-center gap-1">
     <div class="weather-temp text-[clamp(1.15rem,9.8cqh,3rem)] font-bold leading-tight">
-        {{ WeatherData?.current?.temperature | number:'1.1-1' }}°
+        {{ weatherData?.current?.temperature | number:'1.1-1' }}°
     </div>
     <div class="weather-minmax text-[clamp(0.62rem,3.9cqh,1.05rem)] opacity-90">
-        {{ WeatherData?.current?.weather_description }}
+        {{ weatherData?.current?.weather_description }}
     </div>
-    <div class="weather-feels text-[clamp(0.62rem,3.9cqh,1.05rem)] opacity-90">Feels Like: {{ WeatherData?.current?.apparent_temperature | number:'1.1-1' }}°</div>
+    <div class="weather-feels text-[clamp(0.62rem,3.9cqh,1.05rem)] opacity-90">Feels Like: {{ weatherData?.current?.apparent_temperature | number:'1.1-1' }}°</div>
     <div class="weather-city text-[clamp(0.88rem,6.8cqh,2.1rem)] font-semibold leading-tight">
-        {{ WeatherData?.location?.city_name }}
+        {{ weatherData?.location?.city_name }}
     </div>
-    <div class="weather-humidity text-[clamp(0.62rem,3.9cqh,1.05rem)] opacity-90">Humidity: {{ WeatherData?.current?.humidity }}%</div>
+    <div class="weather-humidity text-[clamp(0.62rem,3.9cqh,1.05rem)] opacity-90">Humidity: {{ weatherData?.current?.humidity }}%</div>
     </div>
 
    <div class="weather-details shrink-0 mt-2 pt-2 border-t border-white/10 w-full text-[clamp(0.56rem,3.4cqh,1rem)] grid grid-cols-2 gap-x-2 gap-y-1 opacity-80">
-    <span>Wind: {{ WeatherData?.current?.wind_speed }}m/s</span>
-    <span>Code: {{ WeatherData?.current?.weather_code }}</span>
-    @for (day of (WeatherData?.forecast ?? []) | slice:0:2; track day.date) {
+    <span>Wind: {{ weatherData?.current?.wind_speed }}m/s</span>
+    <span>Code: {{ weatherData?.current?.weather_code }}</span>
+    @for (day of (weatherData?.forecast ?? []) | slice:0:2; track day.date) {
     <span>{{ day.date | date:'EEE' }}: {{ day.temperature_min | number:'1.0-0' }}°/{{ day.temperature_max | number:'1.0-0' }}°</span>
     }
 </div>
 
 </div>
 } @else if (error) {
-<div class="flex h-full min-h-[10rem] items-center justify-center text-sm text-error opacity-70">
-  {{ error }}
+<div class="flex h-full min-h-[10rem] flex-col items-center justify-center gap-3 px-3 text-sm text-error opacity-80">
+    <div>{{ error }}</div>
+    <button class="btn btn-sm btn-outline" type="button" (click)="retryWeatherLoad()">Erneut versuchen</button>
 </div>
 } @else {
 <div class="flex h-full min-h-[10rem] items-center justify-center text-sm opacity-70">
-  Wetterdaten werden geladen ...
+    @if (isLoading) {
+        Wetterdaten werden geladen ...
+    } @else {
+        Keine Wetterdaten vorhanden.
+    }
 </div>
 }

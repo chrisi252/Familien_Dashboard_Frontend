@@ -1,13 +1,13 @@
 <div
   class="card relative bg-base-100 shadow-xl w-full h-full min-w-0 rounded-xl transition-colors duration-300"
-  [style.backgroundColor]="data().backgroundColor ?? 'var(--fallback-b1,oklch(var(--b1)/1))'"
-  [style.color]="data().color ?? 'inherit'"
+
+ 
   cdkDrag 
   cdkDragPreviewContainer="parent">
   
          <button
     class="btn btn-circle btn-sm absolute top-3 right-3 bg-base-100/50 hover:bg-base-100/90 backdrop-blur-md border-none shadow-sm transition-all z-10"
-    [style.color]="data().color"
+   
     (click)="showOptions.set(true)">
     <ng-icon name="heroCog6Tooth" class="text-lg"></ng-icon>
   </button>
@@ -20,7 +20,7 @@
 
 
         <div class="h-full min-h-0 overflow-auto pr-1">
-          <ng-container [ngComponentOutlet]="data().content"></ng-container>
+          <ng-container [ngComponentOutlet]="data().content" [ngComponentOutletInputs]="widgetInputs()"></ng-container>
         </div>
 
        @if(showOptions()){

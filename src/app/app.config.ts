@@ -1,4 +1,4 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { APP_INITIALIZER, ApplicationConfig, inject, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideIcons } from '@ng-icons/core';
 import {
@@ -12,6 +12,7 @@ import {
 import { routes } from './app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { authorizeInterceptor } from './authorize-interceptor';
+import { UserStateService } from './services/user-state-service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -25,6 +26,14 @@ export const appConfig: ApplicationConfig = {
       heroArrowsRightLeft
     }),
     provideHttpClient(withInterceptors([authorizeInterceptor])),
+    {
+      provide: APP_INITIALIZER,
+      multi: true,
+      useFactory: () => {
+        const userState = inject(UserStateService);
+        return () => userState.initializeSession();
+      },
+    },
 
   ]
 };

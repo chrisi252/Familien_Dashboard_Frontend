@@ -1,14 +1,17 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { RegisterResponse } from '../interfaces/register-response';
 import { LoginResponse } from '../interfaces/login-response';
+import { finalize } from 'rxjs/operators';
+import { UserStateService } from './user-state-service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   private apiUrl = '/api';
+  private userState = inject(UserStateService);
 
   constructor(private http: HttpClient) {}
 
@@ -23,6 +26,11 @@ export class AuthService {
     last_name: string;
   }): Observable<RegisterResponse> {
     return this.http.post<RegisterResponse>(`${this.apiUrl}/users/register`, credentials);
+  }
+  logout(): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/users/logout`, {}).pipe(
+      finalize(() => this.userState.clearSession()),
+    );
   }
 
 

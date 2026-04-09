@@ -1,77 +1,74 @@
 import { Routes } from '@angular/router';
-import { LoginComponent } from './components/login-component/login-component';
-import { WidgetComponent } from './components/widget-component/widget-component';
-import { DashboardComponent } from './components/dashboard-component/dashboard-component';
-import { RegisterComponent } from './components/register-component/register-component';
-import { FamilySelectionComponent } from './components/family-selection-component/family-selection-component';
-import { JoinFamily } from './components/family-selection-component/join-family/join-family';
-import { CreateFamily } from './components/family-selection-component/create-family/create-family';
-import { FamilyadminComponent } from './components/admin-component/familyadmin-component';
-import { EditUsers } from './components/admin-component/edit-users/edit-users';
-import { EditDashboard } from './components/admin-component/edit-dashboard/edit-dashboard';
-import { EditWidgets } from './components/admin-component/edit-widgets/edit-widgets';
-import { ProfileComponent } from './components/profile-component/profile-component';
-
-
+import { authGuard } from './guards/auth.guard';
+import { familyAdminGuard } from './guards/familyadmin.guard';
 
 export const routes: Routes = [
     {
-        path:'login',
-        component:LoginComponent,
-
+        path: 'login',
+        loadComponent: () => import('./components/login-component/login-component').then(m => m.LoginComponent),
     },
     {
-        path:'familyadmin',
-        component:FamilyadminComponent,
-
+        path: 'familyadmin',
+        loadComponent: () => import('./components/admin-component/familyadmin-component').then(m => m.FamilyadminComponent),
+        canActivate: [authGuard, familyAdminGuard],
         children: [
-      {
-        path: 'editusers',
-        component: EditUsers
-      },
-      {
-        path: 'editdashboard',
-        component: EditDashboard
-      },
-      {
-        path:'editwidgets',
-        component:EditWidgets
-      },
-      {
+            {
+                path: 'editusers',
+                loadComponent: () => import('./components/admin-component/edit-users/edit-users').then(m => m.EditUsers)
+            },
+            {
+                path: 'editdashboard',
+                loadComponent: () => import('./components/admin-component/edit-dashboard/edit-dashboard').then(m => m.EditDashboard)
+            },
+            {
+                path: 'editwidgets',
+                loadComponent: () => import('./components/admin-component/edit-widgets/edit-widgets').then(m => m.EditWidgets)
+            },
+            {
+                path: 'dashboard',
+                loadComponent: () => import('./components/dashboard-component/dashboard-component').then(m => m.DashboardComponent)
+            }
+        ]
+    },
+    {
+        path: 'register',
+        loadComponent: () => import('./components/register-component/register-component').then(m => m.RegisterComponent),
+    },
+    {
+        path: 'family-selection',
+        loadComponent: () => import('./components/family-selection-component/family-selection-component').then(m => m.FamilySelectionComponent),
+        canActivate: [authGuard],
+        children: [
+            {
+                path: 'join',
+                loadComponent: () => import('./components/family-selection-component/join-family/join-family').then(m => m.JoinFamily)
+            },
+            {
+                path: 'join/:familyId',
+                loadComponent: () => import('./components/family-selection-component/join-family/join-family').then(m => m.JoinFamily)
+            },
+            {
+                path: 'create',
+                loadComponent: () => import('./components/family-selection-component/create-family/create-family').then(m => m.CreateFamily)
+            }
+        ]
+    },
+    {
         path: 'dashboard',
-        component: DashboardComponent
-      }
-    ]
+        loadComponent: () => import('./components/dashboard-component/dashboard-component').then(m => m.DashboardComponent),
+        canActivate: [authGuard]
     },
     {
-        path:'register',
-        component:RegisterComponent,
-
+        path: 'profile',
+        loadComponent: () => import('./components/profile-component/profile-component').then(m => m.ProfileComponent),
+        canActivate: [authGuard]
     },
     {
-      path: 'family-selection',
-      component: FamilySelectionComponent,
-      children: [
-        { path: 'join', component: JoinFamily },
-        { path: 'join/:familyId', component: JoinFamily },
-        { path: 'create', component: CreateFamily }
-      ]
+        path: 'widgets',
+        loadComponent: () => import('./components/widget-component/widget-component').then(m => m.WidgetComponent),
     },
     {
-        path:'dashboard',
-        component:DashboardComponent,
-    },
-    {
-      path:'profile',
-      component:ProfileComponent,
-    },
-    {
-        path:'widgets',
-        component:WidgetComponent,
-    },
-    {
-        path:'**',
-        component:LoginComponent,
-
+        path: '**',
+        loadComponent: () => import('./components/login-component/login-component').then(m => m.LoginComponent),
     }
 ];

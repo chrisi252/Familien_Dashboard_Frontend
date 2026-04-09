@@ -1,1 +1,99 @@
-<p>edit-widgets works!</p>
+@if (isLoading()) {
+  <div class="flex justify-center items-center h-40">
+    <span class="loading loading-spinner loading-lg"></span>
+  </div>
+} @else if (errorMessage()) {
+  <div class="alert alert-error">{{ errorMessage() }}</div>
+} @else {
+  <div class="flex flex-col gap-6">
+
+    @if (actionError()) {
+      <div class="alert alert-error">{{ actionError() }}</div>
+    }
+
+    @if (successMessage()) {
+      <div class="alert alert-success">{{ successMessage() }}</div>
+    }
+
+    <div class="alert alert-info">
+      <span>Alle Widgets sind automatisch für jede Familie aktiv. Hier kannst du die Berechtigungen pro Mitglied verwalten. <strong>Hinweis:</strong> Betroffene Mitglieder müssen ihr Dashboard neu laden, damit Änderungen wirksam werden.</span>
+    </div>
+
+    <!-- Widget-Berechtigungen -->
+    <div class="flex flex-col gap-3">
+      <h2 class="text-base font-semibold">Widget-Berechtigungen</h2>
+
+      @for (widget of widgets(); track widget.id) {
+        <div class="card bg-base-100 shadow border border-base-300">
+          <div class="card-body gap-4 p-4">
+
+            <div class="flex items-center justify-between gap-2">
+              <div>
+                <p class="font-medium">{{ widget.display_name ?? widget.widget_key }}</p>
+                @if (widget.description) {
+                  <p class="text-sm opacity-60">{{ widget.description }}</p>
+                }
+              </div>
+            </div>
+
+            <!-- Berechtigungen pro Mitglied -->
+            @if (members().length > 0) {
+              <div>
+                <p class="text-xs font-medium opacity-70 mb-2">Berechtigungen</p>
+                <div class="overflow-x-auto">
+                  <table class="table table-xs">
+                    <thead>
+                      <tr>
+                        <th>Mitglied</th>
+                        <th>Sehen</th>
+                        <th>Bearbeiten</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (member of members(); track member.user_id) {
+                        <tr>
+                          <td>{{ member.user_username }} <span class="opacity-50">({{ member.role_name }})</span></td>
+                          <td>
+                            <input
+                              type="checkbox"
+                              class="checkbox checkbox-xs"
+                              [checked]="getPermission(widget.id, member.user_id).canView"
+                              (change)="updateLocalPermission(widget.id, member.user_id, 'canView', $any($event.target).checked)" />
+                          </td>
+                          <td>
+                            <input
+                              type="checkbox"
+                              class="checkbox checkbox-xs"
+                              [checked]="getPermission(widget.id, member.user_id).canEdit"
+                              (change)="updateLocalPermission(widget.id, member.user_id, 'canEdit', $any($event.target).checked)" />
+                          </td>
+                          <td>
+                            <button
+                              class="btn btn-xs btn-primary"
+                              [disabled]="savingPermission() === widget.id + '-' + member.user_id"
+                              (click)="savePermission(widget.id, member.user_id)">
+                              @if (savingPermission() === widget.id + '-' + member.user_id) {
+                                <span class="loading loading-spinner loading-xs"></span>
+                              } @else {
+                                Speichern
+                              }
+                            </button>
+                          </td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            }
+
+          </div>
+        </div>
+      } @empty {
+        <p class="text-sm opacity-60">Keine Widgets verfügbar.</p>
+      }
+    </div>
+
+  </div>
+}

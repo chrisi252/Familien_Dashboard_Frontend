@@ -1,7 +1,9 @@
 <div class="min-h-screen bg-base-200">
 	<app-header-component></app-header-component>
 
-	<main class="max-w-3xl mx-auto px-4 py-6">
+	<main class="max-w-3xl mx-auto px-4 py-6 flex flex-col gap-6">
+
+		<!-- Profil -->
 		<section class="card bg-base-100 shadow-xl border border-base-300">
 			<div class="card-body">
 				<div class="flex items-center justify-between gap-3 flex-wrap mb-2">
@@ -19,7 +21,6 @@
 					<div class="alert alert-error">
 						<span>{{ errorMessage() }}</span>
 					</div>
-
 					<div class="card-actions justify-end mt-4">
 						<button type="button" class="btn btn-primary" (click)="goToLogin()">Zum Login</button>
 					</div>
@@ -33,7 +34,6 @@
 								</span>
 							</div>
 						</div>
-
 						<div class="stat">
 							<div class="stat-title">Mitglied seit</div>
 							<div class="stat-value text-lg">{{ formatDate(profileUser.created_at) }}</div>
@@ -47,21 +47,18 @@
 								<p class="font-semibold">{{ profileUser.id }}</p>
 							</div>
 						</div>
-
 						<div class="card bg-base-200 border border-base-300">
 							<div class="card-body p-4">
 								<p class="text-xs opacity-70">Benutzername</p>
 								<p class="font-semibold">{{ profileUser.username }}</p>
 							</div>
 						</div>
-
 						<div class="card bg-base-200 border border-base-300">
 							<div class="card-body p-4">
 								<p class="text-xs opacity-70">Vorname</p>
 								<p class="font-semibold">{{ profileUser.first_name }}</p>
 							</div>
 						</div>
-
 						<div class="card bg-base-200 border border-base-300">
 							<div class="card-body p-4">
 								<p class="text-xs opacity-70">Nachname</p>
@@ -80,5 +77,116 @@
 				</div>
 			</div>
 		</section>
+
+		<!-- Meine Familien -->
+		<section class="card bg-base-100 shadow-xl border border-base-300">
+			<div class="card-body">
+				<h2 class="card-title text-xl mb-2">Meine Familien</h2>
+
+				@if (familiesLoading()) {
+					<div class="space-y-2">
+						<div class="skeleton h-16 w-full"></div>
+						<div class="skeleton h-16 w-full"></div>
+					</div>
+				} @else {
+					<div class="flex flex-col gap-3">
+						@for (membership of families(); track membership.family.id) {
+							<div class="flex items-center justify-between gap-3 p-3 rounded-xl bg-base-200 border border-base-300">
+								<div>
+									<p class="font-semibold">{{ membership.family.name }}</p>
+									<p class="text-xs opacity-60">
+										Rolle: {{ membership.role.name }} &middot; Beigetreten: {{ formatDate(membership.family.created_at) }}
+									</p>
+								</div>
+								<div class="flex gap-2">
+									<button
+										type="button"
+										class="btn btn-sm btn-primary"
+										(click)="selectFamily(membership)">
+										Auswählen
+									</button>
+									@if (isAdmin(membership)) {
+										<button
+											type="button"
+											class="btn btn-sm btn-error btn-outline"
+											(click)="deleteFamily(membership.family.id)">
+											Löschen
+										</button>
+									}
+								</div>
+							</div>
+						} @empty {
+							<p class="text-sm opacity-60">Du bist noch keiner Familie beigetreten.</p>
+						}
+					</div>
+				}
+			</div>
+		</section>
+
+		<!-- Familie beitreten -->
+		<section class="card bg-base-100 shadow-xl border border-base-300">
+			<div class="card-body">
+				<h2 class="card-title text-xl mb-2">Einer Familie beitreten</h2>
+				<p class="text-sm opacity-60 mb-3">Gib die ID der Familie ein, der du beitreten möchtest.</p>
+
+				<div class="flex gap-2">
+					<input
+						type="number"
+						class="input input-bordered flex-1"
+						placeholder="Familien-ID"
+						[(ngModel)]="joinFamilyId"
+						(keyup.enter)="joinFamily()"
+						min="1" />
+					<button
+						type="button"
+						class="btn btn-primary"
+						(click)="joinFamily()"
+						[disabled]="joinLoading()">
+						@if (joinLoading()) {
+							<span class="loading loading-spinner loading-sm"></span>
+						} @else {
+							Beitreten
+						}
+					</button>
+				</div>
+
+				@if (joinError()) {
+					<div class="alert alert-error mt-3">{{ joinError() }}</div>
+				}
+				@if (joinSuccess()) {
+					<div class="alert alert-success mt-3">Erfolgreich beigetreten!</div>
+				}
+			</div>
+		</section>
+
 	</main>
 </div>
+
+<!-- Bestätigungsdialog Familie löschen -->
+@if (deletingFamilyId()) {
+	<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+		<div class="card bg-base-100 shadow-xl w-full max-w-sm">
+			<div class="card-body gap-4">
+				<h3 class="card-title text-lg">Familie wirklich löschen?</h3>
+				<p class="text-sm opacity-70">Diese Aktion löscht die Familie samt aller Mitglieder, Widgets und Todos. Dies kann nicht rückgängig gemacht werden.</p>
+
+				@if (deleteError()) {
+					<div class="alert alert-error text-sm">{{ deleteError() }}</div>
+				}
+
+				<div class="card-actions justify-end gap-2">
+					<button type="button" class="btn btn-ghost" (click)="cancelDelete()" [disabled]="deleteLoading()">
+						Abbrechen
+					</button>
+					<button type="button" class="btn btn-error" (click)="confirmDeleteFamily()" [disabled]="deleteLoading()">
+						@if (deleteLoading()) {
+							<span class="loading loading-spinner loading-sm"></span>
+						} @else {
+							Löschen
+						}
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+}
