@@ -73,7 +73,7 @@
 				}
 
 				<div class="card-actions justify-end mt-4">
-					<button type="button" class="btn btn-primary" (click)="goToDashboard()">Zurueck zum Dashboard</button>
+					<button type="button" class="btn btn-primary" (click)="goToDashboard()">Zurück zum Dashboard</button>
 				</div>
 			</div>
 		</section>
@@ -161,6 +161,48 @@
 
 	</main>
 </div>
+
+
+<!-- Familie erstellen
+		<section class="card bg-base-100 shadow-xl border border-base-300">
+			<div class="card-body">
+				<h2 class="card-title text-xl mb-2">Eine neue Familie erstellen</h2>
+				<p class="text-sm opacity-60 mb-3">Gib den Namen der Familie ein, die du erstellen möchtest.</p>
+
+				<div class="flex gap-2">
+					<input
+						type="text"
+						class="input input-bordered flex-1"
+						placeholder="Familienname"
+						[(ngModel)]="createFamilyName"
+						(keyup.enter)="createFamilyName()"
+						min="1" />
+					<button
+						type="button"
+						class="btn btn-primary"
+						(click)="createFamilyName()"
+						[disabled]="createLoading()">
+						@if (createLoading()) {
+							<span class="loading loading-spinner loading-sm"></span>
+						} @else {
+							Erstellen
+						}
+					</button>
+				</div>
+
+				@if (createError()) {
+					<div class="alert alert-error mt-3">{{ createError() }}</div>
+				}
+				@if (createSuccess()) {
+					<div class="alert alert-success mt-3">Erfolgreich erstellt!</div>
+				}
+			</div>
+		</section>
+
+	</main>
+</div>
+-->
+
 
 <!-- Bestätigungsdialog Familie löschen -->
 @if (deletingFamilyId()) {

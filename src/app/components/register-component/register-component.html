@@ -25,13 +25,13 @@
           formControlName="username"
           id="username"
           type="text"
-          placeholder="Enter your username"
+          placeholder="Gib deinen Benutzernamen ein"
           class="input input-bordered w-full"
         />
         @if (registerForm.controls.username.invalid && registerForm.controls.username.touched) {
         <label class="label">
           <span class="label-text-alt text-error italic"
-            >Username is required (min. 3 characters).</span
+            >Du brauchst einen Benutzernamen (min. 3 Zeichen).</span
           >
         </label>
         }
@@ -39,68 +39,68 @@
 
       <div class="form-control mb-2">
         <label class="label" for="first_name">
-          <span class="label-text font-bold">First Name</span>
+          <span class="label-text font-bold">Vorname</span>
         </label>
         <input
           formControlName="first_name"
           id="first_name"
           type="text"
-          placeholder="Enter your first name"
+          placeholder="Gib deinen Vornamen ein"
           class="input input-bordered w-full"
         />
         @if (registerForm.controls.first_name.invalid && registerForm.controls.first_name.touched) {
         <label class="label">
-          <span class="label-text-alt text-error italic">First name is required.</span>
+          <span class="label-text-alt text-error italic">Vorname ist erforderlich.</span>
         </label>
         }
       </div>
 
       <div class="form-control mb-2">
         <label class="label" for="last_name">
-          <span class="label-text font-bold">Last Name</span>
+          <span class="label-text font-bold">Nachname</span>
         </label>
         <input
           formControlName="last_name"
           id="last_name"
           type="text"
-          placeholder="Enter your last name"
+          placeholder="Gib deinen Nachnamen ein"
           class="input input-bordered w-full"
         />
         @if (registerForm.controls.last_name.invalid && registerForm.controls.last_name.touched) {
         <label class="label">
-          <span class="label-text-alt text-error italic">Last name is required.</span>
+          <span class="label-text-alt text-error italic">Nachname ist erforderlich.</span>
         </label>
         }
       </div>
 
       <div class="form-control mb-6">
         <label class="label" for="password">
-          <span class="label-text font-bold">Password</span>
+          <span class="label-text font-bold">Passwort</span>
         </label>
         <input
           formControlName="password"
           id="password"
           type="password"
-          placeholder="Enter your password"
+          placeholder="Passwort eingeben"
           class="input input-bordered w-full"
         />
         @if (registerForm.controls.password.invalid && registerForm.controls.password.touched) {
         <label class="label">
           <span class="label-text-alt text-error italic"
-            >Password is required (min. 6 characters).</span
+            >Passwort ist erforderlich (min. 6 Zeichen).</span
           >
         </label>
         }
       </div>
 
-      <button type="submit" class="btn btn-primary w-full">Register</button>
+      <button type="submit" class="btn btn-primary w-full">Registrieren</button>
 
       <div class="divider"></div>
 
       <div class="text-center">
         <p class="text-sm text-base-content">
-          Already have an account?
-          <a [routerLink]="['/login']" class="link link-primary font-bold">Login here</a>.
+         Hast du schon ein Konto?
+          <a [routerLink]="['/login']" class="link link-primary font-bold">Hier einloggen</a>.
         </p>
       </div>
     </div>
