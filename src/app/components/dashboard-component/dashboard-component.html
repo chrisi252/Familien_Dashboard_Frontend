@@ -5,21 +5,25 @@
 
     <app-header-component></app-header-component>
 
-    <div class="pt-5 sm:pt-5 px-4 pb-2 sm:pb-4 flex justify-stretch sm:justify-end">
-      <label for="widget-drawer" class="btn btn-primary shadow-sm cursor-pointer w-full sm:w-auto">
-        <span class="mr-2 text-lg">+</span>
-        Neues Widget hinzufügen
-      </label>
-    </div>
+      <div class="pt-5 sm:pt-5 px-4 pb-2 sm:pb-4 flex justify-stretch sm:justify-end gap-2">
+        <button class="btn btn-ghost btn-sm sm:btn-md" (click)="store.loadWidgetsFromBackend()" title="Aktualisieren">
+          <span class="text-lg">↻</span>
+          <span class="hidden sm:inline">Aktualisieren</span>
+        </button>
+        <label for="widget-drawer" class="btn btn-primary shadow-sm cursor-pointer flex-1 sm:flex-none sm:w-auto">
+          <span class="mr-2 text-lg">+</span>
+          Neues Widget hinzufügen
+        </label>
+      </div>
 
-    <div
-      class="px-4 pb-4 sm:pb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-6 auto-rows-[minmax(14rem,auto)] sm:auto-rows-[minmax(16rem,auto)] items-stretch"
-      appAutoAnimate
-      cdkDropListGroup
-    >@for (item of store.addedWidgets(); track item.id) {
-        <app-widget-component class="block min-w-0" cdkDropList [data]="item" (cdkDropListDropped)="drop($event)" [cdkDropListData]="item.id"></app-widget-component>
-      }
-    </div>
+      <div
+        class="px-4 pb-4 sm:pb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-6 auto-rows-[minmax(14rem,auto)] sm:auto-rows-[minmax(16rem,auto)] items-stretch"
+        appAutoAnimate
+        cdkDropListGroup
+      >@for (item of store.addedWidgets(); track item.id) {
+          <app-widget-component class="block min-w-0" cdkDropList [data]="item" (cdkDropListDropped)="drop($event)" [cdkDropListData]="item.id"></app-widget-component>
+        }
+      </div>
 
   </div>
 

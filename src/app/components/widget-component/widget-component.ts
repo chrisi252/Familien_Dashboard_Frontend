@@ -22,6 +22,11 @@ import { DashboardService } from '../../services/dashboard-service';
 export class WidgetComponent {
   private readonly store = inject(DashboardService);
   data = input.required<Widget>();
-  showOptions=signal(false);
+  showOptions = signal(false);
   colSpan = computed(() => this.store.isMobile() ? 1 : (this.data().cols ?? 1));
+  
+  widgetInputs = computed(() => ({
+    widgetId: this.data().id,
+    canEdit: this.data().permissions.write
+  }));
 }

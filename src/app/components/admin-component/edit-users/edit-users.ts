@@ -1,5 +1,8 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { switchMap } from 'rxjs';
 import { FamilyService } from '../../../services/family-service';
+import { FamilyMember } from '../../../interfaces/user';
+import { UserStateService } from '../../../services/user-state-service';
 
 @Component({
   selector: 'app-edit-users',
@@ -9,15 +12,15 @@ import { FamilyService } from '../../../services/family-service';
 })
 export class EditUsers implements OnInit {
   private familyService = inject(FamilyService);
+  private userState = inject(UserStateService);
 
-  members: any[] = [];
+  members = signal<FamilyMember[]>([]);
 
   ngOnInit() {
-    this.familyService.getFamilies().subscribe((res: any) => {
-      const familyId = res.families[0].family.id;
-      this.familyService.getFamilyById(familyId).subscribe((detail: any) => {
-        this.members = detail.members;
-      });
+    this.userState.resolveCurrentFamilyId$().pipe(
+      switchMap((familyId) => this.familyService.getFamilyById(familyId)),
+    ).subscribe((detail) => {
+      this.members.set(detail.members);
     });
   }
 }

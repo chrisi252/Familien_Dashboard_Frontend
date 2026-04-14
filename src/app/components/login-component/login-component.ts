@@ -1,9 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ThemeSwitchComponent } from '../theme-switch-component/theme-switch-component';
 import { AuthService } from '../../services/auth-service';
-import { ProfileService } from '../../services/profile-service';
+import { UserStateService } from '../../services/user-state-service';
 
 @Component({
   selector: 'app-login-component',
@@ -15,8 +15,9 @@ import { ProfileService } from '../../services/profile-service';
 export class LoginComponent {
   private router = inject(Router);
   private authService = inject(AuthService);
-  private profileService = inject(ProfileService);
+  private userState = inject(UserStateService);
   private fb = inject(FormBuilder);
+  private cdr = inject(ChangeDetectorRef);
 
   errorMessage = '';
 
@@ -26,14 +27,6 @@ export class LoginComponent {
     username: ['', [Validators.required, Validators.minLength(3)]],
     password: ['', [Validators.required, Validators.minLength(6)]]
   });
-  ngOnInit() {
-    this.profileService.getProfile().subscribe({
-    next: () => this.router.navigate(['/dashboard']),
-    error: () => {}
-  });
-  }
-
-
   submit() {
 
     if (this.loginForm.invalid) {
@@ -45,13 +38,14 @@ export class LoginComponent {
     const payload = this.loginForm.getRawValue();
 
     this.authService.login(payload).subscribe({
-      next: (response) => {
-   
+      next: async () => {
+        await this.userState.initializeSession(true);
         this.router.navigate(['/dashboard']);
       },
       error: (error: { error?: { error?: string } }) => {
         console.error('Login failed:', error);
         this.errorMessage = error.error?.error ?? 'Login fehlgeschlagen. Bitte pruefe deine Daten.';
+        this.cdr.markForCheck();
       }
     });
   }

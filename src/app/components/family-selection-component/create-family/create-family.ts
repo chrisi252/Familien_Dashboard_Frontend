@@ -1,8 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { ThemeSwitchComponent } from '../../theme-switch-component/theme-switch-component';
 import { FamilyService } from '../../../services/family-service';
+import { UserStateService } from '../../../services/user-state-service';
 import { FormsModule } from '@angular/forms';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-create-family',
@@ -12,6 +14,8 @@ import { FormsModule } from '@angular/forms';
 })
 export class CreateFamily {
   store = inject(FamilyService);
+  private userState = inject(UserStateService);
+  private cdr = inject(ChangeDetectorRef);
   errorMessage = '';
   isLoading = false;
   familyName = '';
@@ -33,7 +37,8 @@ export class CreateFamily {
     }
 
     this.store.createFamily(familyName).subscribe({
-      next: () => {
+      next: async () => {
+        await firstValueFrom(this.userState.refreshFamilyContext());
         this.isLoading = false;
         this.router.navigate(['/dashboard']);
       },
@@ -41,9 +46,10 @@ export class CreateFamily {
         this.isLoading = false;
         if (error.status === 400) {
           this.errorMessage = error.error?.error ?? 'Bad Request: Name fehlt oder Benutzer wurde im Backend nicht gefunden.';
-          return;
+        } else {
+          this.errorMessage = error.error?.error ?? 'Familie konnte nicht erstellt werden.';
         }
-        this.errorMessage = error.error?.error ?? 'Familie konnte nicht erstellt werden.';
+        this.cdr.markForCheck();
       },
     });
   }

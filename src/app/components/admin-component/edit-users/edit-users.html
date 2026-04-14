@@ -1,16 +1,22 @@
-<div class="">
-  @for(member of members; track member.id){
-    <div class="card bg-base-100 shadow-xl mb-4">
-      <div class="card-body">
-        <h2 class="card-title">{{ member.user_username }}</h2>
-        <p>Rolle: {{ member.role_name }}</p>
-        <div class="card-actions justify-end">
-          <button class="btn btn-primary shadow-sm cursor-pointer">Bearbeiten</button>
-          <button class="btn btn-error shadow-sm cursor-pointer">Löschen</button>
+<div class="flex flex-col gap-8">
+
+  <!-- Members -->
+  <div>
+    <h2 class="text-xl font-bold mb-4">Mitglieder</h2>
+    @for (member of members(); track member.id) {
+      <div class="card bg-base-100 shadow-xl mb-4">
+        <div class="card-body">
+          <h2 class="card-title">{{ member.user_username }}</h2>
+          <p>Rolle: {{ member.role_name }}</p>
+          <div class="card-actions justify-end">
+            <button class="btn btn-primary shadow-sm cursor-pointer">Bearbeiten</button>
+            <button class="btn btn-error shadow-sm cursor-pointer">Löschen</button>
+          </div>
         </div>
       </div>
-    </div>
-  } @empty {
-    <p class="text-sm opacity-60">Keine Mitglieder gefunden.</p>
-  }
+    } @empty {
+      <p class="text-sm opacity-60">Keine Mitglieder gefunden.</p>
+    }
+  </div>
+
 </div>

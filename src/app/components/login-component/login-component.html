@@ -23,13 +23,13 @@
 
       <div class="form-control mb-6">
         <label class="label" for="password">
-          <span class="label-text font-bold">Password</span>
+          <span class="label-text font-bold">Passwort</span>
         </label>
-        <input formControlName="password" id="password" type="password" placeholder="Enter your password" class="input input-bordered w-full" />
+        <input formControlName="password" id="password" type="password" placeholder="Passwort eingeben" class="input input-bordered w-full" />
 
         @if(loginForm.controls.password.invalid && loginForm.controls.password.touched) {
           <label class="label">
-            <span class="label-text-alt text-error italic">Please enter a valid password.</span>
+            <span class="label-text-alt text-error italic">Bitte gib ein gültiges Passwort ein.</span>
           </label>
         }
       </div>
@@ -42,15 +42,15 @@
 
       <div class="flex items-center justify-between mb-4">
         <button type="submit" class="btn btn-primary">Login</button>
-        <a [routerLink]="['/forgot-password']" class="link link-hover text-sm text-primary font-bold">Forgot Password?</a>
+        <a [routerLink]="['/forgot-password']" class="link link-hover text-sm text-primary font-bold">Passwort vergessen?</a>
       </div>
 
       <div class="divider"></div>
 
       <div class="text-center">
         <p class="text-sm text-base-content">
-          Don't have an account?
-          <a [routerLink]="['/register']" class="link link-primary font-bold">Register here</a>.
+          Hast du noch keinen Account?
+          <a [routerLink]="['/register']" class="link link-primary font-bold">Hier registrieren</a>.
         </p>
       </div>
 

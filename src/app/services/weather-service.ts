@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { WeatherResponse } from '../interfaces/weather';
+import { WeatherLocation, WeatherResponse } from '../interfaces/weather';
 
 @Injectable({
   providedIn: 'root',
@@ -15,11 +15,11 @@ export class WeatherService {
     return this.http.get<WeatherResponse>(`${this.apiUrl}/weather/${familyId}`);
   }
 
-  getLocation(familyId: number): Observable<{ location: any }> {
-    return this.http.get<{ location: any }>(`${this.apiUrl}/weather/${familyId}/location`);
+  getLocation(familyId: number): Observable<{ location: WeatherLocation }> {
+    return this.http.get<{ location: WeatherLocation }>(`${this.apiUrl}/weather/${familyId}/location`);
   }
 
-  updateLocation(familyId: number, city: string): Observable<any> {
-    return this.http.put(`${this.apiUrl}/weather/${familyId}/location`, { city });
+  updateLocation(familyId: number, city: string): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/weather/${familyId}/location`, { city });
   }
 }
