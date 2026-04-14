@@ -179,27 +179,27 @@ export class UserStateService {
   }
 
   private persistSelectedFamilyId(familyId: number): void {
-    if (typeof localStorage === 'undefined') {
+    if (typeof sessionStorage === 'undefined') {
       return;
     }
 
-    localStorage.setItem(UserStateService.SELECTED_FAMILY_STORAGE_KEY, String(familyId));
+    sessionStorage.setItem(UserStateService.SELECTED_FAMILY_STORAGE_KEY, String(familyId));
   }
 
   private readPersistedFamilyId(): number | null {
-    if (typeof localStorage === 'undefined') {
+    if (typeof sessionStorage === 'undefined') {
       return null;
     }
 
-    const rawFamilyId = localStorage.getItem(UserStateService.SELECTED_FAMILY_STORAGE_KEY);
+    const rawFamilyId = sessionStorage.getItem(UserStateService.SELECTED_FAMILY_STORAGE_KEY);
     return this.toPositiveNumber(rawFamilyId);
   }
 
   private clearPersistedFamilyId(): void {
-    if (typeof localStorage === 'undefined') {
+    if (typeof sessionStorage === 'undefined') {
       return;
     }
 
-    localStorage.removeItem(UserStateService.SELECTED_FAMILY_STORAGE_KEY);
+    sessionStorage.removeItem(UserStateService.SELECTED_FAMILY_STORAGE_KEY);
   }
 }

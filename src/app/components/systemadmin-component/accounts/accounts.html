@@ -1,0 +1,49 @@
+<div class="flex flex-col gap-6 max-w-md">
+  <h1 class="text-2xl font-bold">Admin-Account erstellen</h1>
+
+  @if (successMessage()) {
+    <div class="alert alert-success">{{ successMessage() }}</div>
+  }
+  @if (errorMessage()) {
+    <div class="alert alert-error">{{ errorMessage() }}</div>
+  }
+
+  <div class="card bg-base-200 shadow">
+    <div class="card-body gap-4">
+
+      <div class="form-control gap-1">
+        <label class="label py-0"><span class="label-text">Benutzername *</span></label>
+        <input class="input input-bordered" [ngModel]="username()" (ngModelChange)="username.set($event)"
+          placeholder="admin2" autocomplete="off" />
+      </div>
+
+      <div class="form-control gap-1">
+        <label class="label py-0"><span class="label-text">Passwort *</span></label>
+        <input type="password" class="input input-bordered" [ngModel]="password()" (ngModelChange)="password.set($event)"
+          placeholder="Mind. 8 Zeichen" autocomplete="new-password" />
+      </div>
+
+      <div class="flex gap-3">
+        <div class="form-control gap-1 flex-1">
+          <label class="label py-0"><span class="label-text">Vorname</span></label>
+          <input class="input input-bordered" [ngModel]="firstName()" (ngModelChange)="firstName.set($event)" />
+        </div>
+        <div class="form-control gap-1 flex-1">
+          <label class="label py-0"><span class="label-text">Nachname</span></label>
+          <input class="input input-bordered" [ngModel]="lastName()" (ngModelChange)="lastName.set($event)" />
+        </div>
+      </div>
+
+      <div class="card-actions justify-end pt-2">
+        <button class="btn btn-primary"
+          [disabled]="isSaving() || !username().trim() || !password().trim()"
+          (click)="submit()">
+          @if (isSaving()) {
+            <span class="loading loading-spinner loading-sm"></span>
+          }
+          Account erstellen
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

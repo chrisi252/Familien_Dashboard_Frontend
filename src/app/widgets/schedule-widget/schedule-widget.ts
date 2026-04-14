@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, input, signal } from '@angular/core';
 import { ScheduleEvent } from '../../interfaces/schedule-event';
 
 @Component({
@@ -8,8 +8,10 @@ import { ScheduleEvent } from '../../interfaces/schedule-event';
   styleUrl: './schedule-widget.css',
 })
 export class ScheduleWidget {
+  widgetId = input<number>(0);
+  canEdit = input<boolean>(false);
 
-    events = signal<ScheduleEvent[]>([
+  events = signal<ScheduleEvent[]>([
     {
       dayName: 'Mo',
       dayNumber: '03',

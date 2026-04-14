@@ -127,16 +127,17 @@
 		<section class="card bg-base-100 shadow-xl border border-base-300">
 			<div class="card-body">
 				<h2 class="card-title text-xl mb-2">Einer Familie beitreten</h2>
-				<p class="text-sm opacity-60 mb-3">Gib die ID der Familie ein, der du beitreten möchtest.</p>
+				<p class="text-sm opacity-60 mb-3">Gib den Beitrittscode der Familie ein, der du beitreten möchtest.</p>
 
 				<div class="flex gap-2">
 					<input
-						type="number"
+						type="text"
 						class="input input-bordered flex-1"
-						placeholder="Familien-ID"
-						[(ngModel)]="joinFamilyId"
+						placeholder="Beitrittscode"
+						[(ngModel)]="joinFamilyCode"
 						(keyup.enter)="joinFamily()"
-						min="1" />
+						maxlength="6"
+						autocomplete="off" />
 					<button
 						type="button"
 						class="btn btn-primary"

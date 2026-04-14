@@ -6,6 +6,7 @@ import { ProfileService } from '../../services/profile-service';
 import { FamilyService } from '../../services/family-service';
 import { UserStateService } from '../../services/user-state-service';
 import { User, FamilyMembership } from '../../interfaces/user';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-profile-component',
@@ -26,7 +27,7 @@ export class ProfileComponent implements OnInit {
   families = signal<FamilyMembership[]>([]);
   familiesLoading = signal(false);
 
-  joinFamilyId = '';
+  joinFamilyCode = '';
   joinError = signal('');
   joinLoading = signal(false);
   joinSuccess = signal(false);
@@ -85,9 +86,9 @@ export class ProfileComponent implements OnInit {
   }
 
   joinFamily() {
-    const parsedId = Number(this.joinFamilyId);
-    if (!this.joinFamilyId || Number.isNaN(parsedId) || parsedId <= 0) {
-      this.joinError.set('Bitte gib eine gueltige Familien-ID ein.');
+    const code = this.joinFamilyCode.trim().toUpperCase();
+    if (!code || code.length !== 6) {
+      this.joinError.set('Bitte gib einen gültigen 6-stelligen Einladungscode ein.');
       return;
     }
 
@@ -95,11 +96,12 @@ export class ProfileComponent implements OnInit {
     this.joinLoading.set(true);
     this.joinSuccess.set(false);
 
-    this.familyService.joinFamily(parsedId).subscribe({
-      next: () => {
+    this.familyService.joinByCode(code).subscribe({
+      next: async () => {
+        await firstValueFrom(this.userState.refreshFamilyContext());
         this.joinLoading.set(false);
         this.joinSuccess.set(true);
-        this.joinFamilyId = '';
+        this.joinFamilyCode = '';
         this.loadFamilies();
       },
       error: (error: { error?: { error?: string } }) => {

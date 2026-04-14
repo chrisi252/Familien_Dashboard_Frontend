@@ -40,7 +40,12 @@ export class LoginComponent {
     this.authService.login(payload).subscribe({
       next: async () => {
         await this.userState.initializeSession(true);
-        this.router.navigate(['/dashboard']);
+        const user = this.userState.currentUser();
+        if (user?.is_system_admin) {
+          this.router.navigate(['/systemadmin']);
+        } else {
+          this.router.navigate(['/dashboard']);
+        }
       },
       error: (error: { error?: { error?: string } }) => {
         console.error('Login failed:', error);

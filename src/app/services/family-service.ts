@@ -4,6 +4,14 @@ import { Observable } from 'rxjs/internal/Observable';
 import { HttpClient } from '@angular/common/http';
 import { FamilyWidgetDetailed, WidgetLayoutItem, WidgetLayoutResponse, WidgetUserPermission } from '../interfaces/widget';
 
+export interface FamilyInviteCode {
+  id: number;
+  family_id: number;
+  code: string;
+  created_at: string;
+  expires_at: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -69,5 +77,9 @@ export class FamilyService {
 
   joinByCode(code: string): Observable<FamilyMember> {
     return this.http.post<FamilyMember>(`${this.apiUrl}/families/join-by-code`, { code });
+  }
+
+  generateInviteCode(familyId: number): Observable<FamilyInviteCode> {
+    return this.http.post<FamilyInviteCode>(`${this.apiUrl}/families/${familyId}/invite-code`, {});
   }
 }

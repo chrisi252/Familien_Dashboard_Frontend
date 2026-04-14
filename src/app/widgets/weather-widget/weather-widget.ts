@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, input, OnInit } from '@angular/core';
 import { DecimalPipe, SlicePipe, DatePipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -15,6 +15,9 @@ import { UserStateService } from '../../services/user-state-service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WeatherWidget implements OnInit {
+  widgetId = input<number>(0);
+  canEdit = input<boolean>(false);
+
   weatherData: WeatherResponse | null = null;
   isDayTime = true;
   error: string | null = null;
@@ -89,7 +92,6 @@ export class WeatherWidget implements OnInit {
   }
 
   private checkDayTime(icon: string): boolean {
-    // Example logic - replace with actual day/night detection based on icon
     return icon.includes('d');
   }
 }

@@ -7,7 +7,7 @@ export class ThemeService {
   isDarkMode = signal(false);
 
   constructor() {
-    const savedTheme = localStorage.getItem('theme');
+    const savedTheme = sessionStorage.getItem('theme');
     if (savedTheme === 'dark') {
       this.isDarkMode = signal(true);
       this.applyTheme();
@@ -24,6 +24,6 @@ export class ThemeService {
 
     document.documentElement.setAttribute('data-theme', themeName);
 
-    localStorage.setItem('theme', themeName);
+    sessionStorage.setItem('theme', themeName);
   }
 }

@@ -1,0 +1,37 @@
+<div class="flex flex-col gap-6">
+  <h1 class="text-2xl font-bold">Familien verwalten</h1>
+
+  @if (isLoading()) {
+    <div class="flex justify-center py-12">
+      <span class="loading loading-spinner loading-lg"></span>
+    </div>
+  } @else if (errorMessage()) {
+    <div class="alert alert-error">{{ errorMessage() }}</div>
+  } @else {
+    <div class="overflow-x-auto">
+      <table class="table table-zebra w-full">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Erstellt am</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (family of families(); track family.id) {
+            <tr>
+              <td class="font-mono text-sm opacity-60">{{ family.id }}</td>
+              <td class="font-semibold">{{ family.name }}</td>
+              <td class="text-sm opacity-60">{{ family.created_at | date: 'dd.MM.yyyy HH:mm' }}</td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="3" class="text-center opacity-50 py-8">Keine Familien vorhanden.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <div class="text-sm opacity-50">{{ families().length }} Familie(n) gesamt</div>
+  }
+</div>

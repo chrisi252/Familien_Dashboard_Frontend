@@ -1,21 +1,29 @@
 import { Routes } from '@angular/router';
-import { LoginComponent } from './components/login-component/login-component';
-import { WidgetComponent } from './components/widget-component/widget-component';
-import { DashboardComponent } from './components/dashboard-component/dashboard-component';
-import { RegisterComponent } from './components/register-component/register-component';
-import { FamilySelectionComponent } from './components/family-selection-component/family-selection-component';
-import { JoinFamily } from './components/family-selection-component/join-family/join-family';
-import { CreateFamily } from './components/family-selection-component/create-family/create-family';
-import { FamilyadminComponent } from './components/admin-component/familyadmin-component';
-import { EditUsers } from './components/admin-component/edit-users/edit-users';
-import { EditDashboard } from './components/admin-component/edit-dashboard/edit-dashboard';
-import { EditWidgets } from './components/admin-component/edit-widgets/edit-widgets';
-import { ProfileComponent } from './components/profile-component/profile-component';
-import { SystemadminComponent } from './components/systemadmin-component/systemadmin-component';
 import { authGuard } from './guards/auth.guard';
 import { familyAdminGuard } from './guards/familyadmin.guard';
+import { systemAdminGuard } from './guards/systemadmin.guard';
 
 export const routes: Routes = [
+    {
+        path: 'systemadmin',
+        loadComponent: () => import('./components/systemadmin-component/systemadmin-component').then(m => m.SystemadminComponent),
+        canActivate: [authGuard, systemAdminGuard],
+        children: [
+            {
+                path: 'families',
+                loadComponent: () => import('./components/systemadmin-component/families/families').then(m => m.SystemadminFamilies),
+            },
+            {
+                path: 'accounts',
+                loadComponent: () => import('./components/systemadmin-component/accounts/accounts').then(m => m.SystemadminAccounts),
+            },
+            {
+                path: '',
+                redirectTo: 'families',
+                pathMatch: 'full',
+            }
+        ]
+    },
     {
         path: 'login',
         loadComponent: () => import('./components/login-component/login-component').then(m => m.LoginComponent),

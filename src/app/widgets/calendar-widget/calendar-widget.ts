@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, input } from '@angular/core';
 
 interface CalendarEvent {
   id: string;
@@ -12,6 +12,7 @@ interface CalendarEvent {
   templateUrl: './calendar-widget.html',
   styleUrl: './calendar-widget.css',
 })
-export class CalendarWidget  {
-
+export class CalendarWidget {
+  widgetId = input<number>(0);
+  canEdit = input<boolean>(false);
 }

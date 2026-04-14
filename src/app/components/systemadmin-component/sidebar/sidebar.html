@@ -10,28 +10,22 @@
   <ul class="menu flex-1 px-4 py-6 gap-2 text-base">
 
     <li class="rounded-lg" routerLinkActive="bg-primary text-primary-content" [routerLinkActiveOptions]="{ exact: true }">
-      <p routerLink="/systemadmin/families" class="flex items-center gap-2">
+      <a routerLink="/systemadmin/families" class="flex items-center gap-2">
         Familien verwalten
-      </p>
+      </a>
     </li>
 
     <li class="rounded-lg" routerLinkActive="bg-primary text-primary-content" [routerLinkActiveOptions]="{ exact: true }">
-      <p routerLink="/systemadmin/users" class="flex items-center gap-2">
-        Alle Benutzer verwalten
-      </p>
-    </li>
-
-    <li class="rounded-lg" routerLinkActive="bg-primary text-primary-content" [routerLinkActiveOptions]="{ exact: true }">
-      <p routerLink="/systemadmin/settings" class="flex items-center gap-2">
-        System-Einstellungen
-      </p>
+      <a routerLink="/systemadmin/accounts" class="flex items-center gap-2">
+        Admin-Account erstellen
+      </a>
     </li>
 
   </ul>
 
   <div class="p-4 border-t border-base-300 bg-base-200/50">
-    <a routerLink="/dashboard" class="btn btn-ghost btn-block justify-start text-error hover:bg-error/10">
-      Dashboard vorschau
+    <a routerLink="/login" class="btn btn-ghost btn-block justify-start text-error hover:bg-error/10">
+      Abmelden
     </a>
   </div>
 
