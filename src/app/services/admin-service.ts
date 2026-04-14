@@ -2,13 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AdminCreateAccountRequest, AdminCreateAccountResponse, AdminFamiliesResponse } from '../interfaces/family-admin';
-
+import { environment } from '../../environments/environment';
 
 
 
 @Injectable({ providedIn: 'root' })
 export class AdminService {
-  private apiUrl = '/api/admin';
+  private apiUrl = `${environment.apiBase}/admin`;
 
   constructor(private http: HttpClient) {}
 

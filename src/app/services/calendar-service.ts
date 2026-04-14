@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface CalendarApiEvent {
   id: number;
@@ -27,7 +28,7 @@ export interface UpdateCalendarEventPayload {
   providedIn: 'root',
 })
 export class CalendarService {
-  private apiUrl = '/api/calendar';
+  private apiUrl = `${environment.apiBase}/calendar`;
 
   constructor(private http: HttpClient) {}
 

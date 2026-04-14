@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
+import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs';
 import { RegisterResponse } from '../interfaces/register-response';
 import { LoginResponse } from '../interfaces/login-response';
@@ -10,7 +11,7 @@ import { UserStateService } from './user-state-service';
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = '/api';
+  private apiUrl = environment.apiBase;
   private userState = inject(UserStateService);
 
   constructor(private http: HttpClient) {}

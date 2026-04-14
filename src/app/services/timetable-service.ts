@@ -1,5 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs';
 import {
   TimetableEntry,
@@ -10,7 +11,7 @@ import {
 
 @Injectable({ providedIn: 'root' })
 export class TimetableService {
-  private apiUrl = '/api';
+  private apiUrl = environment.apiBase;
   private http = inject(HttpClient);
 
   getPersons(familyId: number): Observable<{ persons: TimetablePerson[] }> {

@@ -1,5 +1,6 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
+import { environment } from '../environments/environment';
 import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
 
@@ -9,7 +10,7 @@ export const authorizeInterceptor: HttpInterceptorFn = (req, next) => {
   const isLoginRequest = req.url.includes('/users/login');
   const isRegisterRequest = req.url.includes('/users/register');
 
-  const apiRequest = req.url.startsWith('/api') || req.url.includes('/api/');
+  const apiRequest = req.url.startsWith(environment.apiBase);
   const requestWithCredentials = apiRequest
     ? req.clone({ withCredentials: true })
     : req;

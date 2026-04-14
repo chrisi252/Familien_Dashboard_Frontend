@@ -3,6 +3,7 @@ import { FamiliesResponse, FamilyDetailResponse, FamilyMember } from '../interfa
 import { Observable } from 'rxjs/internal/Observable';
 import { HttpClient } from '@angular/common/http';
 import { FamilyWidgetDetailed, WidgetLayoutItem, WidgetLayoutResponse, WidgetUserPermission } from '../interfaces/widget';
+import { environment } from '../../environments/environment';
 
 export interface FamilyInviteCode {
   id: number;
@@ -17,7 +18,7 @@ export interface FamilyInviteCode {
 })
 export class FamilyService {
 
-   private apiUrl = '/api';
+  private apiUrl = environment.apiBase;
 
   constructor(private http: HttpClient) {}
 
