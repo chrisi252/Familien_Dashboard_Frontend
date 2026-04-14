@@ -4,6 +4,7 @@ import { Widget } from '../interfaces/widget';
 import { ScheduleWidget } from '../widgets/schedule-widget/schedule-widget';
 import { TodoWidget } from '../widgets/todo-widget/todo-widget';
 import { CalendarWidget } from '../widgets/calendar-widget/calendar-widget';
+import { TimetableWidget } from '../widgets/timetable-widget/timetable-widget';
 
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -20,6 +21,7 @@ const WIDGET_REGISTRY: Record<string, { content: Type<unknown>; label: string; d
   schedule: { content: ScheduleWidget, label: 'Termine', defaultRows: 2, defaultCols: 1 },
   weather: { content: WeatherWidget, label: 'Wetter', defaultRows: 2, defaultCols: 1 },
   calendar: { content: CalendarWidget, label: 'Google Kalender', defaultRows: 2, defaultCols: 2 },
+  timetable: { content: TimetableWidget, label: 'Stundenplan', defaultRows: 3, defaultCols: 2 },
 };
 
 @Injectable({ providedIn: 'root' })

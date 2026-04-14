@@ -1,0 +1,195 @@
+<div class="flex flex-col h-full gap-2 overflow-hidden">
+
+  @if (isLoading()) {
+    <div class="flex justify-center items-center flex-1">
+      <span class="loading loading-spinner loading-md"></span>
+    </div>
+  } @else if (errorMessage()) {
+    <div class="alert alert-error text-sm">{{ errorMessage() }}</div>
+  } @else {
+
+    <!-- Person tabs -->
+    <div class="flex gap-1 flex-wrap">
+      @for (person of persons(); track person.person_name) {
+        <button
+          class="btn btn-xs"
+          [class.btn-primary]="selectedPerson() === person.person_name"
+          [class.btn-ghost]="selectedPerson() !== person.person_name"
+          [style.border-color]="selectedPerson() !== person.person_name ? person.color : null"
+          (click)="selectPerson(person.person_name)">
+          <span class="inline-block w-2 h-2 rounded-full mr-1" [style.background-color]="person.color"></span>
+          {{ person.person_name }}
+        </button>
+      }
+      @if (canEdit()) {
+        <button class="btn btn-xs btn-ghost opacity-60" (click)="openAddForm()">
+          <ng-icon name="heroPlus" />
+        </button>
+      }
+    </div>
+
+    @if (persons().length === 0) {
+      <div class="flex flex-col items-center justify-center flex-1 opacity-50 gap-2 text-sm">
+        <span>Noch keine Personen</span>
+        @if (canEdit()) {
+          <button class="btn btn-sm btn-primary" (click)="openAddForm()">Eintrag hinzufügen</button>
+        }
+      </div>
+    } @else if (selectedPerson()) {
+
+      <!-- Timetable grid -->
+      @if (isLoadingEntries()) {
+        <div class="flex justify-center items-center flex-1">
+          <span class="loading loading-spinner loading-sm"></span>
+        </div>
+      } @else {
+        <div class="overflow-x-auto flex-1">
+          <table class="table table-xs w-full">
+            <thead>
+              <tr>
+                @for (day of weekdays; track day) {
+                  <th class="text-center text-xs font-semibold">{{ day }}</th>
+                }
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                @for (day of [0,1,2,3,4]; track day) {
+                  <td class="align-top p-1 min-w-[4.5rem]">
+                    <div class="flex flex-col gap-1">
+                      @for (entry of entriesByDay()[day]; track entry.id) {
+                        <div
+                          class="rounded p-1 text-xs leading-tight cursor-default relative group"
+                          [style.background-color]="entry.color + '33'"
+                          [style.border-left]="'3px solid ' + entry.color">
+                          <div class="font-semibold truncate">{{ entry.subject }}</div>
+                          <div class="opacity-70">{{ entry.start_time }}–{{ entry.end_time }}</div>
+                          @if (entry.room) {
+                            <div class="opacity-60 truncate">{{ entry.room }}</div>
+                          }
+                          @if (canEdit()) {
+                            <div class="absolute top-0 right-0 hidden group-hover:flex gap-0.5 bg-base-100 rounded shadow p-0.5">
+                              <button class="btn btn-xs btn-ghost p-0.5" (click)="openEditForm(entry)">
+                                <ng-icon name="heroPencil" class="text-xs" />
+                              </button>
+                              <button class="btn btn-xs btn-ghost text-error p-0.5" (click)="deleteEntry(entry)">
+                                <ng-icon name="heroTrash" class="text-xs" />
+                              </button>
+                            </div>
+                          }
+                        </div>
+                      }
+                    </div>
+                  </td>
+                }
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        @if (canEdit()) {
+          <button class="btn btn-xs btn-primary self-start" (click)="openAddForm()">
+            <ng-icon name="heroPlus" /> Eintrag
+          </button>
+        }
+      }
+    }
+
+    <!-- Add/Edit modal -->
+    @if (showAddForm()) {
+      <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40" (click)="closeForm()">
+        <div class="card bg-base-100 shadow-xl w-full max-w-sm mx-4" (click)="$event.stopPropagation()">
+          <div class="card-body gap-3 p-5">
+            <div class="flex justify-between items-center">
+              <h3 class="font-bold text-base">
+                {{ editingEntry() ? 'Eintrag bearbeiten' : 'Neuer Eintrag' }}
+              </h3>
+              <button class="btn btn-xs btn-ghost" (click)="closeForm()">
+                <ng-icon name="heroXMark" />
+              </button>
+            </div>
+
+            <div class="form-control gap-1">
+              <label class="label py-0"><span class="label-text text-xs">Person *</span></label>
+              <input class="input input-sm input-bordered" [value]="form().person_name"
+                (input)="patchForm({ person_name: $any($event.target).value })"
+                placeholder="z.B. Emma" />
+            </div>
+
+            <div class="flex gap-2">
+              <div class="form-control gap-1 flex-1">
+                <label class="label py-0"><span class="label-text text-xs">Farbe</span></label>
+                <input type="color" class="input input-sm input-bordered h-9 p-1 cursor-pointer"
+                  [value]="form().color"
+                  (input)="patchForm({ color: $any($event.target).value })" />
+              </div>
+              <div class="form-control gap-1 flex-1">
+                <label class="label py-0"><span class="label-text text-xs">Wochentag *</span></label>
+                <select class="select select-sm select-bordered"
+                  [value]="form().weekday"
+                  (change)="patchForm({ weekday: +$any($event.target).value })">
+                  @for (day of weekdays; track day; let i = $index) {
+                    <option [value]="i">{{ day }}</option>
+                  }
+                </select>
+              </div>
+            </div>
+
+            <div class="flex gap-2">
+              <div class="form-control gap-1 flex-1">
+                <label class="label py-0"><span class="label-text text-xs">Von *</span></label>
+                <input type="time" class="input input-sm input-bordered"
+                  [value]="form().start_time"
+                  (input)="patchForm({ start_time: $any($event.target).value })" />
+              </div>
+              <div class="form-control gap-1 flex-1">
+                <label class="label py-0"><span class="label-text text-xs">Bis *</span></label>
+                <input type="time" class="input input-sm input-bordered"
+                  [value]="form().end_time"
+                  (input)="patchForm({ end_time: $any($event.target).value })" />
+              </div>
+            </div>
+
+            <div class="form-control gap-1">
+              <label class="label py-0"><span class="label-text text-xs">Fach *</span></label>
+              <input class="input input-sm input-bordered" [value]="form().subject"
+                (input)="patchForm({ subject: $any($event.target).value })"
+                placeholder="z.B. Mathematik" />
+            </div>
+
+            <div class="flex gap-2">
+              <div class="form-control gap-1 flex-1">
+                <label class="label py-0"><span class="label-text text-xs">Raum</span></label>
+                <input class="input input-sm input-bordered" [value]="form().room ?? ''"
+                  (input)="patchForm({ room: $any($event.target).value || null })"
+                  placeholder="z.B. 101" />
+              </div>
+              <div class="form-control gap-1 flex-1">
+                <label class="label py-0"><span class="label-text text-xs">Lehrkraft</span></label>
+                <input class="input input-sm input-bordered" [value]="form().teacher ?? ''"
+                  (input)="patchForm({ teacher: $any($event.target).value || null })"
+                  placeholder="z.B. Hr. Müller" />
+              </div>
+            </div>
+
+            <div class="form-control gap-1">
+              <label class="label py-0"><span class="label-text text-xs">Notiz</span></label>
+              <input class="input input-sm input-bordered" [value]="form().note ?? ''"
+                (input)="patchForm({ note: $any($event.target).value || null })" />
+            </div>
+
+            <div class="flex gap-2 justify-end pt-1">
+              <button class="btn btn-sm btn-ghost" (click)="closeForm()">Abbrechen</button>
+              <button class="btn btn-sm btn-primary"
+                [disabled]="!form().subject.trim() || !form().person_name.trim()"
+                (click)="saveEntry()">
+                <ng-icon name="heroCheck" /> Speichern
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+  }
+</div>

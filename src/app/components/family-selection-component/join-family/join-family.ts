@@ -1,6 +1,6 @@
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { ThemeSwitchComponent } from '../../theme-switch-component/theme-switch-component';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { FamilyService } from '../../../services/family-service';
 import { UserStateService } from '../../../services/user-state-service';
 import { FormsModule } from '@angular/forms';
@@ -12,38 +12,30 @@ import { firstValueFrom } from 'rxjs';
   templateUrl: './join-family.html',
   styleUrl: './join-family.css',
 })
-export class JoinFamily implements OnInit {
-  store = inject(FamilyService);
+export class JoinFamily {
+  private familyService = inject(FamilyService);
   private userState = inject(UserStateService);
-  private cdr = inject(ChangeDetectorRef);
+  private router = inject(Router);
+
+  inviteCode = '';
   errorMessage = '';
   isLoading = false;
-  familyCode = '';
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
-
-  ngOnInit(): void {
-    const routeFamilyId = this.route.snapshot.paramMap.get('familyId');
-    if (routeFamilyId) {
-      this.familyCode = routeFamilyId;
-    }
-  }
 
   onCancel() {
     this.router.navigate(['/family-selection']);
   }
 
-  tryJoinFamily() {
+  tryJoinByCode() {
     this.errorMessage = '';
+    const code = this.inviteCode.trim().toUpperCase();
 
-    const parsedId = Number(this.familyCode);
-    if (!this.familyCode || Number.isNaN(parsedId) || parsedId <= 0) {
-      this.errorMessage = 'Bitte gib eine gueltige Familien-ID ein.';
+    if (!code || code.length !== 6) {
+      this.errorMessage = 'Bitte gib einen gültigen 6-stelligen Einladungscode ein.';
       return;
     }
 
     this.isLoading = true;
-    this.store.joinFamily(parsedId).subscribe({
+    this.familyService.joinByCode(code).subscribe({
       next: async () => {
         await firstValueFrom(this.userState.refreshFamilyContext());
         this.isLoading = false;
@@ -51,10 +43,8 @@ export class JoinFamily implements OnInit {
       },
       error: (error: { error?: { error?: string } }) => {
         this.isLoading = false;
-        this.errorMessage = error.error?.error ?? 'Familie konnte nicht beigetreten werden.';
-        this.cdr.markForCheck();
+        this.errorMessage = error.error?.error ?? 'Beitreten fehlgeschlagen.';
       },
     });
   }
-
 }
