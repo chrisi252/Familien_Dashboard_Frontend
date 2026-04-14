@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FamiliesResponse, FamilyDetailResponse } from '../interfaces/user';
+import { FamiliesResponse, FamilyDetailResponse, FamilyMember } from '../interfaces/user';
 import { Observable } from 'rxjs/internal/Observable';
 import { HttpClient } from '@angular/common/http';
 import { FamilyWidgetDetailed, WidgetLayoutItem, WidgetLayoutResponse, WidgetUserPermission } from '../interfaces/widget';
@@ -65,5 +65,9 @@ export class FamilyService {
       `${this.apiUrl}/families/${familyId}/widgets/layout`,
       { layout },
     );
+  }
+
+  joinByCode(code: string): Observable<FamilyMember> {
+    return this.http.post<FamilyMember>(`${this.apiUrl}/families/join-by-code`, { code });
   }
 }

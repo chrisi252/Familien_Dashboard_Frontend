@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { switchMap } from 'rxjs';
 import { FamilyService } from '../../../services/family-service';
 import { FamilyMember } from '../../../interfaces/user';
@@ -14,13 +14,13 @@ export class EditUsers implements OnInit {
   private familyService = inject(FamilyService);
   private userState = inject(UserStateService);
 
-  members: FamilyMember[] = [];
+  members = signal<FamilyMember[]>([]);
 
   ngOnInit() {
     this.userState.resolveCurrentFamilyId$().pipe(
       switchMap((familyId) => this.familyService.getFamilyById(familyId)),
     ).subscribe((detail) => {
-      this.members = detail.members;
+      this.members.set(detail.members);
     });
   }
 }

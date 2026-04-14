@@ -44,10 +44,6 @@ export const routes: Routes = [
                 loadComponent: () => import('./components/family-selection-component/join-family/join-family').then(m => m.JoinFamily)
             },
             {
-                path: 'join/:familyId',
-                loadComponent: () => import('./components/family-selection-component/join-family/join-family').then(m => m.JoinFamily)
-            },
-            {
                 path: 'create',
                 loadComponent: () => import('./components/family-selection-component/create-family/create-family').then(m => m.CreateFamily)
             }
