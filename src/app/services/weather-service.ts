@@ -12,14 +12,14 @@ export class WeatherService {
   constructor(private http: HttpClient) {}
 
   getWeather(familyId: number): Observable<WeatherResponse> {
-    return this.http.get<WeatherResponse>(`${this.apiUrl}/weather/${familyId}`);
+    return this.http.get<WeatherResponse>(`${this.apiUrl}/families/${familyId}/weather`);
   }
 
   getLocation(familyId: number): Observable<{ location: WeatherLocation }> {
-    return this.http.get<{ location: WeatherLocation }>(`${this.apiUrl}/weather/${familyId}/location`);
+    return this.http.get<{ location: WeatherLocation }>(`${this.apiUrl}/families/${familyId}/weather/location`);
   }
 
   updateLocation(familyId: number, city: string): Observable<void> {
-    return this.http.put<void>(`${this.apiUrl}/weather/${familyId}/location`, { city });
+    return this.http.put<void>(`${this.apiUrl}/families/${familyId}/weather/location`, { city });
   }
 }
