@@ -48,6 +48,11 @@ export const routes: Routes = [
             {
                 path: 'dashboard',
                 loadComponent: () => import('./components/dashboard-component/dashboard-component').then(m => m.DashboardComponent)
+            },
+             {
+                path: '',
+                redirectTo: 'editusers',
+                pathMatch: 'full',
             }
         ]
     },

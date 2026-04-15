@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FamiliesResponse, FamilyDetailResponse, FamilyMember } from '../interfaces/user';
+import { FamiliesResponse, FamilyDetailResponse, FamilyMember, FamilyRoleName } from '../interfaces/user';
 import { Observable } from 'rxjs/internal/Observable';
 import { HttpClient } from '@angular/common/http';
 import { FamilyWidgetDetailed, WidgetLayoutItem, WidgetLayoutResponse, WidgetUserPermission } from '../interfaces/widget';
@@ -36,10 +36,6 @@ export class FamilyService {
 
   deleteFamily(id: number): Observable<{ message: string }> {
     return this.http.delete<{ message: string }>(`${this.apiUrl}/families/${id}`);
-  }
-
-  joinFamily(familyId: number): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/families/${familyId}/join`, {});
   }
 
   getFamilyWidgets(familyId: number): Observable<{ widgets: FamilyWidgetDetailed[] }> {
@@ -82,5 +78,18 @@ export class FamilyService {
 
   generateInviteCode(familyId: number): Observable<FamilyInviteCode> {
     return this.http.post<FamilyInviteCode>(`${this.apiUrl}/families/${familyId}/invite-code`, {});
+  }
+
+  removeMember(familyId: number, userId: number): Observable<{ message: string }> {
+    return this.http.delete<{ message: string }>(
+      `${this.apiUrl}/families/${familyId}/members/${userId}`,
+    );
+  }
+
+  changeMemberRole(familyId: number, userId: number, roleName: FamilyRoleName): Observable<FamilyMember> {
+    return this.http.put<FamilyMember>(
+      `${this.apiUrl}/families/${familyId}/members/${userId}/role`,
+      { role_name: roleName },
+    );
   }
 }
