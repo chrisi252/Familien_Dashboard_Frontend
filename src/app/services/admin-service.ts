@@ -1,22 +1,17 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AdminCreateAccountRequest, AdminCreateAccountResponse, AdminFamiliesResponse } from '../interfaces/family-admin';
-import { environment } from '../../environments/environment';
-
-
+import { ApiService } from '../core/api.service';
 
 @Injectable({ providedIn: 'root' })
 export class AdminService {
-  private apiUrl = `${environment.apiBase}/admin`;
-
-  constructor(private http: HttpClient) {}
+  private api = inject(ApiService);
 
   getFamilies(): Observable<AdminFamiliesResponse> {
-    return this.http.get<AdminFamiliesResponse>(`${this.apiUrl}/families`);
+    return this.api.get<AdminFamiliesResponse>('/admin/families');
   }
 
   createAdminAccount(data: AdminCreateAccountRequest): Observable<AdminCreateAccountResponse> {
-    return this.http.post<AdminCreateAccountResponse>(`${this.apiUrl}/accounts`, data);
+    return this.api.post<AdminCreateAccountResponse>('/admin/accounts', data);
   }
 }

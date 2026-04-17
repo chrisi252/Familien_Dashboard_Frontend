@@ -1,9 +1,8 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { FamiliesResponse, FamilyDetailResponse, FamilyMember, FamilyRoleName } from '../interfaces/user';
-import { Observable } from 'rxjs/internal/Observable';
-import { HttpClient } from '@angular/common/http';
 import { FamilyWidgetDetailed, WidgetLayoutItem, WidgetLayoutResponse, WidgetUserPermission } from '../interfaces/widget';
-import { environment } from '../../environments/environment';
+import { ApiService } from '../core/api.service';
 
 export interface FamilyInviteCode {
   id: number;
@@ -17,38 +16,35 @@ export interface FamilyInviteCode {
   providedIn: 'root',
 })
 export class FamilyService {
-
-  private apiUrl = environment.apiBase;
-
-  constructor(private http: HttpClient) {}
+  private api = inject(ApiService);
 
   createFamily(name: string): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/families`, { name });
+    return this.api.post<void>('/families', { name });
   }
 
   getFamilies(): Observable<FamiliesResponse> {
-    return this.http.get<FamiliesResponse>(`${this.apiUrl}/families`);
+    return this.api.get<FamiliesResponse>('/families');
   }
 
   getFamilyById(id: number): Observable<FamilyDetailResponse> {
-    return this.http.get<FamilyDetailResponse>(`${this.apiUrl}/families/${id}`);
+    return this.api.get<FamilyDetailResponse>(`/families/${id}`);
   }
 
   deleteFamily(id: number): Observable<{ message: string }> {
-    return this.http.delete<{ message: string }>(`${this.apiUrl}/families/${id}`);
+    return this.api.delete<{ message: string }>(`/families/${id}`);
   }
 
   getFamilyWidgets(familyId: number): Observable<{ widgets: FamilyWidgetDetailed[] }> {
     // Cache-Buster um sicherzustellen dass immer aktuelle Daten geladen werden
     const timestamp = Date.now();
-    return this.http.get<{ widgets: FamilyWidgetDetailed[] }>(
-      `${this.apiUrl}/families/${familyId}/widgets?_t=${timestamp}`
+    return this.api.get<{ widgets: FamilyWidgetDetailed[] }>(
+      `/families/${familyId}/widgets?_t=${timestamp}`,
     );
   }
 
   getWidgetPermissions(familyId: number, widgetId: number): Observable<{ permissions: WidgetUserPermission[] }> {
-    return this.http.get<{ permissions: WidgetUserPermission[] }>(
-      `${this.apiUrl}/families/${familyId}/widgets/${widgetId}/permissions`
+    return this.api.get<{ permissions: WidgetUserPermission[] }>(
+      `/families/${familyId}/widgets/${widgetId}/permissions`,
     );
   }
 
@@ -59,36 +55,36 @@ export class FamilyService {
     canView: boolean,
     canEdit: boolean,
   ): Observable<WidgetUserPermission> {
-    return this.http.put<WidgetUserPermission>(
-      `${this.apiUrl}/families/${familyId}/widgets/${widgetId}/permissions/${userId}`,
+    return this.api.put<WidgetUserPermission>(
+      `/families/${familyId}/widgets/${widgetId}/permissions/${userId}`,
       { can_view: canView, can_edit: canEdit },
     );
   }
 
   saveWidgetLayout(familyId: number, layout: WidgetLayoutItem[]): Observable<WidgetLayoutResponse> {
-    return this.http.put<WidgetLayoutResponse>(
-      `${this.apiUrl}/families/${familyId}/widgets/layout`,
+    return this.api.put<WidgetLayoutResponse>(
+      `/families/${familyId}/widgets/layout`,
       { layout },
     );
   }
 
   joinByCode(code: string): Observable<FamilyMember> {
-    return this.http.post<FamilyMember>(`${this.apiUrl}/families/join-by-code`, { code });
+    return this.api.post<FamilyMember>('/families/join-by-code', { code });
   }
 
   generateInviteCode(familyId: number): Observable<FamilyInviteCode> {
-    return this.http.post<FamilyInviteCode>(`${this.apiUrl}/families/${familyId}/invite-code`, {});
+    return this.api.post<FamilyInviteCode>(`/families/${familyId}/invite-code`, {});
   }
 
   removeMember(familyId: number, userId: number): Observable<{ message: string }> {
-    return this.http.delete<{ message: string }>(
-      `${this.apiUrl}/families/${familyId}/members/${userId}`,
+    return this.api.delete<{ message: string }>(
+      `/families/${familyId}/members/${userId}`,
     );
   }
 
   changeMemberRole(familyId: number, userId: number, roleName: FamilyRoleName): Observable<FamilyMember> {
-    return this.http.put<FamilyMember>(
-      `${this.apiUrl}/families/${familyId}/members/${userId}/role`,
+    return this.api.put<FamilyMember>(
+      `/families/${familyId}/members/${userId}/role`,
       { role_name: roleName },
     );
   }

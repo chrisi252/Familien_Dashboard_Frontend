@@ -1,4 +1,5 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { HeaderComponent } from '../header-component/header-component';
 import { ProfileService } from '../../services/profile-service';
@@ -24,6 +25,7 @@ export class ProfileComponent implements OnInit {
   private familyAdapter = inject(FamilyAdapterService);
   private userState = inject(UserStateService);
   private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
 
   user = signal<User | null>(null);
   isLoading = signal(true);
@@ -49,7 +51,7 @@ export class ProfileComponent implements OnInit {
     this.isLoading.set(true);
     this.errorMessage.set('');
 
-    this.profileService.getProfile().subscribe({
+    this.profileService.getProfile().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (profile) => {
         if (!profile || !profile.username) {
           this.user.set(null);
@@ -73,7 +75,7 @@ export class ProfileComponent implements OnInit {
 
   loadFamilies() {
     this.familiesLoading.set(true);
-    this.familyService.getFamilies().subscribe({
+    this.familyService.getFamilies().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (res: unknown) => {
         this.families.set(this.familyAdapter.normalizeFamiliesResponse(res));
         this.familiesLoading.set(false);
@@ -106,7 +108,7 @@ export class ProfileComponent implements OnInit {
     this.joinLoading.set(true);
     this.joinSuccess.set(false);
 
-    this.familyService.joinByCode(trimmed).subscribe({
+    this.familyService.joinByCode(trimmed).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: async () => {
         await firstValueFrom(this.userState.refreshFamilyContext());
         this.joinLoading.set(false);
@@ -132,7 +134,7 @@ export class ProfileComponent implements OnInit {
     this.deleteLoading.set(true);
     this.deleteError.set('');
 
-    this.familyService.deleteFamily(familyId).subscribe({
+    this.familyService.deleteFamily(familyId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.deleteLoading.set(false);
         this.deletingFamilyId.set(null);

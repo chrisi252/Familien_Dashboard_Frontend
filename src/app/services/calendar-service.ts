@@ -1,7 +1,6 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
+import { ApiService } from '../core/api.service';
 
 export interface CalendarApiEvent {
   id: number;
@@ -28,24 +27,22 @@ export interface UpdateCalendarEventPayload {
   providedIn: 'root',
 })
 export class CalendarService {
-  private apiUrl = `${environment.apiBase}/calendar`;
-
-  constructor(private http: HttpClient) {}
+  private api = inject(ApiService);
 
   getEventById(eventId: number): Observable<CalendarApiEvent> {
-    return this.http.get<CalendarApiEvent>(`${this.apiUrl}/${eventId}`);
+    return this.api.get<CalendarApiEvent>(`/calendar/${eventId}`);
   }
 
   updateEvent(eventId: number, payload: UpdateCalendarEventPayload): Observable<CalendarApiEvent> {
-    return this.http.put<CalendarApiEvent>(`${this.apiUrl}/${eventId}`, payload);
+    return this.api.put<CalendarApiEvent>(`/calendar/${eventId}`, payload);
   }
 
   deleteEvent(eventId: number): Observable<{ message?: string }> {
-    return this.http.delete<{ message?: string }>(`${this.apiUrl}/${eventId}`);
+    return this.api.delete<{ message?: string }>(`/calendar/${eventId}`);
   }
 
   updateVisibility(eventId: number, userIds: number[]): Observable<CalendarApiEvent> {
-    return this.http.put<CalendarApiEvent>(`${this.apiUrl}/${eventId}/visibility`, {
+    return this.api.put<CalendarApiEvent>(`/calendar/${eventId}/visibility`, {
       user_ids: userIds,
     });
   }

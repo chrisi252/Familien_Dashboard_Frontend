@@ -1,4 +1,5 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { forkJoin, switchMap } from 'rxjs';
 import { FamilyWidgetDetailed, WidgetUserPermission } from '../../../interfaces/widget';
 import { FamilyMember } from '../../../interfaces/user';
@@ -20,6 +21,7 @@ interface PermissionState {
 export class EditWidgets implements OnInit {
   private familyService = inject(FamilyService);
   private userState = inject(UserStateService);
+  private destroyRef = inject(DestroyRef);
 
   widgets = signal<FamilyWidgetDetailed[]>([]);
   members = signal<FamilyMember[]>([]);
@@ -45,6 +47,7 @@ export class EditWidgets implements OnInit {
             familyRes: this.familyService.getFamilyById(id),
           });
         }),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
         next: ({ widgetsRes, familyRes }) => {
@@ -69,7 +72,7 @@ export class EditWidgets implements OnInit {
       this.familyService.getWidgetPermissions(this.familyId!, widget.id)
     );
 
-    forkJoin(permissionRequests).subscribe({
+    forkJoin(permissionRequests).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (responses) => {
         const states = new Map<string, PermissionState>();
         
@@ -125,7 +128,7 @@ export class EditWidgets implements OnInit {
       userId, 
       permission.canView, 
       permission.canEdit
-    ).subscribe({
+    ).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.savingPermission.set(null);
         this.successMessage.set('Berechtigung gespeichert!');

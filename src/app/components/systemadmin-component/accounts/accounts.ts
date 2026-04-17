@@ -1,4 +1,5 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { AdminService } from '../../../services/admin-service';
 
@@ -9,6 +10,7 @@ import { AdminService } from '../../../services/admin-service';
 })
 export class SystemadminAccounts {
   private adminService = inject(AdminService);
+  private destroyRef = inject(DestroyRef);
 
   username = signal('');
   password = signal('');
@@ -31,7 +33,7 @@ export class SystemadminAccounts {
       password: this.password(),
       first_name: this.firstName(),
       last_name: this.lastName(),
-    }).subscribe({
+    }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (res) => {
         this.successMessage.set(`Admin-Account "${res.user.username}" wurde erstellt.`);
         this.username.set('');

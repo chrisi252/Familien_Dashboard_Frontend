@@ -1,4 +1,5 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DatePipe } from '@angular/common';
 import {  AdminService } from '../../../services/admin-service';
 import { AdminFamily } from '../../../interfaces/family-admin';
@@ -10,13 +11,14 @@ import { AdminFamily } from '../../../interfaces/family-admin';
 })
 export class SystemadminFamilies implements OnInit {
   private adminService = inject(AdminService);
+  private destroyRef = inject(DestroyRef);
 
   families = signal<AdminFamily[]>([]);
   isLoading = signal(true);
   errorMessage = signal('');
 
   ngOnInit() {
-    this.adminService.getFamilies().subscribe({
+    this.adminService.getFamilies().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (res) => {
         this.families.set(res.families);
         this.isLoading.set(false);
