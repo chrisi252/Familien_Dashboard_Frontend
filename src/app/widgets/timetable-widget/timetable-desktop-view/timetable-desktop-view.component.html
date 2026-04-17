@@ -1,0 +1,51 @@
+<div class="overflow-x-auto flex-1">
+  <table class="table table-xs w-full">
+    <thead>
+      <tr>
+        @for (day of weekdays(); track day) {
+          <th class="text-center text-xs font-semibold">{{ day }}</th>
+        }
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        @for (day of [0,1,2,3,4]; track day) {
+          <td class="align-top p-1 min-w-[4.5rem]">
+            <div class="flex flex-col gap-1">
+              @for (entry of entriesByDay()[day]; track entry.id) {
+                <div
+                  class="rounded p-1 text-xs leading-tight cursor-default relative group"
+                  [style.background-color]="entry.color + '28'"
+                  [style.border-left]="'3px solid ' + entry.color">
+                  @if (selectedPerson() === ALL_PERSONS) {
+                    <div class="text-[10px] font-bold opacity-70 truncate" [style.color]="entry.color">
+                      {{ entry.person_name }}
+                    </div>
+                  }
+                  <div class="font-semibold truncate">{{ entry.subject }}</div>
+                  <div class="opacity-70 tabular-nums">{{ entry.start_time }}–{{ entry.end_time }}</div>
+                  @if (entry.room) {
+                    <div class="opacity-55 truncate">R {{ entry.room }}</div>
+                  }
+                  @if (entry.teacher && selectedPerson() !== ALL_PERSONS) {
+                    <div class="opacity-55 truncate text-[10px]">{{ entry.teacher }}</div>
+                  }
+                  @if (canEdit()) {
+                    <div class="absolute top-0 right-0 hidden group-hover:flex gap-0.5 bg-base-100 rounded shadow p-0.5">
+                      <button class="btn btn-xs btn-ghost p-0.5" title="Bearbeiten" (click)="editEntry.emit(entry)">
+                        <ng-icon name="heroPencil" class="text-xs" />
+                      </button>
+                      <button class="btn btn-xs btn-ghost text-error p-0.5" title="Löschen" (click)="deleteEntry.emit(entry)">
+                        <ng-icon name="heroTrash" class="text-xs" />
+                      </button>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          </td>
+        }
+      </tr>
+    </tbody>
+  </table>
+</div>

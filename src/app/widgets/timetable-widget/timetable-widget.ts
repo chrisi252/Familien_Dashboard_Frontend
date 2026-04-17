@@ -7,11 +7,8 @@ import {
   OnInit,
   signal,
 } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { NgIcon, provideIcons } from '@ng-icons/core';
-import { heroPlus, heroPencil, heroTrash, heroXMark, heroCheck } from '@ng-icons/heroicons/outline';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { forkJoin, of, switchMap, take } from 'rxjs';
+import { forkJoin, switchMap, take } from 'rxjs';
 import { TimetableService } from '../../services/timetable-service';
 import { UserStateService } from '../../services/user-state-service';
 import { FamilyService } from '../../services/family-service';
@@ -22,6 +19,11 @@ import {
   TimetablePerson,
   WEEKDAY_LABELS,
 } from '../../interfaces/timetable';
+import { LoadingStateComponent } from '../../shared/loading-state/loading-state.component';
+import { TimetablePersonTabsComponent } from './timetable-person-tabs/timetable-person-tabs.component';
+import { TimetableMobileViewComponent } from './timetable-mobile-view/timetable-mobile-view.component';
+import { TimetableDesktopViewComponent } from './timetable-desktop-view/timetable-desktop-view.component';
+import { TimetableFormComponent } from './timetable-form/timetable-form.component';
 
 const DEFAULT_COLORS = [
   '#3B82F6', '#EF4444', '#10B981', '#F59E0B',
@@ -32,8 +34,14 @@ const ALL_PERSONS = '__all__';
 
 @Component({
   selector: 'app-timetable-widget',
-  imports: [FormsModule, NgIcon],
-  viewProviders: [provideIcons({ heroPlus, heroPencil, heroTrash, heroXMark, heroCheck })],
+  standalone: true,
+  imports: [
+    LoadingStateComponent,
+    TimetablePersonTabsComponent,
+    TimetableMobileViewComponent,
+    TimetableDesktopViewComponent,
+    TimetableFormComponent,
+  ],
   templateUrl: './timetable-widget.html',
   styleUrl: './timetable-widget.css',
 })
@@ -61,7 +69,6 @@ export class TimetableWidget implements OnInit {
   showAddForm = signal(false);
   editingEntry = signal<TimetableEntry | null>(null);
 
-  /** Aktiv ausgewählter Tag in der mobilen Ansicht (0=Mo … 4=Fr) */
   selectedDay = signal(0);
 
   readonly weekdays = WEEKDAY_LABELS;
@@ -78,19 +85,6 @@ export class TimetableWidget implements OnInit {
     return result;
   });
 
-  selectedDayEntries = computed(() => this.entriesByDay()[this.selectedDay()] ?? []);
-
-  personColor(username: string): string {
-    return this.persons().find((p) => p.person_name === username)?.color
-      ?? DEFAULT_COLORS[this.familyMembers().findIndex((m) => m.user_username === username) % DEFAULT_COLORS.length]
-      ?? '#6B7280';
-  }
-
-  personHasEntries(username: string): boolean {
-    return this.persons().some((p) => p.person_name === username);
-  }
-
-  // Form state
   form = signal<TimetableEntryCreate>({
     person_name: '',
     color: DEFAULT_COLORS[0],
@@ -153,31 +147,6 @@ export class TimetableWidget implements OnInit {
     }
   }
 
-  private loadAllEntries() {
-    if (!this.familyId) return;
-    const allPersons = this.persons();
-    if (allPersons.length === 0) {
-      this.entries.set([]);
-      return;
-    }
-
-    this.isLoadingEntries.set(true);
-    const requests = allPersons.map((p) =>
-      this.timetableService.getEntries(this.familyId!, p.person_name),
-    );
-
-    forkJoin(requests)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (results) => {
-          const combined = results.flatMap((r) => r.entries);
-          this.entries.set(combined);
-          this.isLoadingEntries.set(false);
-        },
-        error: () => this.isLoadingEntries.set(false),
-      });
-  }
-
   openAddForm() {
     const person = this.selectedPerson() === ALL_PERSONS ? null : this.selectedPerson();
     const color = person
@@ -220,15 +189,14 @@ export class TimetableWidget implements OnInit {
     this.editingEntry.set(null);
   }
 
-  saveEntry() {
+  saveEntry(formValue: TimetableEntryCreate) {
     if (!this.familyId) return;
-    const f = this.form();
-    if (!f.subject.trim() || !f.person_name.trim()) return;
+    if (!formValue.subject.trim() || !formValue.person_name.trim()) return;
 
     const editing = this.editingEntry();
     if (editing) {
       this.timetableService
-        .updateEntry(this.familyId, editing.id, f)
+        .updateEntry(this.familyId, editing.id, formValue)
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: (updated) => {
@@ -239,7 +207,7 @@ export class TimetableWidget implements OnInit {
         });
     } else {
       this.timetableService
-        .createEntry(this.familyId, f)
+        .createEntry(this.familyId, formValue)
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
           next: (created) => {
@@ -274,7 +242,6 @@ export class TimetableWidget implements OnInit {
       });
   }
 
-  /** Alle Einträge einer Person löschen */
   deleteAllEntriesForPerson(personName: string) {
     if (!this.familyId) return;
     this.showDeletePersonConfirm.set(null);
@@ -297,14 +264,12 @@ export class TimetableWidget implements OnInit {
         });
     };
 
-    // Wenn die Person gerade ausgewählt ist oder alle geladen sind, haben wir die Daten bereits
     if (
       this.selectedPerson() === personName ||
       this.selectedPerson() === ALL_PERSONS
     ) {
       deleteFromCurrent();
     } else {
-      // Einträge erst laden, dann löschen
       this.timetableService
         .getEntries(this.familyId, personName)
         .pipe(takeUntilDestroyed(this.destroyRef))
@@ -317,27 +282,29 @@ export class TimetableWidget implements OnInit {
     }
   }
 
-  patchForm(patch: Partial<TimetableEntryCreate>) {
-    if (patch.person_name !== undefined) {
-      const known = this.persons().find((p) => p.person_name === patch.person_name);
-      if (known) {
-        this.form.set({ ...this.form(), ...patch, color: known.color });
-        return;
-      }
-      // Farbe aus DEFAULT_COLORS basierend auf Familymember-Index
-      const memberIndex = this.familyMembers().findIndex(
-        (m) => m.user_username === patch.person_name,
-      );
-      if (memberIndex >= 0) {
-        this.form.set({
-          ...this.form(),
-          ...patch,
-          color: DEFAULT_COLORS[memberIndex % DEFAULT_COLORS.length],
-        });
-        return;
-      }
+  private loadAllEntries() {
+    if (!this.familyId) return;
+    const allPersons = this.persons();
+    if (allPersons.length === 0) {
+      this.entries.set([]);
+      return;
     }
-    this.form.set({ ...this.form(), ...patch });
+
+    this.isLoadingEntries.set(true);
+    const requests = allPersons.map((p) =>
+      this.timetableService.getEntries(this.familyId!, p.person_name),
+    );
+
+    forkJoin(requests)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (results) => {
+          const combined = results.flatMap((r) => r.entries);
+          this.entries.set(combined);
+          this.isLoadingEntries.set(false);
+        },
+        error: () => this.isLoadingEntries.set(false),
+      });
   }
 
   private refreshPersons() {

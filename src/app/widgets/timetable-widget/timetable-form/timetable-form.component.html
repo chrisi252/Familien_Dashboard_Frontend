@@ -1,0 +1,108 @@
+<div
+  class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40"
+  (click)="cancelled.emit()">
+  <div
+    class="card bg-base-100 shadow-xl w-full sm:max-w-sm sm:mx-4 rounded-b-none sm:rounded-2xl"
+    (click)="$event.stopPropagation()">
+    <div class="card-body gap-3 p-5">
+      <div class="flex justify-between items-center">
+        <h3 class="font-bold text-base">
+          {{ editingEntry() ? 'Eintrag bearbeiten' : 'Neuer Eintrag' }}
+        </h3>
+        <button class="btn btn-xs btn-ghost" (click)="cancelled.emit()">
+          <ng-icon name="heroXMark" />
+        </button>
+      </div>
+
+      <div class="flex gap-2">
+        <div class="form-control gap-1 flex-1">
+          <label class="label py-0"><span class="label-text text-xs">Person *</span></label>
+          @if (familyMembers().length > 0) {
+            <select class="select select-sm select-bordered"
+              [value]="form().person_name"
+              (change)="patchForm({ person_name: $any($event.target).value })">
+              @for (member of familyMembers(); track member.user_id) {
+                <option [value]="member.user_username">{{ member.user_username }}</option>
+              }
+            </select>
+          } @else {
+            <input class="input input-sm input-bordered" [value]="form().person_name"
+              (input)="patchForm({ person_name: $any($event.target).value })"
+              placeholder="z.B. Emma" />
+          }
+        </div>
+        <div class="form-control gap-1">
+          <label class="label py-0"><span class="label-text text-xs">Farbe</span></label>
+          <input type="color" class="input input-sm input-bordered h-9 w-12 p-1 cursor-pointer"
+            [value]="form().color"
+            (input)="patchForm({ color: $any($event.target).value })" />
+        </div>
+      </div>
+
+      <div class="flex gap-2">
+        <div class="form-control gap-1 flex-1">
+          <label class="label py-0"><span class="label-text text-xs">Wochentag *</span></label>
+          <select class="select select-sm select-bordered"
+            [value]="form().weekday"
+            (change)="patchForm({ weekday: +$any($event.target).value })">
+            @for (day of weekdays; track day; let i = $index) {
+              <option [value]="i">{{ day }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="flex gap-2">
+        <div class="form-control gap-1 flex-1">
+          <label class="label py-0"><span class="label-text text-xs">Von *</span></label>
+          <input type="time" class="input input-sm input-bordered"
+            [value]="form().start_time"
+            (input)="patchForm({ start_time: $any($event.target).value })" />
+        </div>
+        <div class="form-control gap-1 flex-1">
+          <label class="label py-0"><span class="label-text text-xs">Bis *</span></label>
+          <input type="time" class="input input-sm input-bordered"
+            [value]="form().end_time"
+            (input)="patchForm({ end_time: $any($event.target).value })" />
+        </div>
+      </div>
+
+      <div class="form-control gap-1">
+        <label class="label py-0"><span class="label-text text-xs">Fach *</span></label>
+        <input class="input input-sm input-bordered" [value]="form().subject"
+          (input)="patchForm({ subject: $any($event.target).value })"
+          placeholder="z.B. Mathematik" />
+      </div>
+
+      <div class="flex gap-2">
+        <div class="form-control gap-1 flex-1">
+          <label class="label py-0"><span class="label-text text-xs">Raum</span></label>
+          <input class="input input-sm input-bordered" [value]="form().room ?? ''"
+            (input)="patchForm({ room: $any($event.target).value || null })"
+            placeholder="101" />
+        </div>
+        <div class="form-control gap-1 flex-1">
+          <label class="label py-0"><span class="label-text text-xs">Lehrkraft</span></label>
+          <input class="input input-sm input-bordered" [value]="form().teacher ?? ''"
+            (input)="patchForm({ teacher: $any($event.target).value || null })"
+            placeholder="Hr. Müller" />
+        </div>
+      </div>
+
+      <div class="form-control gap-1">
+        <label class="label py-0"><span class="label-text text-xs">Notiz</span></label>
+        <input class="input input-sm input-bordered" [value]="form().note ?? ''"
+          (input)="patchForm({ note: $any($event.target).value || null })" />
+      </div>
+
+      <div class="flex gap-2 justify-end pt-1">
+        <button class="btn btn-sm btn-ghost" (click)="cancelled.emit()">Abbrechen</button>
+        <button class="btn btn-sm btn-primary"
+          [disabled]="!form().subject.trim() || !form().person_name.trim()"
+          (click)="saved.emit(form())">
+          <ng-icon name="heroCheck" /> Speichern
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

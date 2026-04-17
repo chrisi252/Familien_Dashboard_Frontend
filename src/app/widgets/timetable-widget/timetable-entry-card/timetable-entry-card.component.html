@@ -1,0 +1,42 @@
+<div
+  class="rounded-lg p-2 text-sm relative group"
+  [style.background-color]="entry().color + '22'"
+  [style.border-left]="'4px solid ' + entry().color">
+  @if (showPerson()) {
+    <div class="text-[11px] font-bold opacity-70 truncate" [style.color]="entry().color">
+      {{ entry().person_name }}
+    </div>
+  }
+  <div class="font-semibold">{{ entry().subject }}</div>
+  <div class="opacity-70 text-xs tabular-nums">{{ entry().start_time }}–{{ entry().end_time }}</div>
+  @if (entry().room) {
+    <div class="opacity-55 text-xs">Raum {{ entry().room }}</div>
+  }
+  @if (entry().teacher) {
+    <div class="opacity-55 text-xs">{{ entry().teacher }}</div>
+  }
+  @if (entry().note) {
+    <div class="opacity-50 text-xs italic mt-0.5">{{ entry().note }}</div>
+  }
+  @if (canEdit()) {
+    @if (inlinedActions()) {
+      <div class="flex gap-0.5 mt-1 justify-end">
+        <button class="btn btn-xs btn-ghost p-0.5" title="Bearbeiten" (click)="editRequested.emit(entry())">
+          <ng-icon name="heroPencil" class="text-xs" />
+        </button>
+        <button class="btn btn-xs btn-ghost text-error p-0.5" title="Löschen" (click)="deleteRequested.emit(entry())">
+          <ng-icon name="heroTrash" class="text-xs" />
+        </button>
+      </div>
+    } @else {
+      <div class="absolute top-1 right-1 hidden group-hover:flex gap-0.5">
+        <button class="btn btn-xs btn-ghost p-0.5" title="Bearbeiten" (click)="editRequested.emit(entry())">
+          <ng-icon name="heroPencil" class="text-xs" />
+        </button>
+        <button class="btn btn-xs btn-ghost text-error p-0.5" title="Löschen" (click)="deleteRequested.emit(entry())">
+          <ng-icon name="heroTrash" class="text-xs" />
+        </button>
+      </div>
+    }
+  }
+</div>

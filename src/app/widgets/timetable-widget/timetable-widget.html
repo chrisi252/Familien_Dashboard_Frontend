@@ -1,69 +1,17 @@
 <div class="flex flex-col h-full gap-2 overflow-hidden">
 
-  @if (isLoading()) {
-    <div class="flex justify-center items-center flex-1">
-      <span class="loading loading-spinner loading-md"></span>
-    </div>
-  } @else if (errorMessage()) {
-    <div class="alert alert-error text-sm">{{ errorMessage() }}</div>
-  } @else {
+  <app-loading-state [loading]="isLoading()" [error]="errorMessage()">
 
-    <!-- Person tabs -->
-    <div class="flex gap-1 flex-wrap items-center">
-      <button
-        class="btn btn-xs"
-        [class.btn-primary]="selectedPerson() === ALL_PERSONS"
-        [class.btn-ghost]="selectedPerson() !== ALL_PERSONS"
-        (click)="selectPerson(ALL_PERSONS)">
-        Alle
-      </button>
-
-      @for (member of familyMembers(); track member.user_id) {
-        @let isSelected = selectedPerson() === member.user_username;
-        @let hasEntries = personHasEntries(member.user_username);
-        @let color = personColor(member.user_username);
-        <div class="flex items-center gap-0.5">
-          <button
-            class="btn btn-xs"
-            [class.btn-ghost]="!isSelected"
-            [style.background-color]="isSelected ? color : null"
-            [style.color]="isSelected ? '#fff' : null"
-            [style.border-color]="!isSelected ? color : null"
-            [class.opacity-50]="!hasEntries"
-            (click)="selectPerson(member.user_username)">
-            <span
-              class="inline-block w-2 h-2 rounded-full flex-shrink-0"
-              [style.background-color]="isSelected ? '#ffffff88' : color">
-            </span>
-            {{ member.user_username }}
-          </button>
-
-          @if (canEdit() && isSelected && hasEntries) {
-            @if (showDeletePersonConfirm() === member.user_username) {
-              <button class="btn btn-xs btn-error" (click)="deleteAllEntriesForPerson(member.user_username)">
-                Alle löschen?
-              </button>
-              <button class="btn btn-xs btn-ghost" (click)="showDeletePersonConfirm.set(null)">
-                <ng-icon name="heroXMark" />
-              </button>
-            } @else {
-              <button
-                class="btn btn-xs btn-ghost text-error opacity-70"
-                title="Stundenplan löschen"
-                (click)="showDeletePersonConfirm.set(member.user_username)">
-                <ng-icon name="heroTrash" />
-              </button>
-            }
-          }
-        </div>
-      }
-
-      @if (canEdit()) {
-        <button class="btn btn-xs btn-ghost opacity-60" title="Eintrag hinzufügen" (click)="openAddForm()">
-          <ng-icon name="heroPlus" />
-        </button>
-      }
-    </div>
+    <app-timetable-person-tabs
+      [familyMembers]="familyMembers()"
+      [persons]="persons()"
+      [selectedPerson]="selectedPerson()"
+      [showDeletePersonConfirm]="showDeletePersonConfirm()"
+      [canEdit]="canEdit()"
+      (personSelected)="selectPerson($event)"
+      (deletePersonRequested)="showDeletePersonConfirm.set($event)"
+      (deletePersonConfirmed)="deleteAllEntriesForPerson($event)"
+      (addEntryRequested)="openAddForm()" />
 
     @if (isLoadingEntries()) {
       <div class="flex justify-center items-center flex-1">
@@ -82,227 +30,38 @@
       </div>
     } @else {
 
-      <!-- Mobile: Tages-Tabs + Liste -->
-      <div class="flex md:hidden flex-col gap-2 flex-1 overflow-hidden">
-        <div class="flex gap-1">
-          @for (day of weekdays; track day; let i = $index) {
-            <button
-              class="btn btn-xs flex-1"
-              [class.btn-primary]="selectedDay() === i"
-              [class.btn-ghost]="selectedDay() !== i"
-              (click)="selectedDay.set(i)">
-              {{ day }}
-              @if (entriesByDay()[i].length > 0) {
-                <span class="badge badge-xs ml-0.5">{{ entriesByDay()[i].length }}</span>
-              }
-            </button>
-          }
-        </div>
+      <app-timetable-mobile-view
+        class="flex md:hidden flex-col gap-2 flex-1 overflow-hidden"
+        [entriesByDay]="entriesByDay()"
+        [weekdays]="weekdays"
+        [selectedDay]="selectedDay()"
+        [selectedPerson]="selectedPerson()"
+        [canEdit]="canEdit()"
+        (daySelected)="selectedDay.set($event)"
+        (editEntry)="openEditForm($event)"
+        (deleteEntry)="deleteEntry($event)" />
 
-        <div class="overflow-y-auto flex-1 flex flex-col gap-1.5 pr-0.5">
-          @if (selectedDayEntries().length === 0) {
-            <div class="flex items-center justify-center flex-1 opacity-40 text-sm">
-              Keine Einträge
-            </div>
-          } @else {
-            @for (entry of selectedDayEntries(); track entry.id) {
-              <div
-                class="rounded-lg p-2 text-sm relative group"
-                [style.background-color]="entry.color + '22'"
-                [style.border-left]="'4px solid ' + entry.color">
-                @if (selectedPerson() === ALL_PERSONS) {
-                  <div class="text-[11px] font-bold opacity-70 truncate" [style.color]="entry.color">
-                    {{ entry.person_name }}
-                  </div>
-                }
-                <div class="font-semibold">{{ entry.subject }}</div>
-                <div class="opacity-70 text-xs tabular-nums">{{ entry.start_time }}–{{ entry.end_time }}</div>
-                @if (entry.room) {
-                  <div class="opacity-55 text-xs">Raum {{ entry.room }}</div>
-                }
-                @if (entry.teacher) {
-                  <div class="opacity-55 text-xs">{{ entry.teacher }}</div>
-                }
-                @if (entry.note) {
-                  <div class="opacity-50 text-xs italic mt-0.5">{{ entry.note }}</div>
-                }
-                @if (canEdit()) {
-                  <div class="absolute top-1 right-1 hidden group-hover:flex gap-0.5">
-                    <button class="btn btn-xs btn-ghost p-0.5" title="Bearbeiten" (click)="openEditForm(entry)">
-                      <ng-icon name="heroPencil" class="text-xs" />
-                    </button>
-                    <button class="btn btn-xs btn-ghost text-error p-0.5" title="Löschen" (click)="deleteEntry(entry)">
-                      <ng-icon name="heroTrash" class="text-xs" />
-                    </button>
-                  </div>
-                }
-              </div>
-            }
-          }
-        </div>
-      </div>
+      <app-timetable-desktop-view
+        class="hidden md:block overflow-x-auto flex-1"
+        [entriesByDay]="entriesByDay()"
+        [weekdays]="weekdays"
+        [selectedPerson]="selectedPerson()"
+        [canEdit]="canEdit()"
+        (editEntry)="openEditForm($event)"
+        (deleteEntry)="deleteEntry($event)" />
 
-      <!-- Desktop: Wochentabelle -->
-      <div class="hidden md:block overflow-x-auto flex-1">
-        <table class="table table-xs w-full">
-          <thead>
-            <tr>
-              @for (day of weekdays; track day) {
-                <th class="text-center text-xs font-semibold">{{ day }}</th>
-              }
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              @for (day of [0,1,2,3,4]; track day) {
-                <td class="align-top p-1 min-w-[4.5rem]">
-                  <div class="flex flex-col gap-1">
-                    @for (entry of entriesByDay()[day]; track entry.id) {
-                      <div
-                        class="rounded p-1 text-xs leading-tight cursor-default relative group"
-                        [style.background-color]="entry.color + '28'"
-                        [style.border-left]="'3px solid ' + entry.color">
-                        @if (selectedPerson() === ALL_PERSONS) {
-                          <div class="text-[10px] font-bold opacity-70 truncate" [style.color]="entry.color">
-                            {{ entry.person_name }}
-                          </div>
-                        }
-                        <div class="font-semibold truncate">{{ entry.subject }}</div>
-                        <div class="opacity-70 tabular-nums">{{ entry.start_time }}–{{ entry.end_time }}</div>
-                        @if (entry.room) {
-                          <div class="opacity-55 truncate">R {{ entry.room }}</div>
-                        }
-                        @if (entry.teacher && selectedPerson() !== ALL_PERSONS) {
-                          <div class="opacity-55 truncate text-[10px]">{{ entry.teacher }}</div>
-                        }
-                        @if (canEdit()) {
-                          <div class="absolute top-0 right-0 hidden group-hover:flex gap-0.5 bg-base-100 rounded shadow p-0.5">
-                            <button class="btn btn-xs btn-ghost p-0.5" title="Bearbeiten" (click)="openEditForm(entry)">
-                              <ng-icon name="heroPencil" class="text-xs" />
-                            </button>
-                            <button class="btn btn-xs btn-ghost text-error p-0.5" title="Löschen" (click)="deleteEntry(entry)">
-                              <ng-icon name="heroTrash" class="text-xs" />
-                            </button>
-                          </div>
-                        }
-                      </div>
-                    }
-                  </div>
-                </td>
-              }
-            </tr>
-          </tbody>
-        </table>
-      </div>
     }
 
-    <!-- Add/Edit modal -->
     @if (showAddForm()) {
-      <div class="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40" (click)="closeForm()">
-        <div class="card bg-base-100 shadow-xl w-full sm:max-w-sm sm:mx-4 rounded-b-none sm:rounded-2xl" (click)="$event.stopPropagation()">
-          <div class="card-body gap-3 p-5">
-            <div class="flex justify-between items-center">
-              <h3 class="font-bold text-base">
-                {{ editingEntry() ? 'Eintrag bearbeiten' : 'Neuer Eintrag' }}
-              </h3>
-              <button class="btn btn-xs btn-ghost" (click)="closeForm()">
-                <ng-icon name="heroXMark" />
-              </button>
-            </div>
-
-            <div class="flex gap-2">
-              <div class="form-control gap-1 flex-1">
-                <label class="label py-0"><span class="label-text text-xs">Person *</span></label>
-                @if (familyMembers().length > 0) {
-                  <select class="select select-sm select-bordered"
-                    [value]="form().person_name"
-                    (change)="patchForm({ person_name: $any($event.target).value })">
-                    @for (member of familyMembers(); track member.user_id) {
-                      <option [value]="member.user_username">{{ member.user_username }}</option>
-                    }
-                  </select>
-                } @else {
-                  <input class="input input-sm input-bordered" [value]="form().person_name"
-                    (input)="patchForm({ person_name: $any($event.target).value })"
-                    placeholder="z.B. Emma" />
-                }
-              </div>
-              <div class="form-control gap-1">
-                <label class="label py-0"><span class="label-text text-xs">Farbe</span></label>
-                <input type="color" class="input input-sm input-bordered h-9 w-12 p-1 cursor-pointer"
-                  [value]="form().color"
-                  (input)="patchForm({ color: $any($event.target).value })" />
-              </div>
-            </div>
-
-            <div class="flex gap-2">
-              <div class="form-control gap-1 flex-1">
-                <label class="label py-0"><span class="label-text text-xs">Wochentag *</span></label>
-                <select class="select select-sm select-bordered"
-                  [value]="form().weekday"
-                  (change)="patchForm({ weekday: +$any($event.target).value })">
-                  @for (day of weekdays; track day; let i = $index) {
-                    <option [value]="i">{{ day }}</option>
-                  }
-                </select>
-              </div>
-            </div>
-
-            <div class="flex gap-2">
-              <div class="form-control gap-1 flex-1">
-                <label class="label py-0"><span class="label-text text-xs">Von *</span></label>
-                <input type="time" class="input input-sm input-bordered"
-                  [value]="form().start_time"
-                  (input)="patchForm({ start_time: $any($event.target).value })" />
-              </div>
-              <div class="form-control gap-1 flex-1">
-                <label class="label py-0"><span class="label-text text-xs">Bis *</span></label>
-                <input type="time" class="input input-sm input-bordered"
-                  [value]="form().end_time"
-                  (input)="patchForm({ end_time: $any($event.target).value })" />
-              </div>
-            </div>
-
-            <div class="form-control gap-1">
-              <label class="label py-0"><span class="label-text text-xs">Fach *</span></label>
-              <input class="input input-sm input-bordered" [value]="form().subject"
-                (input)="patchForm({ subject: $any($event.target).value })"
-                placeholder="z.B. Mathematik" />
-            </div>
-
-            <div class="flex gap-2">
-              <div class="form-control gap-1 flex-1">
-                <label class="label py-0"><span class="label-text text-xs">Raum</span></label>
-                <input class="input input-sm input-bordered" [value]="form().room ?? ''"
-                  (input)="patchForm({ room: $any($event.target).value || null })"
-                  placeholder="101" />
-              </div>
-              <div class="form-control gap-1 flex-1">
-                <label class="label py-0"><span class="label-text text-xs">Lehrkraft</span></label>
-                <input class="input input-sm input-bordered" [value]="form().teacher ?? ''"
-                  (input)="patchForm({ teacher: $any($event.target).value || null })"
-                  placeholder="Hr. Müller" />
-              </div>
-            </div>
-
-            <div class="form-control gap-1">
-              <label class="label py-0"><span class="label-text text-xs">Notiz</span></label>
-              <input class="input input-sm input-bordered" [value]="form().note ?? ''"
-                (input)="patchForm({ note: $any($event.target).value || null })" />
-            </div>
-
-            <div class="flex gap-2 justify-end pt-1">
-              <button class="btn btn-sm btn-ghost" (click)="closeForm()">Abbrechen</button>
-              <button class="btn btn-sm btn-primary"
-                [disabled]="!form().subject.trim() || !form().person_name.trim()"
-                (click)="saveEntry()">
-                <ng-icon name="heroCheck" /> Speichern
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+      <app-timetable-form
+        [familyMembers]="familyMembers()"
+        [persons]="persons()"
+        [editingEntry]="editingEntry()"
+        [initialForm]="form()"
+        (saved)="saveEntry($event)"
+        (cancelled)="closeForm()" />
     }
 
-  }
+  </app-loading-state>
+
 </div>

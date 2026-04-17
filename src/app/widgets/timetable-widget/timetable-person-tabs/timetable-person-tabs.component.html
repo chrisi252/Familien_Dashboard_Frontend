@@ -1,0 +1,55 @@
+<div class="flex gap-1 flex-wrap items-center">
+  <button
+    class="btn btn-xs"
+    [class.btn-primary]="selectedPerson() === ALL_PERSONS"
+    [class.btn-ghost]="selectedPerson() !== ALL_PERSONS"
+    (click)="personSelected.emit(ALL_PERSONS)">
+    Alle
+  </button>
+
+  @for (member of familyMembers(); track member.user_id) {
+    @let isSelected = selectedPerson() === member.user_username;
+    @let hasEntries = personHasEntries(member.user_username);
+    @let color = personColor(member.user_username);
+    <div class="flex items-center gap-0.5">
+      <button
+        class="btn btn-xs"
+        [class.btn-ghost]="!isSelected"
+        [style.background-color]="isSelected ? color : null"
+        [style.color]="isSelected ? '#fff' : null"
+        [style.border-color]="!isSelected ? color : null"
+        [class.opacity-50]="!hasEntries"
+        (click)="personSelected.emit(member.user_username)">
+        <span
+          class="inline-block w-2 h-2 rounded-full flex-shrink-0"
+          [style.background-color]="isSelected ? '#ffffff88' : color">
+        </span>
+        {{ member.user_username }}
+      </button>
+
+      @if (canEdit() && isSelected && hasEntries) {
+        @if (showDeletePersonConfirm() === member.user_username) {
+          <button class="btn btn-xs btn-error" (click)="deletePersonConfirmed.emit(member.user_username)">
+            Alle löschen?
+          </button>
+          <button class="btn btn-xs btn-ghost" (click)="deletePersonRequested.emit(null)">
+            <ng-icon name="heroXMark" />
+          </button>
+        } @else {
+          <button
+            class="btn btn-xs btn-ghost text-error opacity-70"
+            title="Stundenplan löschen"
+            (click)="deletePersonRequested.emit(member.user_username)">
+            <ng-icon name="heroTrash" />
+          </button>
+        }
+      }
+    </div>
+  }
+
+  @if (canEdit()) {
+    <button class="btn btn-xs btn-ghost opacity-60" title="Eintrag hinzufügen" (click)="addEntryRequested.emit()">
+      <ng-icon name="heroPlus" />
+    </button>
+  }
+</div>
