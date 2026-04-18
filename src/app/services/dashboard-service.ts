@@ -1,10 +1,10 @@
 import { computed, inject, Injectable, signal, Type } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Widget } from '../interfaces/widget';
 import { TodoWidget } from '../widgets/todo-widget/todo-widget';
 import { TimetableWidget } from '../widgets/timetable-widget/timetable-widget';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { map } from 'rxjs';
+import { debounceTime, map, Subject, switchMap } from 'rxjs';
 import { WeatherWidget } from '../widgets/weather-widget/weather-widget';
 import { FamilyService } from './family-service';
 import { UserStateService } from './user-state-service';
@@ -46,6 +46,34 @@ export class DashboardService {
   isLoading = signal(false);
   isSaving = signal(false);
   errorMessage = signal('');
+
+  private saveTrigger$ = new Subject<void>();
+
+  constructor() {
+    this.saveTrigger$
+      .pipe(
+        debounceTime(300),
+        switchMap(() => {
+          const familyId = this.userState.currentFamilyId();
+          if (!familyId) {
+            this.isSaving.set(false);
+            return [];
+          }
+          const layout: WidgetLayoutItem[] = this.addedWidgets().map((widget, index) => ({
+            family_widget_id: widget.id,
+            position: index,
+            grid_col: widget.cols ?? 1,
+            grid_row: widget.rows ?? 1,
+          }));
+          return this.familyService.saveWidgetLayout(familyId, layout);
+        }),
+        takeUntilDestroyed(),
+      )
+      .subscribe({
+        next: () => this.isSaving.set(false),
+        error: () => this.isSaving.set(false),
+      });
+  }
 
   addWidget(widget: Widget) {
     this.addedWidgets.update(widgets => [...widgets, { ...widget }]);
@@ -166,27 +194,8 @@ export class DashboardService {
     };
   }
 
-  // Speichert das aktuelle Layout atomar ans Backend
   private saveLayoutToBackend() {
-    const familyId = this.userState.currentFamilyId();
-    if (!familyId) return;
-
-    const layout: WidgetLayoutItem[] = this.addedWidgets().map((widget, index) => ({
-      family_widget_id: widget.id,
-      position: index,
-      grid_col: widget.cols ?? 1,
-      grid_row: widget.rows ?? 1,
-    }));
-
     this.isSaving.set(true);
-    this.familyService.saveWidgetLayout(familyId, layout).subscribe({
-      next: () => {
-        this.isSaving.set(false);
-      },
-      error: () => {
-        this.isSaving.set(false);
-        // Fehler ignorieren, lokales Layout bleibt
-      }
-    });
+    this.saveTrigger$.next();
   }
 }

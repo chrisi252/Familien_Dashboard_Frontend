@@ -2,7 +2,8 @@
   class="card relative bg-base-100 shadow-xl w-full h-full min-w-0 rounded-xl transition-colors duration-300"
 
  
-  cdkDrag 
+  cdkDrag
+  [cdkDragDisabled]="modalState.isAnyOpen()"
   cdkDragPreviewContainer="parent">
   
          <button

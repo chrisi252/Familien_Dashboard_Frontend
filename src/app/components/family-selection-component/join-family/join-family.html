@@ -11,9 +11,9 @@
         Gib den 6-stelligen Einladungscode ein, den dir ein Familienadmin gegeben hat.
       </p>
 
-      @if (errorMessage) {
+      @if (errorMessage()) {
         <div class="mb-4">
-          <app-alert-banner [message]="errorMessage" type="error" />
+          <app-alert-banner [message]="errorMessage()" type="error" />
         </div>
       }
 
@@ -29,9 +29,9 @@
 
         <button
           (click)="tryJoinByCode()"
-          [disabled]="isLoading"
+          [disabled]="isLoading()"
           class="btn btn-primary">
-          @if (isLoading) {
+          @if (isLoading()) {
             <span class="loading loading-spinner loading-sm"></span>
           }
           Beitreten

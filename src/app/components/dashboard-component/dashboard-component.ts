@@ -4,10 +4,11 @@ import { WidgetComponent } from "../widget-component/widget-component";
 import { DashboardService } from "../../services/dashboard-service";
 import { AutoAnimateDirective } from "../../directives/auto-animate-directive";
 import { CdkDropList, CdkDropListGroup, CdkDragDrop } from "@angular/cdk/drag-drop";
+import { AlertBannerComponent } from "../../shared/alert-banner/alert-banner.component";
 
 @Component({
   selector: 'app-dashboard-component',
-  imports: [HeaderComponent, WidgetComponent, AutoAnimateDirective, CdkDropList, CdkDropListGroup],
+  imports: [HeaderComponent, WidgetComponent, AutoAnimateDirective, CdkDropList, CdkDropListGroup, AlertBannerComponent],
   templateUrl: './dashboard-component.html',
   styleUrl: './dashboard-component.css',
 })

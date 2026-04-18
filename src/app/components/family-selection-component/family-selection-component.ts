@@ -23,25 +23,12 @@ export class FamilySelectionComponent {
 
 
   onJoinFamily() {
-    this.isLoading = true;
     this.errorMessage = '';
-
-
-
-    console.log('Join Family clicked');
-    this.isLoading = false;
-       this.router.navigate(['/family-selection/join']);
+    this.router.navigate(['/family-selection/join']);
   }
 
-
   onCreateFamily() {
-    this.isLoading = true;
     this.errorMessage = '';
-
-
-
-    console.log('Create Family clicked');
-    this.isLoading = false;
     this.router.navigate(['/family-selection/create']);
   }
 

@@ -5,6 +5,12 @@
 
     <app-header-component></app-header-component>
 
+      @if (store.errorMessage()) {
+        <div class="px-4 pt-4">
+          <app-alert-banner [message]="store.errorMessage()" type="error" />
+        </div>
+      }
+
       <div class="pt-5 sm:pt-5 px-4 pb-2 sm:pb-4 flex justify-stretch sm:justify-end gap-2">
         <button class="btn btn-ghost btn-sm sm:btn-md" (click)="store.loadWidgetsFromBackend()" title="Aktualisieren">
           <span class="text-lg">↻</span>

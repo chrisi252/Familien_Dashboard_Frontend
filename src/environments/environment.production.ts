@@ -4,11 +4,13 @@ declare global {
   }
 }
 
+const API_BASE_FALLBACK = '/api';
+
 function resolveApiBase(): string {
   if (typeof window !== 'undefined' && window.__env?.API_URL) {
     return window.__env.API_URL;
   }
-  return '/api';
+  return API_BASE_FALLBACK;
 }
 
 export const environment = {

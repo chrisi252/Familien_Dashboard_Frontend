@@ -5,6 +5,7 @@ import { WidgetsOptions } from "./widgets-options/widgets-options";
 import { NgIcon } from '@ng-icons/core';
 import { CdkDrag } from '@angular/cdk/drag-drop';
 import { DashboardService } from '../../services/dashboard-service';
+import { ModalStateService } from '../../shared/modal/modal-state.service';
 
 
 
@@ -21,6 +22,7 @@ import { DashboardService } from '../../services/dashboard-service';
 })
 export class WidgetComponent {
   private readonly store = inject(DashboardService);
+  protected readonly modalState = inject(ModalStateService);
   data = input.required<Widget>();
   showOptions = signal(false);
   colSpan = computed(() => this.store.isMobile() ? 1 : (this.data().cols ?? 1));
