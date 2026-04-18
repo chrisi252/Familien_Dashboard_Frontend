@@ -12,9 +12,9 @@
         <h2 class="card-title text-3xl font-bold mb-2 text-base-content">Family Setup</h2>
         <p class="text-base-content mb-6">Was möchtest du tun?</p>
 
-        @if(errorMessage) {
-          <div class="alert alert-error mb-4">
-            <span>{{ errorMessage }}</span>
+        @if (errorMessage) {
+          <div class="mb-4">
+            <app-alert-banner [message]="errorMessage" type="error" />
           </div>
         }
 

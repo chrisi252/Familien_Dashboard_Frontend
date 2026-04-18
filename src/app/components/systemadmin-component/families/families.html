@@ -1,13 +1,7 @@
 <div class="flex flex-col gap-6">
   <h1 class="text-2xl font-bold">Familien verwalten</h1>
 
-  @if (isLoading()) {
-    <div class="flex justify-center py-12">
-      <span class="loading loading-spinner loading-lg"></span>
-    </div>
-  } @else if (errorMessage()) {
-    <div class="alert alert-error">{{ errorMessage() }}</div>
-  } @else {
+  <app-loading-state [loading]="isLoading()" [error]="errorMessage()">
     <div class="overflow-x-auto">
       <table class="table table-zebra w-full">
         <thead>
@@ -33,5 +27,5 @@
       </table>
     </div>
     <div class="text-sm opacity-50">{{ families().length }} Familie(n) gesamt</div>
-  }
+  </app-loading-state>
 </div>

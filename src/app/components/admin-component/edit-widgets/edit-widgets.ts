@@ -6,6 +6,8 @@ import { FamilyMember } from '../../../interfaces/user';
 import { FamilyService } from '../../../services/family-service';
 import { UserStateService } from '../../../services/user-state-service';
 import { FormsModule } from '@angular/forms';
+import { AlertBannerComponent } from '../../../shared/alert-banner/alert-banner.component';
+import { LoadingStateComponent } from '../../../shared/loading-state/loading-state.component';
 
 interface PermissionState {
   canView: boolean;
@@ -14,7 +16,7 @@ interface PermissionState {
 
 @Component({
   selector: 'app-edit-widgets',
-  imports: [FormsModule],
+  imports: [FormsModule, AlertBannerComponent, LoadingStateComponent],
   templateUrl: './edit-widgets.html',
   styleUrl: './edit-widgets.css',
 })

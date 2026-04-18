@@ -26,10 +26,14 @@
     </div>
 
     @if (error()) {
-      <div class="alert alert-error mt-3">{{ error() }}</div>
+      <div class="mt-3">
+        <app-alert-banner [message]="error()" type="error" />
+      </div>
     }
     @if (success()) {
-      <div class="alert alert-success mt-3">Erfolgreich beigetreten!</div>
+      <div class="mt-3">
+        <app-alert-banner message="Erfolgreich beigetreten!" type="success" />
+      </div>
     }
   </div>
 </section>

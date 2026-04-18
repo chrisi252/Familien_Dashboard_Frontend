@@ -4,11 +4,12 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ThemeSwitchComponent } from '../theme-switch-component/theme-switch-component';
 import { AuthService } from '../../services/auth-service';
 import { UserStateService } from '../../services/user-state-service';
+import { AlertBannerComponent } from '../../shared/alert-banner/alert-banner.component';
 
 @Component({
   selector: 'app-login-component',
   standalone: true,
-  imports: [ThemeSwitchComponent, RouterLink, ReactiveFormsModule],
+  imports: [ThemeSwitchComponent, RouterLink, ReactiveFormsModule, AlertBannerComponent],
   templateUrl: './login-component.html',
   styleUrl: './login-component.css',
 })
@@ -49,7 +50,7 @@ export class LoginComponent {
       },
       error: (error: { error?: { error?: string } }) => {
         console.error('Login failed:', error);
-        this.errorMessage = error.error?.error ?? 'Login fehlgeschlagen. Bitte pruefe deine Daten.';
+        this.errorMessage = 'Login fehlgeschlagen. Bitte pruefe deine Daten.';
         this.cdr.markForCheck();
       }
     });

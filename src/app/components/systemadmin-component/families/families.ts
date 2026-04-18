@@ -3,10 +3,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DatePipe } from '@angular/common';
 import {  AdminService } from '../../../services/admin-service';
 import { AdminFamily } from '../../../interfaces/family-admin';
+import { LoadingStateComponent } from '../../../shared/loading-state/loading-state.component';
 
 @Component({
   selector: 'app-systemadmin-families',
-  imports: [DatePipe],
+  imports: [DatePipe, LoadingStateComponent],
   templateUrl: './families.html',
 })
 export class SystemadminFamilies implements OnInit {

@@ -4,10 +4,11 @@ import { ThemeSwitchComponent } from '../theme-switch-component/theme-switch-com
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth-service';
 import { UserStateService } from '../../services/user-state-service';
+import { AlertBannerComponent } from '../../shared/alert-banner/alert-banner.component';
 
 @Component({
   selector: 'app-register-component',
-  imports: [ThemeSwitchComponent, RouterLink, ReactiveFormsModule],
+  imports: [ThemeSwitchComponent, RouterLink, ReactiveFormsModule, AlertBannerComponent],
   templateUrl: './register-component.html',
   styleUrl: './register-component.css',
 })

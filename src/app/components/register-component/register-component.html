@@ -12,9 +12,9 @@
       <h2 class="card-title text-2xl font-bold mb-4 text-base-content">Register</h2>
 
       @if (errorMessage) {
-      <div class="alert alert-error mb-4">
-        <span>{{ errorMessage }}</span>
-      </div>
+        <div class="mb-4">
+          <app-alert-banner [message]="errorMessage" type="error" />
+        </div>
       }
 
       <div class="form-control mb-2">

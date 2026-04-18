@@ -5,10 +5,11 @@ import { FamilyService } from '../../../services/family-service';
 import { UserStateService } from '../../../services/user-state-service';
 import { FormsModule } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
+import { AlertBannerComponent } from '../../../shared/alert-banner/alert-banner.component';
 
 @Component({
   selector: 'app-create-family',
-  imports: [ThemeSwitchComponent, FormsModule],
+  imports: [ThemeSwitchComponent, FormsModule, AlertBannerComponent],
   templateUrl: './create-family.html',
   styleUrl: './create-family.css',
 })

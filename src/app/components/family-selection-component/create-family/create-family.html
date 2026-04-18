@@ -9,10 +9,10 @@
             <h2
                 class="card-title text-3xl font-bold mb-2 text-base-content">Bennenen sie ihre Familie</h2>
             <p class="text-base-content mb-6">Erstellen sie eine neue Familie und laden sie andere Mitglieder ein.</p>
-            @if(errorMessage) {
-            <div class="alert alert-error mb-4">
-                <span>{{ errorMessage }}</span>
-            </div>
+            @if (errorMessage) {
+              <div class="mb-4">
+                <app-alert-banner [message]="errorMessage" type="error" />
+              </div>
             }
 
             <div class="flex flex-col gap-4">

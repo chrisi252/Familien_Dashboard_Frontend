@@ -37,17 +37,8 @@
 				</button>
 			</div>
 
-			@if (error(); as message) {
-				<div class="alert alert-error">
-					<span>{{ message }}</span>
-				</div>
-			}
-
-			@if (success(); as message) {
-				<div class="alert alert-success">
-					<span>{{ message }}</span>
-				</div>
-			}
+			<app-alert-banner [message]="error() ?? ''" type="error" />
+			<app-alert-banner [message]="success() ?? ''" type="success" />
 		}
 	</div>
 </section>

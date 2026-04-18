@@ -1,11 +1,7 @@
 import { computed, inject, Injectable, signal, Type } from '@angular/core';
-import { NotesWidget } from '../widgets/notes-widget/notes-widget';
 import { Widget } from '../interfaces/widget';
-import { ScheduleWidget } from '../widgets/schedule-widget/schedule-widget';
 import { TodoWidget } from '../widgets/todo-widget/todo-widget';
-import { CalendarWidget } from '../widgets/calendar-widget/calendar-widget';
 import { TimetableWidget } from '../widgets/timetable-widget/timetable-widget';
-
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
@@ -16,11 +12,9 @@ import { FamilyWidgetDetailed, WidgetLayoutItem } from '../interfaces/widget';
 
 // Widget-Registry: Mappt widget_key vom Backend zu Angular Components
 const WIDGET_REGISTRY: Record<string, { content: Type<unknown>; label: string; defaultRows: number; defaultCols: number }> = {
-  notes: { content: NotesWidget, label: 'Notizen', defaultRows: 2, defaultCols: 2 },
+
   todo: { content: TodoWidget, label: 'Aufgaben', defaultRows: 2, defaultCols: 1 },
-  schedule: { content: ScheduleWidget, label: 'Termine', defaultRows: 2, defaultCols: 1 },
   weather: { content: WeatherWidget, label: 'Wetter', defaultRows: 2, defaultCols: 1 },
-  calendar: { content: CalendarWidget, label: 'Google Kalender', defaultRows: 2, defaultCols: 2 },
   timetable: { content: TimetableWidget, label: 'Stundenplan', defaultRows: 3, defaultCols: 2 },
 };
 

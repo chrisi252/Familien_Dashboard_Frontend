@@ -4,10 +4,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { switchMap } from 'rxjs';
 import { UserStateService } from '../../../services/user-state-service';
 import { WeatherService } from '../../../services/weather-service';
+import { AlertBannerComponent } from '../../../shared/alert-banner/alert-banner.component';
 
 @Component({
   selector: 'app-edit-dashboard',
-  imports: [],
+  imports: [AlertBannerComponent],
   templateUrl: './edit-dashboard.html',
   styleUrl: './edit-dashboard.css',
 })

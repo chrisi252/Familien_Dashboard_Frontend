@@ -9,6 +9,7 @@ import {
   TimetablePerson,
   WEEKDAY_LABELS,
 } from '../../../interfaces/timetable';
+import { ModalComponent } from '../../../shared/modal/modal.component';
 
 const DEFAULT_COLORS = [
   '#3B82F6', '#EF4444', '#10B981', '#F59E0B',
@@ -18,7 +19,7 @@ const DEFAULT_COLORS = [
 @Component({
   selector: 'app-timetable-form',
   standalone: true,
-  imports: [FormsModule, NgIcon],
+  imports: [FormsModule, NgIcon, ModalComponent],
   viewProviders: [provideIcons({ heroCheck, heroXMark })],
   templateUrl: './timetable-form.component.html',
 })

@@ -3,10 +3,11 @@ import { switchMap, take } from 'rxjs';
 import { FamilyInviteCode, FamilyService } from '../../../services/family-service';
 import { FamilyMember, FamilyRoleName } from '../../../interfaces/user';
 import { UserStateService } from '../../../services/user-state-service';
+import { AlertBannerComponent } from '../../../shared/alert-banner/alert-banner.component';
 
 @Component({
   selector: 'app-edit-users',
-  imports: [],
+  imports: [AlertBannerComponent],
   templateUrl: './edit-users.html',
   styleUrl: './edit-users.css',
 })

@@ -43,32 +43,28 @@
 </section>
 
 @if (deletingFamilyId()) {
-  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
-    <div class="card bg-base-100 shadow-xl w-full max-w-sm">
-      <div class="card-body gap-4">
-        <h3 class="card-title text-lg">Familie wirklich löschen?</h3>
-        <p class="text-sm opacity-70">
-          Diese Aktion löscht die Familie samt aller Mitglieder, Widgets und Todos.
-          Dies kann nicht rückgängig gemacht werden.
-        </p>
+  <app-modal (backdropClicked)="deleteCancelled.emit()">
+    <div class="card-body gap-4">
+      <h3 class="card-title text-lg">Familie wirklich löschen?</h3>
+      <p class="text-sm opacity-70">
+        Diese Aktion löscht die Familie samt aller Mitglieder, Widgets und Todos.
+        Dies kann nicht rückgängig gemacht werden.
+      </p>
 
-        @if (deleteError()) {
-          <div class="alert alert-error text-sm">{{ deleteError() }}</div>
-        }
+      <app-alert-banner [message]="deleteError()" type="error" />
 
-        <div class="card-actions justify-end gap-2">
-          <button type="button" class="btn btn-ghost" (click)="deleteCancelled.emit()" [disabled]="deleteLoading()">
-            Abbrechen
-          </button>
-          <button type="button" class="btn btn-error" (click)="deleteConfirmed.emit()" [disabled]="deleteLoading()">
-            @if (deleteLoading()) {
-              <span class="loading loading-spinner loading-sm"></span>
-            } @else {
-              Löschen
-            }
-          </button>
-        </div>
+      <div class="card-actions justify-end gap-2">
+        <button type="button" class="btn btn-ghost" (click)="deleteCancelled.emit()" [disabled]="deleteLoading()">
+          Abbrechen
+        </button>
+        <button type="button" class="btn btn-error" (click)="deleteConfirmed.emit()" [disabled]="deleteLoading()">
+          @if (deleteLoading()) {
+            <span class="loading loading-spinner loading-sm"></span>
+          } @else {
+            Löschen
+          }
+        </button>
       </div>
     </div>
-  </div>
+  </app-modal>
 }

@@ -34,9 +34,9 @@
         }
       </div>
 
-      @if(errorMessage) {
-        <div class="alert alert-error mb-4">
-          <span>{{ errorMessage }}</span>
+      @if (errorMessage) {
+        <div class="mb-4">
+          <app-alert-banner [message]="errorMessage" type="error" />
         </div>
       }
 

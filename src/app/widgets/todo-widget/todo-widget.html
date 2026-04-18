@@ -1,12 +1,6 @@
 <div class="flex flex-col h-full gap-2 overflow-hidden">
 
-  @if (isLoading()) {
-    <div class="flex justify-center items-center flex-1">
-      <span class="loading loading-spinner loading-md"></span>
-    </div>
-  } @else if (errorMessage()) {
-    <div class="alert alert-error text-sm">{{ errorMessage() }}</div>
-  } @else {
+  <app-loading-state [loading]="isLoading()" [error]="errorMessage()">
 
     @if (canEdit()) {
       <div class="flex gap-2">
@@ -46,6 +40,6 @@
       }
     </ul>
 
-  }
+  </app-loading-state>
 
 </div>

@@ -1,12 +1,8 @@
 <div class="flex flex-col gap-6 max-w-md">
   <h1 class="text-2xl font-bold">Admin-Account erstellen</h1>
 
-  @if (successMessage()) {
-    <div class="alert alert-success">{{ successMessage() }}</div>
-  }
-  @if (errorMessage()) {
-    <div class="alert alert-error">{{ errorMessage() }}</div>
-  }
+  <app-alert-banner [message]="successMessage()" type="success" />
+  <app-alert-banner [message]="errorMessage()" type="error" />
 
   <div class="card bg-base-200 shadow">
     <div class="card-body gap-4">

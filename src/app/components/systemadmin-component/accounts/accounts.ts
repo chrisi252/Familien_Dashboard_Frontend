@@ -2,10 +2,11 @@ import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { AdminService } from '../../../services/admin-service';
+import { AlertBannerComponent } from '../../../shared/alert-banner/alert-banner.component';
 
 @Component({
   selector: 'app-systemadmin-accounts',
-  imports: [FormsModule],
+  imports: [FormsModule, AlertBannerComponent],
   templateUrl: './accounts.html',
 })
 export class SystemadminAccounts {

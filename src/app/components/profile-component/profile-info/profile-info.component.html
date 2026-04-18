@@ -14,9 +14,7 @@
         <div class="skeleton h-12 w-full"></div>
       </div>
     } @else if (error()) {
-      <div class="alert alert-error">
-        <span>{{ error() }}</span>
-      </div>
+      <app-alert-banner [message]="error()" type="error" />
       <div class="card-actions justify-end mt-4">
         <button type="button" class="btn btn-primary" (click)="goToLogin.emit()">Zum Login</button>
       </div>

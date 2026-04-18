@@ -1,9 +1,11 @@
 import { Component, input, output } from '@angular/core';
 import { User } from '../../../interfaces/user';
+import { AlertBannerComponent } from '../../../shared/alert-banner/alert-banner.component';
 
 @Component({
   selector: 'app-profile-info',
   standalone: true,
+  imports: [AlertBannerComponent],
   templateUrl: './profile-info.component.html',
 })
 export class ProfileInfoComponent {

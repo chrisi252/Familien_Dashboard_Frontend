@@ -5,10 +5,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { switchMap } from 'rxjs';
 import { Todo, TodoService } from '../../services/todo-service';
 import { UserStateService } from '../../services/user-state-service';
+import { LoadingStateComponent } from '../../shared/loading-state/loading-state.component';
 
 @Component({
   selector: 'app-todo-widget',
-  imports: [NgIcon],
+  imports: [NgIcon, LoadingStateComponent],
   viewProviders: [provideIcons({ heroPencil, heroCheck, heroXMark, heroTrash })],
   templateUrl: './todo-widget.html',
   styleUrl: './todo-widget.css',

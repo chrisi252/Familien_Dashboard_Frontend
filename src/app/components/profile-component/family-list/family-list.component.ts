@@ -1,9 +1,12 @@
 import { Component, input, output } from '@angular/core';
 import { FamilyMembership } from '../../../interfaces/user';
+import { AlertBannerComponent } from '../../../shared/alert-banner/alert-banner.component';
+import { ModalComponent } from '../../../shared/modal/modal.component';
 
 @Component({
   selector: 'app-family-list',
   standalone: true,
+  imports: [AlertBannerComponent, ModalComponent],
   templateUrl: './family-list.component.html',
 })
 export class FamilyListComponent {
