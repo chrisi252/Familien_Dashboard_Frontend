@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, input, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, input, OnInit, signal } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { heroPencil, heroCheck, heroXMark, heroTrash } from '@ng-icons/heroicons/outline';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -13,6 +13,7 @@ import { LoadingStateComponent } from '../../shared/loading-state/loading-state.
   viewProviders: [provideIcons({ heroPencil, heroCheck, heroXMark, heroTrash })],
   templateUrl: './todo-widget.html',
   styleUrl: './todo-widget.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TodoWidget implements OnInit {
   private todoService = inject(TodoService);
@@ -58,6 +59,7 @@ export class TodoWidget implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (todo) => this.todos.set([...this.todos(), todo]),
+        error: () => this.errorMessage.set('Aufgabe konnte nicht gespeichert werden.'),
       });
   }
 
@@ -69,6 +71,7 @@ export class TodoWidget implements OnInit {
       .subscribe({
         next: (updated) =>
           this.todos.set(this.todos().map((t) => (t.id === updated.id ? updated : t))),
+        error: () => this.errorMessage.set('Status konnte nicht aktualisiert werden.'),
       });
   }
 
@@ -79,6 +82,7 @@ export class TodoWidget implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => this.todos.set(this.todos().filter((t) => t.id !== id)),
+        error: () => this.errorMessage.set('Aufgabe konnte nicht entfernt werden.'),
       });
   }
 
@@ -98,6 +102,7 @@ export class TodoWidget implements OnInit {
           this.todos.set(this.todos().map((t) => (t.id === updated.id ? updated : t)));
           this.editingId.set(null);
         },
+        error: () => this.errorMessage.set('Änderung konnte nicht gespeichert werden.'),
       });
   }
 

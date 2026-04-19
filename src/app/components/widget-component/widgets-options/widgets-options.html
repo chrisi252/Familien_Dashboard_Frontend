@@ -1,4 +1,4 @@
-<button class="btn btn-ghost top-0 right-0 absolute" (click)="closeOptions.emit()">Schließen</button>
+<button class="btn btn-ghost top-0 right-0 absolute" (click)="showOptions.set(false)">Schließen</button>
 
 <button class="btn btn-ghost top-0 left-0 absolute text-error hover:bg-error/20" (click)="store.removeWidget(widget().id)">
   <ng-icon name="heroTrash" class="text-xl"></ng-icon>

@@ -4,6 +4,7 @@
  
   cdkDrag
   [cdkDragDisabled]="modalState.isAnyOpen()"
+  [cdkDragStartDelay]="store.isMobile() ? 150 : 0"
   cdkDragPreviewContainer="parent">
   
          <button
@@ -26,9 +27,8 @@
           <ng-container [ngComponentOutlet]="data().content" [ngComponentOutletInputs]="widgetInputs()"></ng-container>
         </div>
 
-       @if(showOptions()){
+       @if (showOptions()) {
            <app-widgets-options
-             (closeOptions)="showOptions.set(false)"
              [(showOptions)]="showOptions"
              [widget]="data()">
            </app-widgets-options>

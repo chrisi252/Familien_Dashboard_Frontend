@@ -1,7 +1,6 @@
 import { Component, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { ThemeSwitchComponent } from "../theme-switch-component/theme-switch-component";
-import { Router } from "@angular/router";
 import { AuthService } from '../../services/auth-service';
 import { UserStateService } from '../../services/user-state-service';
 

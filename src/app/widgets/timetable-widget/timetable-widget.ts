@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   computed,
   DestroyRef,
@@ -14,6 +15,8 @@ import { UserStateService } from '../../services/user-state-service';
 import { FamilyService } from '../../services/family-service';
 import { FamilyMember } from '../../interfaces/user';
 import {
+  TIMETABLE_ALL_PERSONS,
+  TIMETABLE_PERSON_COLORS,
   TimetableEntry,
   TimetableEntryCreate,
   TimetablePerson,
@@ -24,13 +27,6 @@ import { TimetablePersonTabsComponent } from './timetable-person-tabs/timetable-
 import { TimetableMobileViewComponent } from './timetable-mobile-view/timetable-mobile-view.component';
 import { TimetableDesktopViewComponent } from './timetable-desktop-view/timetable-desktop-view.component';
 import { TimetableFormComponent } from './timetable-form/timetable-form.component';
-
-const DEFAULT_COLORS = [
-  '#3B82F6', '#EF4444', '#10B981', '#F59E0B',
-  '#8B5CF6', '#EC4899', '#14B8A6', '#F97316',
-];
-
-const ALL_PERSONS = '__all__';
 
 @Component({
   selector: 'app-timetable-widget',
@@ -44,6 +40,7 @@ const ALL_PERSONS = '__all__';
   ],
   templateUrl: './timetable-widget.html',
   styleUrl: './timetable-widget.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TimetableWidget implements OnInit {
   private timetableService = inject(TimetableService);
@@ -58,7 +55,7 @@ export class TimetableWidget implements OnInit {
 
   familyMembers = signal<FamilyMember[]>([]);
   persons = signal<TimetablePerson[]>([]);
-  selectedPerson = signal<string>(ALL_PERSONS);
+  selectedPerson = signal<string>(TIMETABLE_ALL_PERSONS);
   entries = signal<TimetableEntry[]>([]);
 
   isLoading = signal(true);
@@ -72,7 +69,7 @@ export class TimetableWidget implements OnInit {
   selectedDay = signal(0);
 
   readonly weekdays = WEEKDAY_LABELS;
-  readonly ALL_PERSONS = ALL_PERSONS;
+  readonly ALL_PERSONS = TIMETABLE_ALL_PERSONS;
 
   entriesByDay = computed(() => {
     const result: Record<number, TimetableEntry[]> = { 0: [], 1: [], 2: [], 3: [], 4: [] };
@@ -87,7 +84,7 @@ export class TimetableWidget implements OnInit {
 
   form = signal<TimetableEntryCreate>({
     person_name: '',
-    color: DEFAULT_COLORS[0],
+    color: TIMETABLE_PERSON_COLORS[0],
     weekday: 0,
     start_time: '08:00',
     end_time: '08:45',
@@ -130,7 +127,7 @@ export class TimetableWidget implements OnInit {
     this.selectedPerson.set(name);
     this.showDeletePersonConfirm.set(null);
 
-    if (name === ALL_PERSONS) {
+    if (name === TIMETABLE_ALL_PERSONS) {
       this.loadAllEntries();
     } else {
       this.isLoadingEntries.set(true);
@@ -148,10 +145,10 @@ export class TimetableWidget implements OnInit {
   }
 
   openAddForm() {
-    const person = this.selectedPerson() === ALL_PERSONS ? null : this.selectedPerson();
+    const person = this.selectedPerson() === TIMETABLE_ALL_PERSONS ? null : this.selectedPerson();
     const color = person
-      ? (this.persons().find((p) => p.person_name === person)?.color ?? DEFAULT_COLORS[0])
-      : DEFAULT_COLORS[0];
+      ? (this.persons().find((p) => p.person_name === person)?.color ?? TIMETABLE_PERSON_COLORS[0])
+      : TIMETABLE_PERSON_COLORS[0];
 
     this.form.set({
       person_name: person ?? (this.familyMembers()[0]?.user_username ?? ''),
@@ -204,6 +201,7 @@ export class TimetableWidget implements OnInit {
             this.refreshPersons();
             this.closeForm();
           },
+          error: () => this.errorMessage.set('Eintrag konnte nicht aktualisiert werden.'),
         });
     } else {
       this.timetableService
@@ -218,13 +216,14 @@ export class TimetableWidget implements OnInit {
               ]);
             }
             if (
-              this.selectedPerson() === ALL_PERSONS ||
+              this.selectedPerson() === TIMETABLE_ALL_PERSONS ||
               this.selectedPerson() === created.person_name
             ) {
               this.entries.set([...this.entries(), created]);
             }
             this.closeForm();
           },
+          error: () => this.errorMessage.set('Eintrag konnte nicht erstellt werden.'),
         });
     }
   }
@@ -239,6 +238,7 @@ export class TimetableWidget implements OnInit {
           this.entries.set(this.entries().filter((e) => e.id !== entry.id));
           this.refreshPersons();
         },
+        error: () => this.errorMessage.set('Eintrag konnte nicht gelöscht werden.'),
       });
   }
 
@@ -250,7 +250,7 @@ export class TimetableWidget implements OnInit {
       const toDelete = this.entries().filter((e) => e.person_name === personName);
       if (toDelete.length === 0) {
         this.persons.set(this.persons().filter((p) => p.person_name !== personName));
-        this.selectPerson(ALL_PERSONS);
+        this.selectPerson(TIMETABLE_ALL_PERSONS);
         return;
       }
       forkJoin(toDelete.map((e) => this.timetableService.deleteEntry(this.familyId!, e.id)))
@@ -259,14 +259,15 @@ export class TimetableWidget implements OnInit {
           next: () => {
             this.entries.set(this.entries().filter((e) => e.person_name !== personName));
             this.persons.set(this.persons().filter((p) => p.person_name !== personName));
-            this.selectPerson(ALL_PERSONS);
+            this.selectPerson(TIMETABLE_ALL_PERSONS);
           },
+          error: () => this.errorMessage.set('Einträge konnten nicht gelöscht werden.'),
         });
     };
 
     if (
       this.selectedPerson() === personName ||
-      this.selectedPerson() === ALL_PERSONS
+      this.selectedPerson() === TIMETABLE_ALL_PERSONS
     ) {
       deleteFromCurrent();
     } else {
@@ -315,7 +316,7 @@ export class TimetableWidget implements OnInit {
       .subscribe({
         next: (res) => {
           this.persons.set(res.persons);
-          if (this.selectedPerson() === ALL_PERSONS) {
+          if (this.selectedPerson() === TIMETABLE_ALL_PERSONS) {
             this.loadAllEntries();
           }
         },

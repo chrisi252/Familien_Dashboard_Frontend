@@ -1,4 +1,4 @@
-import { Component, computed, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { Widget } from '../../interfaces/widget';
 import { NgComponentOutlet } from '@angular/common';
 import { WidgetsOptions } from "./widgets-options/widgets-options";
@@ -19,9 +19,10 @@ import { ModalStateService } from '../../shared/modal/modal-state.service';
   imports: [NgComponentOutlet, WidgetsOptions,NgIcon, CdkDrag],
   templateUrl: './widget-component.html',
   styleUrl: './widget-component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WidgetComponent {
-  private readonly store = inject(DashboardService);
+  protected readonly store = inject(DashboardService);
   protected readonly modalState = inject(ModalStateService);
   data = input.required<Widget>();
   showOptions = signal(false);

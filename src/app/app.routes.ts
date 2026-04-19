@@ -90,7 +90,16 @@ export const routes: Routes = [
         loadComponent: () => import('./components/widget-component/widget-component').then(m => m.WidgetComponent),
     },
     {
+        path: 'not-found',
+        loadComponent: () => import('./components/not-found-component/not-found-component').then(m => m.NotFoundComponent),
+    },
+    {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full',
+    },
+    {
         path: '**',
-        loadComponent: () => import('./components/login-component/login-component').then(m => m.LoginComponent),
+        redirectTo: 'not-found',
     }
 ];

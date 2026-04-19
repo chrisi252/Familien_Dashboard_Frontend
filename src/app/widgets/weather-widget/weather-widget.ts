@@ -27,11 +27,8 @@ export class WeatherWidget implements OnInit {
 
   private readonly destroyRef = inject(DestroyRef);
   private readonly userState = inject(UserStateService);
-
-  constructor(
-    private weatherService: WeatherService,
-    private changeDetectorRef: ChangeDetectorRef,
-  ) {}
+  private readonly weatherService = inject(WeatherService);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
 
   ngOnInit() {
     this.loadWeather();
