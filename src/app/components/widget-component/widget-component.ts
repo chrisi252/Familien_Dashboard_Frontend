@@ -26,7 +26,13 @@ export class WidgetComponent {
   protected readonly modalState = inject(ModalStateService);
   data = input.required<Widget>();
   showOptions = signal(false);
-  colSpan = computed(() => this.store.isMobile() ? 1 : (this.data().cols ?? 1));
+  // Widget darf nie mehr Spalten beanspruchen, als das aktuelle Grid hergibt
+  // (sonst Overflow/Layout-Sprünge auf engen Viewports).
+  colSpan = computed(() => {
+    const requested = this.data().cols ?? 1;
+    const maxCols = this.store.gridCols();
+    return Math.min(Math.max(1, requested), Math.max(1, maxCols));
+  });
   
   widgetInputs = computed(() => ({
     widgetId: this.data().id,

@@ -31,6 +31,28 @@ export class DashboardService {
     { initialValue: false }
   );
 
+  // Aktuelle Anzahl Spalten im Dashboard-Grid — matcht die Tailwind-Breakpoints
+  // im Dashboard-Template: grid-cols-1 / sm:2 / lg:3 / xl:4 / 2xl:5
+  gridCols = toSignal(
+    this.breakpointObserver
+      .observe([
+        '(min-width: 1536px)',
+        '(min-width: 1280px)',
+        '(min-width: 1024px)',
+        '(min-width: 640px)',
+      ])
+      .pipe(
+        map(state => {
+          if (state.breakpoints['(min-width: 1536px)']) return 5;
+          if (state.breakpoints['(min-width: 1280px)']) return 4;
+          if (state.breakpoints['(min-width: 1024px)']) return 3;
+          if (state.breakpoints['(min-width: 640px)']) return 2;
+          return 1;
+        }),
+      ),
+    { initialValue: 1 },
+  );
+
   // Alle verfügbaren Widgets (vom Backend, inkl. solche ohne Position)
   widgets = signal<Widget[]>([]);
 

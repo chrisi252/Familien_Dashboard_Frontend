@@ -1,4 +1,4 @@
-<div class="flex flex-col h-full gap-2 overflow-hidden">
+<div class="@container flex flex-col h-full gap-2 overflow-hidden">
 
   <app-loading-state [loading]="isLoading()" [error]="errorMessage()">
 
@@ -31,7 +31,7 @@
     } @else {
 
       <app-timetable-mobile-view
-        class="flex md:hidden flex-col gap-2 flex-1 overflow-hidden"
+        class="flex @2xl:hidden flex-col gap-2 flex-1 overflow-hidden"
         [entriesByDay]="entriesByDay()"
         [weekdays]="weekdays"
         [selectedDay]="selectedDay()"
@@ -42,7 +42,7 @@
         (deleteEntry)="deleteEntry($event)" />
 
       <app-timetable-desktop-view
-        class="hidden md:block overflow-x-auto flex-1"
+        class="hidden @2xl:block overflow-x-auto flex-1"
         [entriesByDay]="entriesByDay()"
         [weekdays]="weekdays"
         [selectedPerson]="selectedPerson()"

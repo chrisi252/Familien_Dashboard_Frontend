@@ -30,6 +30,11 @@
                   @if (entry.teacher && selectedPerson() !== ALL_PERSONS) {
                     <div class="opacity-55 truncate text-[10px]">{{ entry.teacher }}</div>
                   }
+                  @if (entry.note) {
+                    <div class="opacity-50 italic text-[10px] truncate" [title]="entry.note">
+                      {{ entry.note }}
+                    </div>
+                  }
                   @if (canEdit()) {
                     <div class="absolute top-0 right-0 hidden group-hover:flex gap-0.5 bg-base-100 rounded shadow p-0.5">
                       <button class="btn btn-xs btn-ghost p-0.5" title="Bearbeiten" (click)="editEntry.emit(entry)">
