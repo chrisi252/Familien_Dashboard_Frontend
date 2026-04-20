@@ -12,7 +12,7 @@ Das Familiendashboard kennt drei Rollen:
 |--------------------|--------------------------------------------------------------------------------|
 | **System-Administrator** | Familien und Benutzerkonten systemweit verwalten.                          |
 | **Familien-Administrator** | Widgets aktivieren/deaktivieren, Mitglieder einladen, Berechtigungen pro Widget vergeben, Dashboard-Layout vorgeben. |
-| **Nutzer** (z. B. Kind, Au-Pair) | Eigenes Dashboard ansehen, mit freigegebenen Widgets interagieren, persönliches Layout anpassen. |
+| **Nutzer** (z. B. Kind) | Eigenes Dashboard ansehen, mit freigegebenen Widgets interagieren, persönliches Layout anpassen. |
 
 Deine Rolle siehst du nicht direkt — du merkst sie daran, welche Menüpunkte und Buttons dir angezeigt werden.
 
@@ -67,7 +67,7 @@ Zeigt den wöchentlichen Stundenplan für alle Familienmitglieder an.
 - **Person komplett entfernen:** Mülleimer-Icon neben dem Personen-Tab.
 
 ### ☀️ Wetter-Widget
-Zeigt das aktuelle Wetter sowie die Vorhersage für die nächsten Tage. Der Standort wird durch die Familien-Konfiguration im Backend festgelegt.
+Zeigt das aktuelle Wetter. Der Standort wird durch die Familien-Konfiguration im Backend festgelegt.
 
 Bei Verbindungsfehlern erscheint ein Hinweis mit „Erneut versuchen"-Button.
 
@@ -87,17 +87,17 @@ Nur berechtigte Nutzer sehen Bearbeitungs-Buttons.
 
 Über den Avatar oben rechts → **„Admin"** öffnet sich der Admin-Bereich mit drei Unterseiten:
 
-### 5.1 Benutzer verwalten (`/familyadmin/editusers`)
+### 5.1 Benutzer verwalten 
 - Einladungs-Code der Familie anzeigen und neu generieren.
 - Mitgliederliste mit Rollen.
 - Rolle eines Mitglieds ändern (Admin ↔ Nutzer).
 - Mitglied aus der Familie entfernen.
 
-### 5.2 Widgets verwalten (`/familyadmin/editwidgets`)
+### 5.2 Widgets verwalten 
 - Liste aller für die Familie verfügbaren Widgets.
 - Pro Widget: einzelnen Mitgliedern **Lesen** / **Bearbeiten** erlauben oder entziehen.
 
-### 5.3 Dashboard bearbeiten (`/familyadmin/editdashboard`)
+### 5.3 Dashboard bearbeiten 
 - Layout-Vorlage der Familie definieren.
 
 ---
@@ -105,8 +105,7 @@ Nur berechtigte Nutzer sehen Bearbeitungs-Buttons.
 ## 6. System-Administration *(nur System-Admin)*
 
 Unter `/systemadmin` können System-Admins:
-- Alle Familien anzeigen, erstellen oder löschen.
-- Alle Benutzerkonten verwalten (aktivieren/deaktivieren, Rollen zuweisen).
+- Alle Familien anzeigen
 
 ---
 
