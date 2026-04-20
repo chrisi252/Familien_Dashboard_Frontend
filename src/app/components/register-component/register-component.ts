@@ -8,6 +8,7 @@ import { AlertBannerComponent } from '../../shared/alert-banner/alert-banner.com
 
 @Component({
   selector: 'app-register-component',
+  standalone: true,
   imports: [ThemeSwitchComponent, RouterLink, ReactiveFormsModule, AlertBannerComponent],
   templateUrl: './register-component.html',
   styleUrl: './register-component.css',
@@ -20,6 +21,8 @@ export class RegisterComponent {
   private cdr = inject(ChangeDetectorRef);
 
   errorMessage = '';
+  isLoading = false;
+  showPassword = false;
 
   registerForm = this.fb.nonNullable.group({
     username: ['', [Validators.required, Validators.minLength(3)]],
@@ -28,6 +31,10 @@ export class RegisterComponent {
     password: ['', [Validators.required, Validators.minLength(6)]],
   });
 
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
+  }
+
   register() {
     if (this.registerForm.invalid) {
       this.registerForm.markAllAsTouched();
@@ -35,6 +42,7 @@ export class RegisterComponent {
     }
 
     this.errorMessage = '';
+    this.isLoading = true;
     const credentials = this.registerForm.getRawValue();
 
     this.authService.register(credentials).subscribe({
@@ -45,6 +53,7 @@ export class RegisterComponent {
       },
       error: (error) => {
         console.error('Registration failed:', error);
+        this.isLoading = false;
         if (error.error?.error) {
           this.errorMessage = error.error.error;
         } else {

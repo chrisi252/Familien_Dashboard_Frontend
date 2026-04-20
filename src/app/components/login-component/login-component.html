@@ -1,59 +1,100 @@
-<div class="flex h-screen items-center justify-center bg-base-200 px-4">
+<div class="fixed inset-0 z-0 overflow-hidden bg-base-300 selection:bg-primary/30">
+  <div class="absolute top-[-20%] left-[-10%] w-[70%] h-[70%] rounded-full bg-primary/20 blur-[120px] mix-blend-screen animate-blob opacity-60"></div>
+  <div class="absolute top-[20%] right-[-10%] w-[60%] h-[60%] rounded-full bg-secondary/20 blur-[120px] mix-blend-screen animate-blob animation-delay-2000 opacity-60"></div>
+  <div class="absolute bottom-[-20%] left-[20%] w-[80%] h-[80%] rounded-full bg-accent/20 blur-[120px] mix-blend-screen animate-blob animation-delay-4000 opacity-50"></div>
+</div>
 
-  <div class="absolute top-4 left-4">
+<div class="relative z-10 min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
+  
+  <div class="absolute top-6 left-6">
     <app-theme-switch-component></app-theme-switch-component>
   </div>
 
-  <form [formGroup]="loginForm" (ngSubmit)="submit()" class="card w-full max-w-sm bg-base-100 shadow-xl">
-    <div class="card-body">
-      <h2 class="card-title text-2xl font-bold mb-4 text-base-content">Login</h2>
-
-      <div class="form-control mb-2">
-        <label class="label" for="username">
-          <span class="label-text font-bold">Benutzername</span>
-        </label>
-        <input formControlName="username" id="username" type="text" placeholder="Benutzername eingeben" class="input input-bordered w-full" />
-
-        @if(loginForm.controls.username.invalid && loginForm.controls.username.touched) {
-          <label class="label">
-            <span class="label-text-alt text-error italic">Bitte gib einen gueltigen Benutzernamen ein.</span>
-          </label>
-        }
-      </div>
-
-      <div class="form-control mb-6">
-        <label class="label" for="password">
-          <span class="label-text font-bold">Passwort</span>
-        </label>
-        <input formControlName="password" id="password" type="password" placeholder="Passwort eingeben" class="input input-bordered w-full" />
-
-        @if(loginForm.controls.password.invalid && loginForm.controls.password.touched) {
-          <label class="label">
-            <span class="label-text-alt text-error italic">Bitte gib ein gültiges Passwort ein.</span>
-          </label>
-        }
-      </div>
-
-      @if (errorMessage) {
-        <div class="mb-4">
-          <app-alert-banner [message]="errorMessage" type="error" />
+  <div class="w-full max-w-md p-[1px] rounded-[2rem] bg-gradient-to-b from-base-content/20 via-base-content/5 to-transparent shadow-[0_8px_30px_rgb(0,0,0,0.12)] backdrop-blur-3xl animate-fade-in-up">
+    
+    <div class="bg-base-100/70 backdrop-blur-xl rounded-[calc(2rem-1px)] p-8 sm:p-12">
+      
+      <div class="text-center mb-10">
+        <div class="mx-auto w-12 h-12 bg-gradient-to-tr from-primary to-secondary rounded-xl shadow-lg shadow-primary/30 flex items-center justify-center mb-6">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6 text-primary-content">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+          </svg>
         </div>
-      }
-
-      <div class="flex items-center justify-between mb-4">
-        <button type="submit" class="btn btn-primary">Login</button>
-        <a [routerLink]="['/forgot-password']" class="link link-hover text-sm text-primary font-bold">Passwort vergessen?</a>
+        <h2 class="text-3xl font-extrabold tracking-tight text-base-content">Welcome Home</h2>
+        <p class="text-sm font-medium text-base-content/50 mt-2 uppercase tracking-widest">Secure Family Access</p>
       </div>
 
-      <div class="divider"></div>
+      <form [formGroup]="loginForm" (ngSubmit)="submit()" class="space-y-6">
+        
+        <div class="relative group">
+          <input formControlName="username" id="username" type="text" placeholder="Username" 
+                 class="peer w-full h-14 bg-base-200/50 text-base-content border border-base-content/10 rounded-2xl px-4 pt-5 pb-1 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary focus:bg-base-100 transition-all placeholder-transparent shadow-inner" />
+          <label for="username" class="absolute left-4 top-2 text-[10px] font-bold uppercase tracking-wider text-base-content/50 transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:top-4 peer-placeholder-shown:normal-case peer-placeholder-shown:tracking-normal peer-focus:top-2 peer-focus:text-[10px] peer-focus:uppercase peer-focus:tracking-wider peer-focus:text-primary pointer-events-none">
+            Benutzername
+          </label>
+          @if(loginForm.controls.username.invalid && loginForm.controls.username.touched) {
+            <p class="absolute -bottom-5 left-2 text-xs text-error font-medium flex items-center gap-1">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+              Ungültige Eingabe
+            </p>
+          }
+        </div>
 
-      <div class="text-center">
-        <p class="text-sm text-base-content">
-          Hast du noch keinen Account?
-          <a [routerLink]="['/register']" class="link link-primary font-bold">Hier registrieren</a>.
+        <div class="relative group mt-8">
+          <input formControlName="password" id="password" [type]="showPassword ? 'text' : 'password'" placeholder="Password" 
+                 class="peer w-full h-14 bg-base-200/50 text-base-content border border-base-content/10 rounded-2xl pl-4 pr-12 pt-5 pb-1 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary focus:bg-base-100 transition-all placeholder-transparent shadow-inner" />
+          <label for="password" class="absolute left-4 top-2 text-[10px] font-bold uppercase tracking-wider text-base-content/50 transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:top-4 peer-placeholder-shown:normal-case peer-placeholder-shown:tracking-normal peer-focus:top-2 peer-focus:text-[10px] peer-focus:uppercase peer-focus:tracking-wider peer-focus:text-primary pointer-events-none">
+            Passwort
+          </label>
+          
+          <button type="button" (click)="togglePasswordVisibility()" class="absolute right-4 top-1/2 -translate-y-1/2 text-base-content/40 hover:text-primary transition-colors focus:outline-none">
+            @if(showPassword) {
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" /></svg>
+            } @else {
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+            }
+          </button>
+          
+          @if(loginForm.controls.password.invalid && loginForm.controls.password.touched) {
+            <p class="absolute -bottom-5 left-2 text-xs text-error font-medium flex items-center gap-1">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+              Passwort zu kurz
+            </p>
+          }
+        </div>
+
+        <div class="flex items-center justify-end pt-2">
+          <a [routerLink]="['/forgot-password']" class="text-xs font-semibold text-base-content/60 hover:text-primary transition-colors">Passwort vergessen?</a>
+        </div>
+
+        @if (errorMessage) {
+          <div class="pt-2">
+            <app-alert-banner [message]="errorMessage" type="error" />
+          </div>
+        }
+
+        <div class="pt-4">
+          <button type="submit" class="group relative w-full h-14 flex items-center justify-center bg-primary text-primary-content font-bold rounded-2xl overflow-hidden transition-all hover:scale-[1.02] active:scale-95 shadow-[0_0_40px_-10px] shadow-primary" [disabled]="isLoading">
+            <div class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
+            
+            @if(isLoading) {
+              <span class="loading loading-spinner loading-md"></span>
+            } @else {
+              <span class="tracking-wide text-lg">Einloggen</span>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+            }
+          </button>
+        </div>
+
+      </form>
+      
+      <div class="mt-10 text-center">
+        <p class="text-sm text-base-content/60 font-medium">
+          Noch kein Account? 
+          <a [routerLink]="['/register']" class="text-primary hover:text-primary-focus font-bold underline decoration-2 underline-offset-4 transition-all">Jetzt erstellen</a>
         </p>
       </div>
 
     </div>
-  </form>
+  </div>
 </div>

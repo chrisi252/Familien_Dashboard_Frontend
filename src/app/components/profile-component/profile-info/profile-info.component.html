@@ -1,7 +1,7 @@
-<section class="card bg-base-100 shadow-xl border border-base-300">
-  <div class="card-body">
+<section class="glass-wrapper h-auto">
+  <div class="glass-card">
     <div class="flex items-center justify-between gap-3 flex-wrap mb-2">
-      <h1 class="card-title text-2xl">Mein Profil</h1>
+      <h1 class="text-2xl font-bold">Mein Profil</h1>
       <button type="button" class="btn btn-outline btn-sm" (click)="reload.emit()" [disabled]="isLoading()">
         Neu laden
       </button>
@@ -15,8 +15,8 @@
       </div>
     } @else if (error()) {
       <app-alert-banner [message]="error()" type="error" />
-      <div class="card-actions justify-end mt-4">
-        <button type="button" class="btn btn-primary" (click)="goToLogin.emit()">Zum Login</button>
+      <div class="flex justify-end mt-4">
+        <button type="button" class="btn-premium" (click)="goToLogin.emit()">Zum Login</button>
       </div>
     } @else if (user(); as profileUser) {
       <div class="stats stats-vertical sm:stats-horizontal bg-base-200 mb-4 w-full">
@@ -66,8 +66,8 @@
       </div>
     }
 
-    <div class="card-actions justify-end mt-4">
-      <button type="button" class="btn btn-primary" (click)="goToDashboard.emit()">Zurück zum Dashboard</button>
+    <div class="flex justify-end mt-4">
+      <button type="button" class="btn-premium" (click)="goToDashboard.emit()">Zurück zum Dashboard</button>
     </div>
   </div>
 </section>

@@ -21,21 +21,26 @@ export class LoginComponent {
   private cdr = inject(ChangeDetectorRef);
 
   errorMessage = '';
-
-
+  isLoading = false;
+  showPassword = false;
 
   loginForm = this.fb.nonNullable.group({
     username: ['', [Validators.required, Validators.minLength(3)]],
     password: ['', [Validators.required, Validators.minLength(6)]]
   });
-  submit() {
 
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
+  }
+
+  submit() {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
       return;
     }
 
     this.errorMessage = '';
+    this.isLoading = true;
     const payload = this.loginForm.getRawValue();
 
     this.authService.login(payload).subscribe({
@@ -50,7 +55,8 @@ export class LoginComponent {
       },
       error: (error: { error?: { error?: string } }) => {
         console.error('Login failed:', error);
-        this.errorMessage = 'Login fehlgeschlagen. Bitte pruefe deine Daten.';
+        this.errorMessage = 'Login fehlgeschlagen. Bitte prüfe deine Daten.';
+        this.isLoading = false;
         this.cdr.markForCheck();
       }
     });

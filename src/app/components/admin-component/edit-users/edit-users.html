@@ -51,11 +51,11 @@
     }
 
     @for (member of members(); track member.id) {
-      <div class="card bg-base-100 shadow-xl mb-4">
-        <div class="card-body">
+      <div class="glass-wrapper h-auto mb-4">
+        <div class="glass-card">
           <div class="flex items-center justify-between flex-wrap gap-2">
             <div>
-              <h2 class="card-title">
+              <h2 class="text-xl font-bold">
                 {{ member.user_username }}
                 @if (member.user_id === currentUserId) {
                   <span class="badge badge-ghost text-xs">Du</span>
@@ -67,7 +67,7 @@
             </div>
 
             @if (member.user_id !== currentUserId) {
-              <div class="card-actions">
+              <div>
                 <button class="btn btn-sm btn-outline"
                   [disabled]="actionLoading()"
                   (click)="toggleEdit(member.id)">
