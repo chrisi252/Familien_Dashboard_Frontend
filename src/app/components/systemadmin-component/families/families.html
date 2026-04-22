@@ -1,37 +1,38 @@
 <div class="flex flex-col gap-6">
-  <h1 class="text-2xl font-bold">Familien verwalten</h1>
+  <div class="flex items-center justify-between flex-wrap gap-2">
+    <div>
+      <h1 class="text-2xl font-bold">Familien verwalten</h1>
+      <p class="text-sm opacity-60 mt-1">Alle registrierten Familien im System.</p>
+    </div>
+    <span class="badge badge-ghost text-sm px-3 py-2">{{ families().length }} Familie(n) gesamt</span>
+  </div>
 
-  @if (isLoading()) {
-    <div class="flex justify-center py-12">
-      <span class="loading loading-spinner loading-lg"></span>
-    </div>
-  } @else if (errorMessage()) {
-    <div class="alert alert-error">{{ errorMessage() }}</div>
-  } @else {
-    <div class="overflow-x-auto">
-      <table class="table table-zebra w-full">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Erstellt am</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (family of families(); track family.id) {
-            <tr>
-              <td class="font-mono text-sm opacity-60">{{ family.id }}</td>
-              <td class="font-semibold">{{ family.name }}</td>
-              <td class="text-sm opacity-60">{{ family.created_at | date: 'dd.MM.yyyy HH:mm' }}</td>
-            </tr>
-          } @empty {
-            <tr>
-              <td colspan="3" class="text-center opacity-50 py-8">Keine Familien vorhanden.</td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
-    <div class="text-sm opacity-50">{{ families().length }} Familie(n) gesamt</div>
-  }
+  <app-loading-state [loading]="isLoading()" [error]="errorMessage()">
+
+    @for (family of families(); track family.id) {
+      <div class="glass-wrapper h-auto mb-3">
+        <div class="glass-card">
+          <div class="flex items-center justify-between flex-wrap gap-3">
+            <div class="flex items-center gap-3">
+              <div class="bg-secondary/10 text-secondary rounded-full w-10 h-10 flex items-center justify-center shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+                </svg>
+              </div>
+              <div>
+                <h2 class="font-bold text-base">{{ family.name }}</h2>
+                <p class="text-xs opacity-50 mt-0.5">Erstellt {{ family.created_at | date: 'dd.MM.yyyy HH:mm' }}</p>
+              </div>
+            </div>
+            <span class="font-mono text-xs opacity-40 bg-base-200 px-2 py-1 rounded-lg">#{{ family.id }}</span>
+          </div>
+        </div>
+      </div>
+    } @empty {
+      <div class="text-center opacity-40 py-12">
+        <p class="text-sm">Keine Familien vorhanden.</p>
+      </div>
+    }
+
+  </app-loading-state>
 </div>

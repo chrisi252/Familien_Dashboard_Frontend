@@ -1,0 +1,39 @@
+<section class="glass-wrapper h-auto">
+  <div class="glass-card">
+    <h2 class="text-xl font-bold mb-2">Einer Familie beitreten</h2>
+    <p class="text-sm opacity-60 mb-3">Gib den Beitrittscode der Familie ein, der du beitreten möchtest.</p>
+
+    <div class="flex gap-2">
+      <input
+        type="text"
+        class="input input-bordered flex-1"
+        placeholder="Beitrittscode"
+        [(ngModel)]="code"
+        (keyup.enter)="submit()"
+        maxlength="6"
+        autocomplete="off" />
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="submit()"
+        [disabled]="loading()">
+        @if (loading()) {
+          <span class="loading loading-spinner loading-sm"></span>
+        } @else {
+          Beitreten
+        }
+      </button>
+    </div>
+
+    @if (error()) {
+      <div class="mt-3">
+        <app-alert-banner [message]="error()" type="error" />
+      </div>
+    }
+    @if (success()) {
+      <div class="mt-3">
+        <app-alert-banner message="Erfolgreich beigetreten!" type="success" />
+      </div>
+    }
+  </div>
+</section>

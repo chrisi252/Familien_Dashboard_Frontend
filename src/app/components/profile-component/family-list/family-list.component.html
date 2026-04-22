@@ -1,0 +1,68 @@
+<section class="glass-wrapper h-auto">
+  <div class="glass-card">
+    <h2 class="text-xl font-bold mb-2">Meine Familien</h2>
+
+    @if (familiesLoading()) {
+      <div class="space-y-2">
+        <div class="skeleton h-16 w-full"></div>
+        <div class="skeleton h-16 w-full"></div>
+      </div>
+    } @else {
+      <div class="flex flex-col gap-3">
+        @for (membership of families(); track membership.family.id) {
+          <div class="flex items-center justify-between gap-3 p-3 rounded-xl bg-base-200 border border-base-300">
+            <div>
+              <p class="font-semibold">{{ membership.family.name }}</p>
+              <p class="text-xs opacity-60">Rolle: {{ membership.role.name }}</p>
+            </div>
+            <div class="flex gap-2 flex-shrink-0">
+              <button
+                type="button"
+                class="btn btn-sm btn-primary"
+                (click)="familySelected.emit(membership)">
+                Auswählen
+              </button>
+              @if (isAdmin(membership)) {
+                <button
+                  type="button"
+                  class="btn btn-sm btn-error btn-outline"
+                  (click)="deleteRequested.emit(membership.family.id)">
+                  Löschen
+                </button>
+              }
+            </div>
+          </div>
+        } @empty {
+          <p class="text-sm opacity-60">Du bist noch keiner Familie beigetreten.</p>
+        }
+      </div>
+    }
+  </div>
+</section>
+
+@if (deletingFamilyId()) {
+  <app-modal (backdropClicked)="deleteCancelled.emit()">
+    <div class="card-body gap-4">
+      <h3 class="card-title text-lg">Familie wirklich löschen?</h3>
+      <p class="text-sm opacity-70">
+        Diese Aktion löscht die Familie samt aller Mitglieder, Widgets und Todos.
+        Dies kann nicht rückgängig gemacht werden.
+      </p>
+
+      <app-alert-banner [message]="deleteError()" type="error" />
+
+      <div class="card-actions justify-end gap-2">
+        <button type="button" class="btn btn-ghost" (click)="deleteCancelled.emit()" [disabled]="deleteLoading()">
+          Abbrechen
+        </button>
+        <button type="button" class="btn btn-error" (click)="deleteConfirmed.emit()" [disabled]="deleteLoading()">
+          @if (deleteLoading()) {
+            <span class="loading loading-spinner loading-sm"></span>
+          } @else {
+            Löschen
+          }
+        </button>
+      </div>
+    </div>
+  </app-modal>
+}

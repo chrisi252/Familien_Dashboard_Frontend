@@ -1,18 +1,15 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { User } from '../interfaces/user';
-import { environment } from '../../environments/environment';
+import { ApiService } from '../core/api.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProfileService {
-  private apiUrl = environment.apiBase;
-
-  constructor(private http: HttpClient) {}
+  private api = inject(ApiService);
 
   getProfile(): Observable<User> {
-    return this.http.get<User>(`${this.apiUrl}/users/profile`);
+    return this.api.get<User>('/users/profile');
   }
 }

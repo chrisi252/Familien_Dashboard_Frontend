@@ -19,7 +19,6 @@
 
             <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 mt-4 z-100">
                 <li><button type="button" (click)="goToProfile()">Profil</button></li>
-                <li><button type="button">Einstellungen</button></li>
                 <li><button type="button" (click)="logout()">Abmelden</button></li>
                 @if (userStateService.isFamilyAdmin()) {
             <li><button routerLink="/familyadmin">Admin</button></li>

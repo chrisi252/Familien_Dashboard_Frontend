@@ -1,5 +1,5 @@
 import { inject, Injectable, signal } from '@angular/core';
-import { FamilyRoleName, User } from '../interfaces/user';
+import { FamilyRoleName, User, isFamilyRoleName } from '../interfaces/user';
 import { ProfileService } from './profile-service';
 import { FamilyService } from './family-service';
 import { catchError, map, of, tap, throwError } from 'rxjs';
@@ -171,11 +171,7 @@ export class UserStateService {
   }
 
   private toFamilyRoleName(value: unknown): FamilyRoleName | null {
-    if (value === 'Familyadmin' || value === 'Guest' || value === 'SystemAdmin') {
-      return value;
-    }
-
-    return null;
+    return isFamilyRoleName(value) ? value : null;
   }
 
   private persistSelectedFamilyId(familyId: number): void {

@@ -7,23 +7,21 @@ export class ThemeService {
   isDarkMode = signal(false);
 
   constructor() {
-    const savedTheme = sessionStorage.getItem('theme');
+    const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'dark') {
-      this.isDarkMode = signal(true);
-      this.applyTheme();
+      this.isDarkMode.set(true);
     }
+    this.applyTheme();
   }
 
   toggleTheme() {
-      this.isDarkMode .set(!this.isDarkMode());
+    this.isDarkMode.set(!this.isDarkMode());
     this.applyTheme();
   }
 
   private applyTheme() {
     const themeName = this.isDarkMode() ? 'dark' : 'light';
-
     document.documentElement.setAttribute('data-theme', themeName);
-
-    sessionStorage.setItem('theme', themeName);
+    localStorage.setItem('theme', themeName);
   }
 }

@@ -1,25 +1,23 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { WeatherLocation, WeatherResponse } from '../interfaces/weather';
+import { ApiService } from '../core/api.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class WeatherService {
-  private apiUrl = '/api';
-
-  constructor(private http: HttpClient) {}
+  private api = inject(ApiService);
 
   getWeather(familyId: number): Observable<WeatherResponse> {
-    return this.http.get<WeatherResponse>(`${this.apiUrl}/families/${familyId}/weather`);
+    return this.api.get<WeatherResponse>(`/families/${familyId}/weather`);
   }
 
   getLocation(familyId: number): Observable<{ location: WeatherLocation }> {
-    return this.http.get<{ location: WeatherLocation }>(`${this.apiUrl}/families/${familyId}/weather/location`);
+    return this.api.get<{ location: WeatherLocation }>(`/families/${familyId}/weather/location`);
   }
 
   updateLocation(familyId: number, city: string): Observable<void> {
-    return this.http.put<void>(`${this.apiUrl}/families/${familyId}/weather/location`, { city });
+    return this.api.put<void>(`/families/${familyId}/weather/location`, { city });
   }
 }

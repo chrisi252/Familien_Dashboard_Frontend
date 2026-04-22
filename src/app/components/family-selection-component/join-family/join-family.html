@@ -4,34 +4,37 @@
     <app-theme-switch-component></app-theme-switch-component>
   </div>
 
-  <div class="card w-full max-w-lg bg-base-100 shadow-xl">
-    <div class="card-body">
-      <h2 class="card-title text-3xl font-bold mb-2 text-base-content">Familie beitreten</h2>
+  <div class="glass-wrapper h-auto max-w-lg">
+    <div class="glass-card">
+      <h2 class="text-3xl font-bold mb-2 text-base-content">Familie beitreten</h2>
       <p class="text-base-content mb-6">
         Gib den 6-stelligen Einladungscode ein, den dir ein Familienadmin gegeben hat.
       </p>
 
-      @if (errorMessage) {
-        <div class="alert alert-error mb-4">
-          <span>{{ errorMessage }}</span>
+      @if (errorMessage()) {
+        <div class="mb-4">
+          <app-alert-banner [message]="errorMessage()" type="error" />
         </div>
       }
 
       <div class="flex flex-col gap-4">
-        <input
-          type="text"
-          placeholder="z.B. X7K2BN"
-          [(ngModel)]="inviteCode"
-          (input)="inviteCode = inviteCode.toUpperCase()"
-          maxlength="6"
-          class="input input-bordered w-full text-center tracking-widest text-xl font-mono uppercase"
-          (keyup.enter)="tryJoinByCode()" />
+        <div class="input-floating-container mb-2">
+          <input
+            type="text"
+            placeholder="z.B. X7K2BN"
+            [(ngModel)]="inviteCode"
+            (input)="inviteCode = inviteCode.toUpperCase()"
+            maxlength="6"
+            class="input-floating text-center tracking-widest text-xl font-mono uppercase"
+            (keyup.enter)="tryJoinByCode()" />
+          <label class="label-floating">Einladungscode</label>
+        </div>
 
         <button
           (click)="tryJoinByCode()"
-          [disabled]="isLoading"
-          class="btn btn-primary">
-          @if (isLoading) {
+          [disabled]="isLoading()"
+          class="btn-premium">
+          @if (isLoading()) {
             <span class="loading loading-spinner loading-sm"></span>
           }
           Beitreten

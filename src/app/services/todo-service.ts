@@ -1,6 +1,6 @@
-import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { ApiService } from '../core/api.service';
 
 export interface Todo {
   id: number;
@@ -14,15 +14,14 @@ export interface Todo {
 
 @Injectable({ providedIn: 'root' })
 export class TodoService {
-  private apiUrl = '/api';
-  private http = inject(HttpClient);
+  private api = inject(ApiService);
 
   getTodos(familyId: number): Observable<{ todos: Todo[] }> {
-    return this.http.get<{ todos: Todo[] }>(`${this.apiUrl}/families/${familyId}/todos`);
+    return this.api.get<{ todos: Todo[] }>(`/families/${familyId}/todos`);
   }
 
   createTodo(familyId: number, title: string, description?: string): Observable<Todo> {
-    return this.http.post<Todo>(`${this.apiUrl}/families/${familyId}/todos`, { title, description });
+    return this.api.post<Todo>(`/families/${familyId}/todos`, { title, description });
   }
 
   updateTodo(
@@ -30,10 +29,10 @@ export class TodoService {
     todoId: number,
     data: Partial<{ title: string; description: string | null; is_completed: boolean }>,
   ): Observable<Todo> {
-    return this.http.put<Todo>(`${this.apiUrl}/families/${familyId}/todos/${todoId}`, data);
+    return this.api.put<Todo>(`/families/${familyId}/todos/${todoId}`, data);
   }
 
   deleteTodo(familyId: number, todoId: number): Observable<{ message: string }> {
-    return this.http.delete<{ message: string }>(`${this.apiUrl}/families/${familyId}/todos/${todoId}`);
+    return this.api.delete<{ message: string }>(`/families/${familyId}/todos/${todoId}`);
   }
 }

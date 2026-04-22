@@ -1,37 +1,31 @@
 <div
-  class="card relative bg-base-100 shadow-xl w-full h-full min-w-0 rounded-xl transition-colors duration-300"
-
- 
-  cdkDrag 
+  class="glass-wrapper"
+  cdkDrag
+  [cdkDragDisabled]="modalState.isAnyOpen()"
+  [cdkDragStartDelay]="store.isMobile() ? 150 : 0"
   cdkDragPreviewContainer="parent">
-  
-         <button
-    class="btn btn-circle btn-sm absolute top-3 right-3 bg-base-100/50 hover:bg-base-100/90 backdrop-blur-md border-none shadow-sm transition-all z-10"
-   
 
-    
-    (click)="showOptions.set(true)">
-    <ng-icon name="heroCog6Tooth" class="text-lg"></ng-icon>
-  </button>
+  <div class="glass-card relative gap-2 min-h-0 overflow-hidden">
 
-  <div class="card-body p-4 sm:p-6 gap-2 h-full min-h-0 overflow-hidden">
+    <button
+      class="btn btn-circle btn-sm absolute top-3 right-3 bg-base-100/50 hover:bg-base-100/90 backdrop-blur-md border-none shadow-sm transition-all z-10"
+      (click)="showOptions.set(true)">
+      <ng-icon name="heroCog6Tooth" class="text-lg"></ng-icon>
+    </button>
 
     <div class="badge badge-primary badge-sm">{{ data().label }}</div>
 
     <div class="relative w-full h-full min-h-0 text-sm mt-1">
+      <div class="h-full min-h-0 overflow-auto pr-1">
+        <ng-container [ngComponentOutlet]="data().content" [ngComponentOutletInputs]="widgetInputs()"></ng-container>
+      </div>
 
-
-        <div class="h-full min-h-0 overflow-auto pr-1">
-          <ng-container [ngComponentOutlet]="data().content" [ngComponentOutletInputs]="widgetInputs()"></ng-container>
-        </div>
-
-       @if(showOptions()){
-           <app-widgets-options
-             (closeOptions)="showOptions.set(false)"
-             [(showOptions)]="showOptions"
-             [widget]="data()">
-           </app-widgets-options>
-        }
+      @if (showOptions()) {
+        <app-widgets-options
+          [(showOptions)]="showOptions"
+          [widget]="data()">
+        </app-widgets-options>
+      }
     </div>
 
   </div>

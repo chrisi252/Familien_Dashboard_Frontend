@@ -1,0 +1,9 @@
+@if (loading()) {
+  <div class="flex justify-center items-center flex-1">
+    <span class="loading loading-spinner loading-md"></span>
+  </div>
+} @else if (error()) {
+  <div class="alert alert-error text-sm">{{ error() }}</div>
+} @else {
+  <ng-content />
+}

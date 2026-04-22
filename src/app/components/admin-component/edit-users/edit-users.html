@@ -10,9 +10,7 @@
           Der Code ist <strong>2 Minuten</strong> gültig.
         </p>
 
-        @if (inviteError()) {
-          <div class="alert alert-error text-sm py-2">{{ inviteError() }}</div>
-        }
+        <app-alert-banner [message]="inviteError()" type="error" />
 
         @if (inviteCode(); as code) {
           <div class="flex flex-col items-center gap-2 py-2">
@@ -45,15 +43,73 @@
   <!-- Members -->
   <div>
     <h2 class="text-xl font-bold mb-4">Mitglieder</h2>
+
+    @if (actionError()) {
+      <div class="mb-4">
+        <app-alert-banner [message]="actionError()" type="error" />
+      </div>
+    }
+
     @for (member of members(); track member.id) {
-      <div class="card bg-base-100 shadow-xl mb-4">
-        <div class="card-body">
-          <h2 class="card-title">{{ member.user_username }}</h2>
-          <p>Rolle: {{ member.role_name }}</p>
-          <div class="card-actions justify-end">
-            <button class="btn btn-primary shadow-sm cursor-pointer">Bearbeiten</button>
-            <button class="btn btn-error shadow-sm cursor-pointer">Löschen</button>
+      <div class="glass-wrapper h-auto mb-4">
+        <div class="glass-card">
+          <div class="flex items-center justify-between flex-wrap gap-2">
+            <div>
+              <h2 class="text-xl font-bold">
+                {{ member.user_username }}
+                @if (member.user_id === currentUserId) {
+                  <span class="badge badge-ghost text-xs">Du</span>
+                }
+              </h2>
+              <span class="badge" [class.badge-primary]="member.role_name === 'Familyadmin'" [class.badge-ghost]="member.role_name !== 'Familyadmin'">
+                {{ member.role_name }}
+              </span>
+            </div>
+
+            @if (member.user_id !== currentUserId) {
+              <div>
+                <button class="btn btn-sm btn-outline"
+                  [disabled]="actionLoading()"
+                  (click)="toggleEdit(member.id)">
+                  {{ editingMemberId() === member.id ? 'Abbrechen' : 'Bearbeiten' }}
+                </button>
+              </div>
+            }
           </div>
+
+          @if (editingMemberId() === member.id) {
+            <div class="mt-4 flex flex-col gap-3 border-t border-base-300 pt-4">
+              <!-- Role change -->
+              <div>
+                <p class="text-sm font-semibold mb-2">Rolle ändern</p>
+                <div class="flex gap-2 flex-wrap">
+                  <button class="btn btn-sm btn-primary"
+                    [disabled]="actionLoading() || member.role_name === 'Familyadmin'"
+                    (click)="changeRole(member, 'Familyadmin')">
+                    Zum Admin befördern
+                  </button>
+                  <button class="btn btn-sm btn-outline"
+                    [disabled]="actionLoading() || member.role_name === 'Guest'"
+                    (click)="changeRole(member, 'Guest')">
+                    Zum Gast degradieren
+                  </button>
+                </div>
+              </div>
+
+              <!-- Remove member -->
+              <div class="border-t border-base-300 pt-3">
+                <p class="text-sm font-semibold mb-2">Mitglied entfernen</p>
+                <button class="btn btn-sm btn-error"
+                  [disabled]="actionLoading()"
+                  (click)="removeMember(member)">
+                  @if (actionLoading()) {
+                    <span class="loading loading-spinner loading-xs"></span>
+                  }
+                  Aus Familie entfernen
+                </button>
+              </div>
+            </div>
+          }
         </div>
       </div>
     } @empty {

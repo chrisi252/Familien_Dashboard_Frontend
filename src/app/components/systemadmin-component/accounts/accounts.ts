@@ -1,14 +1,17 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { AdminService } from '../../../services/admin-service';
+import { AlertBannerComponent } from '../../../shared/alert-banner/alert-banner.component';
 
 @Component({
   selector: 'app-systemadmin-accounts',
-  imports: [FormsModule],
+  imports: [FormsModule, AlertBannerComponent],
   templateUrl: './accounts.html',
 })
 export class SystemadminAccounts {
   private adminService = inject(AdminService);
+  private destroyRef = inject(DestroyRef);
 
   username = signal('');
   password = signal('');
@@ -31,7 +34,7 @@ export class SystemadminAccounts {
       password: this.password(),
       first_name: this.firstName(),
       last_name: this.lastName(),
-    }).subscribe({
+    }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (res) => {
         this.successMessage.set(`Admin-Account "${res.user.username}" wurde erstellt.`);
         this.username.set('');

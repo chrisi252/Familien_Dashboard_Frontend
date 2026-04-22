@@ -4,33 +4,35 @@
         <app-theme-switch-component></app-theme-switch-component>
     </div>
 
-    <div class="card w-full max-w-lg bg-base-100 shadow-xl">
-        <div class="card-body">
-            <h2
-                class="card-title text-3xl font-bold mb-2 text-base-content">Bennenen sie ihre Familie</h2>
+    <div class="glass-wrapper h-auto max-w-lg">
+        <div class="glass-card">
+            <h2 class="text-3xl font-bold mb-2 text-base-content">Bennenen sie ihre Familie</h2>
             <p class="text-base-content mb-6">Erstellen sie eine neue Familie und laden sie andere Mitglieder ein.</p>
-            @if(errorMessage) {
-            <div class="alert alert-error mb-4">
-                <span>{{ errorMessage }}</span>
-            </div>
+            @if (errorMessage) {
+              <div class="mb-4">
+                <app-alert-banner [message]="errorMessage" type="error" />
+              </div>
             }
 
             <div class="flex flex-col gap-4">
-                <input
-                    id="createFamily"
-                    type="text"
-                    placeholder="Enter your family name"
-                    [(ngModel)]="familyName"
-                    class="input input-bordered w-full" />
-                    <button
-                        (click)="tryCreateFamily()"
-                        [disabled]="isLoading"
-                        class="btn btn-primary">
-                        @if(isLoading) {
-                            <span class="loading loading-spinner loading-sm"></span>
-                        }
-                        Familie erstellen
-                    </button>
+                <div class="input-floating-container mb-2">
+                    <input
+                        id="createFamily"
+                        type="text"
+                        placeholder="Enter your family name"
+                        [(ngModel)]="familyName"
+                        class="input-floating" />
+                    <label for="createFamily" class="label-floating">Familienname</label>
+                </div>
+                <button
+                    (click)="tryCreateFamily()"
+                    [disabled]="isLoading"
+                    class="btn-premium">
+                    @if(isLoading) {
+                        <span class="loading loading-spinner loading-sm"></span>
+                    }
+                    Familie erstellen
+                </button>
 
                 <div class="divider"></div>
 

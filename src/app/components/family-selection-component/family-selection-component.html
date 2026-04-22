@@ -1,4 +1,4 @@
-<div class="flex h-screen items-center justify-center bg-base-200">
+<div class="flex h-screen items-center justify-center bg-base-200 px-4">
 
   <div class="absolute top-4 left-4">
     <app-theme-switch-component></app-theme-switch-component>
@@ -7,14 +7,14 @@
   <router-outlet></router-outlet>
 
   @if (!isChildRoute()) {
-    <div class="card w-full max-w-lg bg-base-100 shadow-xl">
-      <div class="card-body">
-        <h2 class="card-title text-3xl font-bold mb-2 text-base-content">Family Setup</h2>
+    <div class="glass-wrapper h-auto max-w-lg">
+      <div class="glass-card">
+        <h2 class="text-3xl font-bold mb-2 text-base-content">Family Setup</h2>
         <p class="text-base-content mb-6">Was möchtest du tun?</p>
 
-        @if(errorMessage) {
-          <div class="alert alert-error mb-4">
-            <span>{{ errorMessage }}</span>
+        @if (errorMessage) {
+          <div class="mb-4">
+            <app-alert-banner [message]="errorMessage" type="error" />
           </div>
         }
 
@@ -23,7 +23,7 @@
           <button
             (click)="onJoinFamily()"
             [disabled]="isLoading"
-            class="btn btn-lg btn-primary w-full">
+            class="btn-premium">
             @if(isLoading) {
               <span class="loading loading-spinner loading-sm"></span>
             }
@@ -43,7 +43,6 @@
 
         <div class="divider"></div>
 
-       
       </div>
     </div>
   }

@@ -13,20 +13,9 @@ FROM base AS build
 COPY . .
 RUN npm run build -- --configuration=production
 
-RUN set -eux; \
-    mkdir -p /out; \
-    if find dist -maxdepth 3 -type d -name browser | grep -q .; then \
-      BROWSER_DIR="$(find dist -maxdepth 3 -type d -name browser | head -n 1)"; \
-      cp -R "${BROWSER_DIR}/." /out/; \
-    else \
-      APP_DIR="$(find dist -maxdepth 1 -mindepth 1 -type d | head -n 1)"; \
-      cp -R "${APP_DIR}/." /out/; \
-    fi
-
-
 FROM nginx:1.27-alpine AS production
 RUN rm -rf /usr/share/nginx/html/*
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=build /out/ /usr/share/nginx/html/
+COPY --from=build /app/dist/familiendashboard/browser/ /usr/share/nginx/html/
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]

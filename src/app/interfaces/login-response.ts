@@ -2,6 +2,6 @@ import { User } from './user';
 
 export interface LoginResponse {
   message: string;
-  access_token: string;
   user: User;
+  families: Array<{ family_id: number; is_admin: boolean }>;
 }

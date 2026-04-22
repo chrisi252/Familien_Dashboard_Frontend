@@ -10,6 +10,10 @@ export const routes: Routes = [
         canActivate: [authGuard, systemAdminGuard],
         children: [
             {
+                path: 'users',
+                loadComponent: () => import('./components/systemadmin-component/users/users').then(m => m.SystemadminUsers),
+            },
+            {
                 path: 'families',
                 loadComponent: () => import('./components/systemadmin-component/families/families').then(m => m.SystemadminFamilies),
             },
@@ -19,7 +23,7 @@ export const routes: Routes = [
             },
             {
                 path: '',
-                redirectTo: 'families',
+                redirectTo: 'users',
                 pathMatch: 'full',
             }
         ]
@@ -48,6 +52,11 @@ export const routes: Routes = [
             {
                 path: 'dashboard',
                 loadComponent: () => import('./components/dashboard-component/dashboard-component').then(m => m.DashboardComponent)
+            },
+             {
+                path: '',
+                redirectTo: 'editusers',
+                pathMatch: 'full',
             }
         ]
     },
@@ -85,7 +94,16 @@ export const routes: Routes = [
         loadComponent: () => import('./components/widget-component/widget-component').then(m => m.WidgetComponent),
     },
     {
+        path: 'not-found',
+        loadComponent: () => import('./components/not-found-component/not-found-component').then(m => m.NotFoundComponent),
+    },
+    {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full',
+    },
+    {
         path: '**',
-        loadComponent: () => import('./components/login-component/login-component').then(m => m.LoginComponent),
+        redirectTo: 'not-found',
     }
 ];

@@ -44,3 +44,10 @@ export interface TimetableEntryUpdate {
 }
 
 export const WEEKDAY_LABELS = ['Mo', 'Di', 'Mi', 'Do', 'Fr'] as const;
+
+export const TIMETABLE_PERSON_COLORS = [
+  '#3B82F6', '#EF4444', '#10B981', '#F59E0B',
+  '#8B5CF6', '#EC4899', '#14B8A6', '#F97316',
+] as const;
+
+export const TIMETABLE_ALL_PERSONS = '__all__';

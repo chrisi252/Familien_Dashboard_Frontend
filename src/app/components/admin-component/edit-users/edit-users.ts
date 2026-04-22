@@ -1,12 +1,13 @@
 import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { switchMap, take } from 'rxjs';
 import { FamilyInviteCode, FamilyService } from '../../../services/family-service';
-import { FamilyMember } from '../../../interfaces/user';
+import { FamilyMember, FamilyRoleName } from '../../../interfaces/user';
 import { UserStateService } from '../../../services/user-state-service';
+import { AlertBannerComponent } from '../../../shared/alert-banner/alert-banner.component';
 
 @Component({
   selector: 'app-edit-users',
-  imports: [],
+  imports: [AlertBannerComponent],
   templateUrl: './edit-users.html',
   styleUrl: './edit-users.css',
 })
@@ -22,17 +23,29 @@ export class EditUsers implements OnInit, OnDestroy {
   isGenerating = signal(false);
   inviteError = signal('');
 
+  editingMemberId = signal<number | null>(null);
+  actionError = signal('');
+  actionLoading = signal(false);
+
+  get currentUserId(): number | null {
+    return this.userState.currentUser()?.id ?? null;
+  }
+
   ngOnInit() {
+    this.loadMembers();
+  }
+
+  ngOnDestroy() {
+    this.clearCountdown();
+  }
+
+  private loadMembers() {
     this.userState.resolveCurrentFamilyId$().pipe(
       take(1),
       switchMap((familyId) => this.familyService.getFamilyById(familyId)),
     ).subscribe((detail) => {
       this.members.set(detail.members);
     });
-  }
-
-  ngOnDestroy() {
-    this.clearCountdown();
   }
 
   generateCode() {
@@ -48,13 +61,12 @@ export class EditUsers implements OnInit, OnDestroy {
       next: (res) => {
         this.inviteCode.set(res);
         this.isGenerating.set(false);
-        
-       
+
         let dateString = res.expires_at;
         if (!dateString.endsWith('Z')) {
-            dateString += 'Z';
+          dateString += 'Z';
         }
-        
+
         this.startCountdown(new Date(dateString));
       },
       error: (err) => {
@@ -64,12 +76,74 @@ export class EditUsers implements OnInit, OnDestroy {
     });
   }
 
+  toggleEdit(memberId: number) {
+    this.actionError.set('');
+    this.editingMemberId.set(this.editingMemberId() === memberId ? null : memberId);
+  }
+
+  changeRole(member: FamilyMember, newRole: FamilyRoleName) {
+    const adminCount = this.members().filter(m => m.role_name === 'Familyadmin').length;
+    if (member.role_name === 'Familyadmin' && newRole !== 'Familyadmin' && adminCount <= 1) {
+      this.actionError.set('Der letzte Administrator kann nicht degradiert werden.');
+      return;
+    }
+
+    this.actionLoading.set(true);
+    this.actionError.set('');
+
+    this.userState.resolveCurrentFamilyId$().pipe(
+      take(1),
+      switchMap((familyId) => this.familyService.changeMemberRole(familyId, member.user_id, newRole)),
+    ).subscribe({
+      next: (updated) => {
+        this.members.update(list =>
+          list.map(m => m.user_id === updated.user_id ? { ...m, role_name: updated.role_name } : m)
+        );
+        this.actionLoading.set(false);
+        this.editingMemberId.set(null);
+      },
+      error: (err) => {
+        this.actionError.set(err.error?.error ?? 'Rolle konnte nicht geändert werden.');
+        this.actionLoading.set(false);
+      },
+    });
+  }
+
+  removeMember(member: FamilyMember) {
+    if (member.user_id === this.currentUserId) {
+      this.actionError.set('Du kannst dich nicht selbst entfernen.');
+      return;
+    }
+    const adminCount = this.members().filter(m => m.role_name === 'Familyadmin').length;
+    if (member.role_name === 'Familyadmin' && adminCount <= 1) {
+      this.actionError.set('Der letzte Administrator kann nicht entfernt werden.');
+      return;
+    }
+
+    this.actionLoading.set(true);
+    this.actionError.set('');
+
+    this.userState.resolveCurrentFamilyId$().pipe(
+      take(1),
+      switchMap((familyId) => this.familyService.removeMember(familyId, member.user_id)),
+    ).subscribe({
+      next: () => {
+        this.members.update(list => list.filter(m => m.user_id !== member.user_id));
+        this.actionLoading.set(false);
+        this.editingMemberId.set(null);
+      },
+      error: (err) => {
+        this.actionError.set(err.error?.error ?? 'Mitglied konnte nicht entfernt werden.');
+        this.actionLoading.set(false);
+      },
+    });
+  }
+
   private startCountdown(expiresAt: Date) {
     const tick = () => {
       const diff = Math.max(0, Math.floor((expiresAt.getTime() - Date.now()) / 1000));
       this.secondsLeft.set(diff);
       if (diff === 0) {
-      //  this.inviteCode.set(null);
         this.clearCountdown();
       }
     };

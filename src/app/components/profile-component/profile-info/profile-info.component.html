@@ -1,0 +1,73 @@
+<section class="glass-wrapper h-auto">
+  <div class="glass-card">
+    <div class="flex items-center justify-between gap-3 flex-wrap mb-2">
+      <h1 class="text-2xl font-bold">Mein Profil</h1>
+      <button type="button" class="btn btn-outline btn-sm" (click)="reload.emit()" [disabled]="isLoading()">
+        Neu laden
+      </button>
+    </div>
+
+    @if (isLoading()) {
+      <div class="space-y-3 py-3">
+        <div class="skeleton h-12 w-full"></div>
+        <div class="skeleton h-12 w-full"></div>
+        <div class="skeleton h-12 w-full"></div>
+      </div>
+    } @else if (error()) {
+      <app-alert-banner [message]="error()" type="error" />
+      <div class="flex justify-end mt-4">
+        <button type="button" class="btn-premium" (click)="goToLogin.emit()">Zum Login</button>
+      </div>
+    } @else if (user(); as profileUser) {
+      <div class="stats stats-vertical sm:stats-horizontal bg-base-200 mb-4 w-full">
+        <div class="stat">
+          <div class="stat-title">Status</div>
+          <div class="stat-value text-lg">
+            <span class="badge" [class.badge-success]="profileUser.is_active" [class.badge-error]="!profileUser.is_active">
+              {{ profileUser.is_active ? 'Aktiv' : 'Inaktiv' }}
+            </span>
+          </div>
+        </div>
+        <div class="stat">
+          <div class="stat-title">Mitglied seit</div>
+          <div class="stat-value text-lg">{{ formatDate(profileUser.created_at) }}</div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1">
+        <div class="card bg-base-200 border border-base-300">
+          <div class="card-body p-4">
+            <p class="text-xs opacity-70">ID</p>
+            <p class="font-semibold">{{ profileUser.id }}</p>
+          </div>
+        </div>
+        <div class="card bg-base-200 border border-base-300">
+          <div class="card-body p-4">
+            <p class="text-xs opacity-70">Benutzername</p>
+            <p class="font-semibold">{{ profileUser.username }}</p>
+          </div>
+        </div>
+        <div class="card bg-base-200 border border-base-300">
+          <div class="card-body p-4">
+            <p class="text-xs opacity-70">Vorname</p>
+            <p class="font-semibold">{{ profileUser.first_name }}</p>
+          </div>
+        </div>
+        <div class="card bg-base-200 border border-base-300">
+          <div class="card-body p-4">
+            <p class="text-xs opacity-70">Nachname</p>
+            <p class="font-semibold">{{ profileUser.last_name }}</p>
+          </div>
+        </div>
+      </div>
+    } @else {
+      <div class="alert alert-warning">
+        <span>Keine Profildaten verfuegbar. Bitte erneut laden.</span>
+      </div>
+    }
+
+    <div class="flex justify-end mt-4">
+      <button type="button" class="btn-premium" (click)="goToDashboard.emit()">Zurück zum Dashboard</button>
+    </div>
+  </div>
+</section>

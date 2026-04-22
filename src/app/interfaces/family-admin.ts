@@ -5,6 +5,26 @@ export interface AdminFamily {
   member_count?: number;
 }
 
+export interface UserFamily {
+  family: { id: number; name: string; created_at: string };
+  role: { id: number; name: string };
+}
+
+export interface UserWithFamilies {
+  id: number;
+  username: string;
+  first_name: string;
+  last_name: string;
+  is_active: boolean;
+  is_system_admin: boolean;
+  created_at: string;
+  families: UserFamily[];
+}
+
+export interface AdminUsersResponse {
+  users: UserWithFamilies[];
+}
+
 export interface AdminFamiliesResponse {
   families: AdminFamily[];
 }

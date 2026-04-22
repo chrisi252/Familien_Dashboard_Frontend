@@ -1,24 +1,31 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { HeaderComponent } from '../header-component/header-component';
 import { ProfileService } from '../../services/profile-service';
 import { FamilyService } from '../../services/family-service';
+import { FamilyAdapterService } from '../../services/family-adapter.service';
 import { UserStateService } from '../../services/user-state-service';
 import { User, FamilyMembership } from '../../interfaces/user';
 import { firstValueFrom } from 'rxjs';
+import { ProfileInfoComponent } from './profile-info/profile-info.component';
+import { FamilyListComponent } from './family-list/family-list.component';
+import { JoinFamilyFormComponent } from './join-family-form/join-family-form.component';
 
 @Component({
   selector: 'app-profile-component',
-  imports: [HeaderComponent, FormsModule],
+  standalone: true,
+  imports: [HeaderComponent, ProfileInfoComponent, FamilyListComponent, JoinFamilyFormComponent],
   templateUrl: './profile-component.html',
   styleUrl: './profile-component.css',
 })
 export class ProfileComponent implements OnInit {
   private profileService = inject(ProfileService);
   private familyService = inject(FamilyService);
+  private familyAdapter = inject(FamilyAdapterService);
   private userState = inject(UserStateService);
   private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
 
   user = signal<User | null>(null);
   isLoading = signal(true);
@@ -27,7 +34,6 @@ export class ProfileComponent implements OnInit {
   families = signal<FamilyMembership[]>([]);
   familiesLoading = signal(false);
 
-  joinFamilyCode = '';
   joinError = signal('');
   joinLoading = signal(false);
   joinSuccess = signal(false);
@@ -45,7 +51,7 @@ export class ProfileComponent implements OnInit {
     this.isLoading.set(true);
     this.errorMessage.set('');
 
-    this.profileService.getProfile().subscribe({
+    this.profileService.getProfile().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (profile) => {
         if (!profile || !profile.username) {
           this.user.set(null);
@@ -69,45 +75,12 @@ export class ProfileComponent implements OnInit {
 
   loadFamilies() {
     this.familiesLoading.set(true);
-    this.familyService.getFamilies().subscribe({
+    this.familyService.getFamilies().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (res: unknown) => {
-        this.families.set(this.normalizeFamiliesResponse(res));
+        this.families.set(this.familyAdapter.normalizeFamiliesResponse(res));
         this.familiesLoading.set(false);
       },
-      error: () => {
-        this.familiesLoading.set(false);
-      }
-    });
-  }
-
-  selectFamily(membership: FamilyMembership) {
-    this.userState.selectFamily(membership.family.id, membership.role.name);
-    this.router.navigate(['/dashboard']);
-  }
-
-  joinFamily() {
-    const code = this.joinFamilyCode.trim().toUpperCase();
-    if (!code || code.length !== 6) {
-      this.joinError.set('Bitte gib einen gültigen 6-stelligen Einladungscode ein.');
-      return;
-    }
-
-    this.joinError.set('');
-    this.joinLoading.set(true);
-    this.joinSuccess.set(false);
-
-    this.familyService.joinByCode(code).subscribe({
-      next: async () => {
-        await firstValueFrom(this.userState.refreshFamilyContext());
-        this.joinLoading.set(false);
-        this.joinSuccess.set(true);
-        this.joinFamilyCode = '';
-        this.loadFamilies();
-      },
-      error: (error: { error?: { error?: string } }) => {
-        this.joinLoading.set(false);
-        this.joinError.set(error.error?.error ?? 'Familie konnte nicht beigetreten werden.');
-      }
+      error: () => this.familiesLoading.set(false),
     });
   }
 
@@ -119,8 +92,37 @@ export class ProfileComponent implements OnInit {
     this.router.navigate(['/dashboard']);
   }
 
-  // Delete family methods
-  deleteFamily(familyId: number) {
+  selectFamily(membership: FamilyMembership) {
+    this.userState.selectFamily(membership.family.id, membership.role.name);
+    this.router.navigate(['/dashboard']);
+  }
+
+  joinFamily(code: string) {
+    const trimmed = code.trim().toUpperCase();
+    if (!trimmed || trimmed.length !== 6) {
+      this.joinError.set('Bitte gib einen gültigen 6-stelligen Einladungscode ein.');
+      return;
+    }
+
+    this.joinError.set('');
+    this.joinLoading.set(true);
+    this.joinSuccess.set(false);
+
+    this.familyService.joinByCode(trimmed).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: async () => {
+        await firstValueFrom(this.userState.refreshFamilyContext());
+        this.joinLoading.set(false);
+        this.joinSuccess.set(true);
+        this.loadFamilies();
+      },
+      error: (error: { error?: { error?: string } }) => {
+        this.joinLoading.set(false);
+        this.joinError.set(error.error?.error ?? 'Familie konnte nicht beigetreten werden.');
+      },
+    });
+  }
+
+  startDeleteFamily(familyId: number) {
     this.deletingFamilyId.set(familyId);
     this.deleteError.set('');
   }
@@ -132,7 +134,7 @@ export class ProfileComponent implements OnInit {
     this.deleteLoading.set(true);
     this.deleteError.set('');
 
-    this.familyService.deleteFamily(familyId).subscribe({
+    this.familyService.deleteFamily(familyId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.deleteLoading.set(false);
         this.deletingFamilyId.set(null);
@@ -143,107 +145,12 @@ export class ProfileComponent implements OnInit {
       error: (error: { error?: { error?: string } }) => {
         this.deleteLoading.set(false);
         this.deleteError.set(error.error?.error ?? 'Familie konnte nicht gelöscht werden.');
-      }
+      },
     });
   }
 
   cancelDelete() {
     this.deletingFamilyId.set(null);
     this.deleteError.set('');
-  }
-
-  isAdmin(membership: FamilyMembership): boolean {
-    return membership.role.name === 'Familyadmin';
-  }
-
-  formatDate(dateAsString: string): string {
-    const date = new Date(dateAsString);
-    if (Number.isNaN(date.getTime())) {
-      return '-';
-    }
-    return date.toLocaleDateString('de-DE', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-    });
-  }
-
-  private normalizeFamiliesResponse(response: unknown): FamilyMembership[] {
-    const entries = this.extractFamilyEntries(response);
-    return entries
-      .map((entry) => this.normalizeMembership(entry))
-      .filter((entry): entry is FamilyMembership => entry !== null);
-  }
-
-  private extractFamilyEntries(response: unknown): unknown[] {
-    if (Array.isArray(response)) {
-      return response;
-    }
-
-    if (!response || typeof response !== 'object') {
-      return [];
-    }
-
-    const typed = response as { families?: unknown };
-    if (Array.isArray(typed.families)) {
-      return typed.families;
-    }
-
-    return [];
-  }
-
-  private normalizeMembership(entry: unknown): FamilyMembership | null {
-    if (!entry || typeof entry !== 'object') {
-      return null;
-    }
-
-    const item = entry as Record<string, any>;
-    const familyData = (item['family'] && typeof item['family'] === 'object') ? item['family'] : item;
-    const roleData = (item['role'] && typeof item['role'] === 'object') ? item['role'] : null;
-
-    const familyId = this.toPositiveNumber(
-      familyData?.id ?? familyData?.family_id ?? familyData?.familyId ?? item['family_id'] ?? item['familyId'],
-    );
-
-    if (!familyId) {
-      return null;
-    }
-
-    const roleNameRaw = roleData?.name ?? item['role_name'] ?? item['roleName'];
-    const roleName = this.toFamilyRoleName(roleNameRaw);
-
-    return {
-      family: {
-        id: familyId,
-        name: String(familyData?.name ?? item['family_name'] ?? item['familyName'] ?? `Familie ${familyId}`),
-        created_at: String(familyData?.created_at ?? familyData?.createdAt ?? item['created_at'] ?? item['createdAt'] ?? ''),
-      },
-      role: {
-        id: this.toPositiveNumber(roleData?.id ?? item['role_id'] ?? item['roleId']) ?? 0,
-        name: roleName,
-      },
-    };
-  }
-
-  private toPositiveNumber(value: unknown): number | null {
-    if (typeof value === 'number' && Number.isFinite(value) && value > 0) {
-      return value;
-    }
-
-    if (typeof value === 'string') {
-      const parsed = Number(value);
-      if (Number.isFinite(parsed) && parsed > 0) {
-        return parsed;
-      }
-    }
-
-    return null;
-  }
-
-  private toFamilyRoleName(value: unknown): 'Familyadmin' | 'Guest' | 'SystemAdmin' {
-    if (value === 'Familyadmin' || value === 'Guest' || value === 'SystemAdmin') {
-      return value;
-    }
-    return 'Guest';
   }
 }

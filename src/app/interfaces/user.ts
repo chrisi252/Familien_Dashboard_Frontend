@@ -9,7 +9,12 @@ export interface User {
   created_at: string;
 }
 
-export type FamilyRoleName = 'Familyadmin' | 'Guest' | 'SystemAdmin';
+export const FAMILY_ROLES = ['Familyadmin', 'Guest', 'SystemAdmin'] as const;
+export type FamilyRoleName = (typeof FAMILY_ROLES)[number];
+
+export function isFamilyRoleName(value: unknown): value is FamilyRoleName {
+  return typeof value === 'string' && (FAMILY_ROLES as readonly string[]).includes(value);
+}
 
 export interface FamilyMembership {
   family: { id: number; name: string; created_at: string };

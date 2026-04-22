@@ -1,14 +1,10 @@
 import { computed, inject, Injectable, signal, Type } from '@angular/core';
-import { NotesWidget } from '../widgets/notes-widget/notes-widget';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Widget } from '../interfaces/widget';
-import { ScheduleWidget } from '../widgets/schedule-widget/schedule-widget';
 import { TodoWidget } from '../widgets/todo-widget/todo-widget';
-import { CalendarWidget } from '../widgets/calendar-widget/calendar-widget';
 import { TimetableWidget } from '../widgets/timetable-widget/timetable-widget';
-
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { map } from 'rxjs';
+import { debounceTime, map, Subject, switchMap } from 'rxjs';
 import { WeatherWidget } from '../widgets/weather-widget/weather-widget';
 import { FamilyService } from './family-service';
 import { UserStateService } from './user-state-service';
@@ -16,11 +12,9 @@ import { FamilyWidgetDetailed, WidgetLayoutItem } from '../interfaces/widget';
 
 // Widget-Registry: Mappt widget_key vom Backend zu Angular Components
 const WIDGET_REGISTRY: Record<string, { content: Type<unknown>; label: string; defaultRows: number; defaultCols: number }> = {
-  notes: { content: NotesWidget, label: 'Notizen', defaultRows: 2, defaultCols: 2 },
+
   todo: { content: TodoWidget, label: 'Aufgaben', defaultRows: 2, defaultCols: 1 },
-  schedule: { content: ScheduleWidget, label: 'Termine', defaultRows: 2, defaultCols: 1 },
   weather: { content: WeatherWidget, label: 'Wetter', defaultRows: 2, defaultCols: 1 },
-  calendar: { content: CalendarWidget, label: 'Google Kalender', defaultRows: 2, defaultCols: 2 },
   timetable: { content: TimetableWidget, label: 'Stundenplan', defaultRows: 3, defaultCols: 2 },
 };
 
@@ -35,6 +29,28 @@ export class DashboardService {
       .observe(Breakpoints.Handset)
       .pipe(map(r => r.matches)),
     { initialValue: false }
+  );
+
+  // Aktuelle Anzahl Spalten im Dashboard-Grid — matcht die Tailwind-Breakpoints
+  // im Dashboard-Template: grid-cols-1 / sm:2 / lg:3 / xl:4 / 2xl:5
+  gridCols = toSignal(
+    this.breakpointObserver
+      .observe([
+        '(min-width: 1536px)',
+        '(min-width: 1280px)',
+        '(min-width: 1024px)',
+        '(min-width: 640px)',
+      ])
+      .pipe(
+        map(state => {
+          if (state.breakpoints['(min-width: 1536px)']) return 5;
+          if (state.breakpoints['(min-width: 1280px)']) return 4;
+          if (state.breakpoints['(min-width: 1024px)']) return 3;
+          if (state.breakpoints['(min-width: 640px)']) return 2;
+          return 1;
+        }),
+      ),
+    { initialValue: 1 },
   );
 
   // Alle verfügbaren Widgets (vom Backend, inkl. solche ohne Position)
@@ -52,6 +68,34 @@ export class DashboardService {
   isLoading = signal(false);
   isSaving = signal(false);
   errorMessage = signal('');
+
+  private saveTrigger$ = new Subject<void>();
+
+  constructor() {
+    this.saveTrigger$
+      .pipe(
+        debounceTime(300),
+        switchMap(() => {
+          const familyId = this.userState.currentFamilyId();
+          if (!familyId) {
+            this.isSaving.set(false);
+            return [];
+          }
+          const layout: WidgetLayoutItem[] = this.addedWidgets().map((widget, index) => ({
+            family_widget_id: widget.id,
+            position: index,
+            grid_col: widget.cols ?? 1,
+            grid_row: widget.rows ?? 1,
+          }));
+          return this.familyService.saveWidgetLayout(familyId, layout);
+        }),
+        takeUntilDestroyed(),
+      )
+      .subscribe({
+        next: () => this.isSaving.set(false),
+        error: () => this.isSaving.set(false),
+      });
+  }
 
   addWidget(widget: Widget) {
     this.addedWidgets.update(widgets => [...widgets, { ...widget }]);
@@ -172,27 +216,8 @@ export class DashboardService {
     };
   }
 
-  // Speichert das aktuelle Layout atomar ans Backend
   private saveLayoutToBackend() {
-    const familyId = this.userState.currentFamilyId();
-    if (!familyId) return;
-
-    const layout: WidgetLayoutItem[] = this.addedWidgets().map((widget, index) => ({
-      family_widget_id: widget.id,
-      position: index,
-      grid_col: widget.cols ?? 1,
-      grid_row: widget.rows ?? 1,
-    }));
-
     this.isSaving.set(true);
-    this.familyService.saveWidgetLayout(familyId, layout).subscribe({
-      next: () => {
-        this.isSaving.set(false);
-      },
-      error: () => {
-        this.isSaving.set(false);
-        // Fehler ignorieren, lokales Layout bleibt
-      }
-    });
+    this.saveTrigger$.next();
   }
 }

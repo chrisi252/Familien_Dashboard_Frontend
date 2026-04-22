@@ -1,41 +1,42 @@
 <div class="flex flex-col gap-6 max-w-md">
-  <h1 class="text-2xl font-bold">Admin-Account erstellen</h1>
+  <div>
+    <h1 class="text-2xl font-bold">Admin-Account erstellen</h1>
+    <p class="text-sm opacity-60 mt-1">Erstellt einen neuen Benutzer mit System-Admin-Rechten.</p>
+  </div>
 
-  @if (successMessage()) {
-    <div class="alert alert-success">{{ successMessage() }}</div>
-  }
-  @if (errorMessage()) {
-    <div class="alert alert-error">{{ errorMessage() }}</div>
-  }
+  <app-alert-banner [message]="successMessage()" type="success" />
+  <app-alert-banner [message]="errorMessage()" type="error" />
 
-  <div class="card bg-base-200 shadow">
-    <div class="card-body gap-4">
+  <div class="glass-wrapper h-auto">
+    <div class="glass-card gap-4">
 
-      <div class="form-control gap-1">
-        <label class="label py-0"><span class="label-text">Benutzername *</span></label>
-        <input class="input input-bordered" [ngModel]="username()" (ngModelChange)="username.set($event)"
+      <div class="input-floating-container">
+        <input class="input-floating" [ngModel]="username()" (ngModelChange)="username.set($event)"
           placeholder="admin2" autocomplete="off" />
+        <label class="label-floating">Benutzername *</label>
       </div>
 
-      <div class="form-control gap-1">
-        <label class="label py-0"><span class="label-text">Passwort *</span></label>
-        <input type="password" class="input input-bordered" [ngModel]="password()" (ngModelChange)="password.set($event)"
+      <div class="input-floating-container">
+        <input type="password" class="input-floating" [ngModel]="password()" (ngModelChange)="password.set($event)"
           placeholder="Mind. 8 Zeichen" autocomplete="new-password" />
+        <label class="label-floating">Passwort *</label>
       </div>
 
-      <div class="flex gap-3">
-        <div class="form-control gap-1 flex-1">
-          <label class="label py-0"><span class="label-text">Vorname</span></label>
-          <input class="input input-bordered" [ngModel]="firstName()" (ngModelChange)="firstName.set($event)" />
+      <div class="flex flex-col sm:flex-row gap-3">
+        <div class="input-floating-container flex-1">
+          <input class="input-floating" [ngModel]="firstName()" (ngModelChange)="firstName.set($event)"
+            placeholder="Vorname" />
+          <label class="label-floating">Vorname</label>
         </div>
-        <div class="form-control gap-1 flex-1">
-          <label class="label py-0"><span class="label-text">Nachname</span></label>
-          <input class="input input-bordered" [ngModel]="lastName()" (ngModelChange)="lastName.set($event)" />
+        <div class="input-floating-container flex-1">
+          <input class="input-floating" [ngModel]="lastName()" (ngModelChange)="lastName.set($event)"
+            placeholder="Nachname" />
+          <label class="label-floating">Nachname</label>
         </div>
       </div>
 
-      <div class="card-actions justify-end pt-2">
-        <button class="btn btn-primary"
+      <div class="flex justify-end pt-2">
+        <button class="btn-premium"
           [disabled]="isSaving() || !username().trim() || !password().trim()"
           (click)="submit()">
           @if (isSaving()) {

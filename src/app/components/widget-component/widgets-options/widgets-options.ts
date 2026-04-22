@@ -1,4 +1,4 @@
-import { Component, inject, input, model, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, model } from '@angular/core';
 import { Widget } from '../../../interfaces/widget';
 import { DashboardService } from '../../../services/dashboard-service';
 import { NgIcon } from '@ng-icons/core';
@@ -11,16 +11,13 @@ import { NgIcon } from '@ng-icons/core';
   styleUrl: './widgets-options.css',
   host: {
     class: 'absolute top-0 left-0 w-full h-full bg-base-200/95 backdrop-blur-md flex flex-col items-center justify-center text-base-content z-50'
-  }
+  },
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WidgetsOptions {
-showOptions=model<boolean>(false);
-
-store=inject(DashboardService);
+  showOptions = model<boolean>(false);
+  store = inject(DashboardService);
   widget = input.required<Widget>();
-
-
-  closeOptions = output<void>();
 
 
   changeWidth(newWidth: number) {
@@ -31,6 +28,4 @@ store=inject(DashboardService);
   changeHeight(newHeight: number) {
     this.store.updateWidgetSize(this.widget().id, { rows: newHeight });
   }
-selectedOption: any;
-
 }
