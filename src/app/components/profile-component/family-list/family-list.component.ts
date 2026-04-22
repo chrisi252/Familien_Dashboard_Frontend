@@ -24,10 +24,4 @@ export class FamilyListComponent {
   isAdmin(membership: FamilyMembership): boolean {
     return membership.role.name === 'Familyadmin';
   }
-
-  formatDate(dateAsString: string): string {
-    const date = new Date(dateAsString);
-    if (Number.isNaN(date.getTime())) return '-';
-    return date.toLocaleDateString('de-DE', { year: 'numeric', month: '2-digit', day: '2-digit' });
-  }
 }

@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, input, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, input, OnInit, signal } from '@angular/core';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { heroPencil, heroCheck, heroXMark, heroTrash } from '@ng-icons/heroicons/outline';
+import { heroPencil, heroCheck, heroXMark, heroTrash, heroCheckCircle } from '@ng-icons/heroicons/outline';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { switchMap } from 'rxjs';
 import { Todo, TodoService } from '../../services/todo-service';
@@ -10,7 +10,7 @@ import { LoadingStateComponent } from '../../shared/loading-state/loading-state.
 @Component({
   selector: 'app-todo-widget',
   imports: [NgIcon, LoadingStateComponent],
-  viewProviders: [provideIcons({ heroPencil, heroCheck, heroXMark, heroTrash })],
+  viewProviders: [provideIcons({ heroPencil, heroCheck, heroXMark, heroTrash, heroCheckCircle })],
   templateUrl: './todo-widget.html',
   styleUrl: './todo-widget.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -28,6 +28,11 @@ export class TodoWidget implements OnInit {
   errorMessage = signal('');
   editingId = signal<number | null>(null);
   editingText = signal<string>('');
+
+  openTodos = computed(() => this.todos().filter(t => !t.is_completed));
+  completedTodos = computed(() => this.todos().filter(t => t.is_completed));
+  completedCount = computed(() => this.completedTodos().length);
+  totalCount = computed(() => this.todos().length);
 
   private familyId: number | null = null;
 

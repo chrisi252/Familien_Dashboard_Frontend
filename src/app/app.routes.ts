@@ -10,6 +10,10 @@ export const routes: Routes = [
         canActivate: [authGuard, systemAdminGuard],
         children: [
             {
+                path: 'users',
+                loadComponent: () => import('./components/systemadmin-component/users/users').then(m => m.SystemadminUsers),
+            },
+            {
                 path: 'families',
                 loadComponent: () => import('./components/systemadmin-component/families/families').then(m => m.SystemadminFamilies),
             },
@@ -19,7 +23,7 @@ export const routes: Routes = [
             },
             {
                 path: '',
-                redirectTo: 'families',
+                redirectTo: 'users',
                 pathMatch: 'full',
             }
         ]

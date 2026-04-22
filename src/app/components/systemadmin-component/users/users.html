@@ -1,0 +1,81 @@
+<div class="flex flex-col gap-6">
+  <div class="flex items-center justify-between flex-wrap gap-2">
+    <div>
+      <h1 class="text-2xl font-bold">Benutzer verwalten</h1>
+      <p class="text-sm opacity-60 mt-1">Alle registrierten Benutzer und ihre Familienzugehörigkeiten.</p>
+    </div>
+    <span class="badge badge-ghost text-sm px-3 py-2">{{ users().length }} Benutzer gesamt</span>
+  </div>
+
+  <app-loading-state [loading]="isLoading()" [error]="errorMessage()">
+
+    @for (user of users(); track user.id) {
+      <div class="glass-wrapper h-auto mb-3">
+        <div class="glass-card gap-0 p-0">
+
+          <button
+            class="w-full flex items-center justify-between p-4 sm:p-5 text-left hover:bg-base-content/5 transition-colors rounded-[calc(2rem-1px)]"
+            (click)="toggleExpand(user.id)">
+            <div class="flex items-center gap-3 flex-1 min-w-0">
+              <div class="avatar placeholder">
+                <div class="bg-primary/10 text-primary rounded-full w-10 h-10 flex items-center justify-center">
+                  <span class="font-bold text-sm">{{ user.username.slice(0, 2).toUpperCase() }}</span>
+                </div>
+              </div>
+              <div class="min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="font-bold text-base truncate">{{ user.username }}</span>
+                  @if (user.is_system_admin) {
+                    <span class="badge badge-primary badge-sm">System Admin</span>
+                  }
+                  @if (!user.is_active) {
+                    <span class="badge badge-error badge-sm">Inaktiv</span>
+                  }
+                </div>
+                <p class="text-xs opacity-50 mt-0.5">
+                  {{ user.first_name }} {{ user.last_name }} &middot; Erstellt {{ user.created_at | date: 'dd.MM.yyyy' }}
+                </p>
+              </div>
+            </div>
+            <div class="flex items-center gap-3 shrink-0 ml-3">
+              <span class="badge badge-ghost badge-sm">{{ user.families.length }} Familie(n)</span>
+              <svg class="w-4 h-4 opacity-40 transition-transform"
+                [class.rotate-180]="expandedUserId() === user.id"
+                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+              </svg>
+            </div>
+          </button>
+
+          @if (expandedUserId() === user.id) {
+            <div class="px-4 sm:px-5 pb-4 border-t border-base-content/5">
+              @if (user.families.length > 0) {
+                <p class="text-xs font-semibold uppercase tracking-wider opacity-40 mt-4 mb-2">Familien</p>
+                <div class="flex flex-col gap-2">
+                  @for (family of user.families; track family.family.id) {
+                    <div class="flex items-center justify-between bg-base-200/60 rounded-xl px-3 py-2">
+                      <span class="text-sm font-medium">{{ family.family.name }}</span>
+                      <span class="badge badge-sm"
+                        [class.badge-primary]="family.role.name === 'Familyadmin'"
+                        [class.badge-ghost]="family.role.name !== 'Familyadmin'">
+                        {{ family.role.name }}
+                      </span>
+                    </div>
+                  }
+                </div>
+              } @else {
+                <p class="text-sm opacity-40 mt-4">Kein Mitglied in einer Familie.</p>
+              }
+            </div>
+          }
+
+        </div>
+      </div>
+    } @empty {
+      <div class="text-center opacity-40 py-12">
+        <p class="text-sm">Keine Benutzer vorhanden.</p>
+      </div>
+    }
+
+  </app-loading-state>
+</div>
