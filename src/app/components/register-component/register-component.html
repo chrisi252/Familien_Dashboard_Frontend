@@ -12,7 +12,7 @@
 
   <div class="w-full max-w-md p-[1px] rounded-[2rem] bg-gradient-to-b from-base-content/20 via-base-content/5 to-transparent shadow-[0_8px_30px_rgb(0,0,0,0.12)] backdrop-blur-3xl animate-fade-in-up">
     
-    <div class="bg-base-100/70 backdrop-blur-xl rounded-[calc(2rem-1px)] p-8 sm:p-12">
+    <div class="bg-base-100/70 backdrop-blur-xl rounded-[calc(2rem-1px)] p-5 sm:p-8 lg:p-12">
       
       <div class="text-center mb-8">
         <div class="mx-auto w-12 h-12 bg-gradient-to-tr from-primary to-secondary rounded-xl shadow-lg shadow-primary/30 flex items-center justify-center mb-6">
@@ -40,7 +40,7 @@
               First Name
             </label>
             @if(registerForm.controls.first_name.invalid && registerForm.controls.first_name.touched) {
-              <p class="absolute -bottom-4 left-2 text-[10px] text-error font-medium">Required</p>
+              <p class="absolute -bottom-4 left-2 text-xs text-error font-medium">Required</p>
             }
           </div>
 
@@ -51,7 +51,7 @@
               Last Name
             </label>
             @if(registerForm.controls.last_name.invalid && registerForm.controls.last_name.touched) {
-              <p class="absolute -bottom-4 left-2 text-[10px] text-error font-medium">Required</p>
+              <p class="absolute -bottom-4 left-2 text-xs text-error font-medium">Required</p>
             }
           </div>
         </div>

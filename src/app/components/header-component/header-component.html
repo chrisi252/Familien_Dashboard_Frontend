@@ -11,9 +11,9 @@
 
     <div class="flex-1 flex justify-end">
         <div class="dropdown dropdown-end">
-            <div tabindex="0" role="button" class="avatar">
-                <div class="rounded-full w-10">
-                    <img src="https://img.daisyui.com/images/profile/demo/yellingcat@192.webp" alt="Profilbild" />
+            <div tabindex="0" role="button" class="avatar placeholder">
+                <div class="bg-primary/10 text-primary rounded-full w-10 flex items-center justify-center">
+                    <span class="font-bold text-sm">{{ (userStateService.currentUser()?.username ?? '?').slice(0, 2).toUpperCase() }}</span>
                 </div>
             </div>
 
