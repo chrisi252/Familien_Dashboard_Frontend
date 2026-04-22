@@ -25,6 +25,8 @@ export class EditWidgets implements OnInit {
   private userState = inject(UserStateService);
   private destroyRef = inject(DestroyRef);
 
+  currentUserId = this.userState.currentUser()?.id ?? null;
+
   widgets = signal<FamilyWidgetDetailed[]>([]);
   members = signal<FamilyMember[]>([]);
   isLoading = signal(true);
@@ -117,7 +119,10 @@ export class EditWidgets implements OnInit {
   savePermission(widgetId: number, userId: number) {
     if (!this.familyId) return;
     
-    const permission = this.getPermission(widgetId, userId);
+    const stored = this.getPermission(widgetId, userId);
+    const permission: PermissionState = userId === this.currentUserId
+      ? { ...stored, canView: true }
+      : stored;
     const key = `${widgetId}-${userId}`;
     
     this.savingPermission.set(key);

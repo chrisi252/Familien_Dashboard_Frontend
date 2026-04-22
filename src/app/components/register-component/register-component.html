@@ -20,8 +20,8 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.374 21c-2.331 0-4.512-.645-6.374-1.766z" />
           </svg>
         </div>
-        <h2 class="text-3xl font-extrabold tracking-tight text-base-content">Join the Family</h2>
-        <p class="text-sm font-medium text-base-content/50 mt-2 uppercase tracking-widest">Create an Account</p>
+        <h2 class="text-3xl font-extrabold tracking-tight text-base-content">Trete einer Familie bei</h2>
+        <p class="text-sm font-medium text-base-content/50 mt-2 uppercase tracking-widest">Erstelle einen Account</p>
       </div>
 
       @if (errorMessage) {
@@ -37,7 +37,7 @@
             <input formControlName="first_name" id="first_name" type="text" placeholder="First Name" 
                    class="peer w-full h-14 bg-base-200/50 text-base-content border border-base-content/10 rounded-2xl px-4 pt-5 pb-1 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary focus:bg-base-100 transition-all placeholder-transparent shadow-inner" />
             <label for="first_name" class="absolute left-4 top-2 text-[10px] font-bold uppercase tracking-wider text-base-content/50 transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:top-4 peer-placeholder-shown:normal-case peer-placeholder-shown:tracking-normal peer-focus:top-2 peer-focus:text-[10px] peer-focus:uppercase peer-focus:tracking-wider peer-focus:text-primary pointer-events-none">
-              First Name
+             Vorname
             </label>
             @if(registerForm.controls.first_name.invalid && registerForm.controls.first_name.touched) {
               <p class="absolute -bottom-4 left-2 text-xs text-error font-medium">Required</p>
@@ -48,10 +48,10 @@
             <input formControlName="last_name" id="last_name" type="text" placeholder="Last Name" 
                    class="peer w-full h-14 bg-base-200/50 text-base-content border border-base-content/10 rounded-2xl px-4 pt-5 pb-1 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary focus:bg-base-100 transition-all placeholder-transparent shadow-inner" />
             <label for="last_name" class="absolute left-4 top-2 text-[10px] font-bold uppercase tracking-wider text-base-content/50 transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:top-4 peer-placeholder-shown:normal-case peer-placeholder-shown:tracking-normal peer-focus:top-2 peer-focus:text-[10px] peer-focus:uppercase peer-focus:tracking-wider peer-focus:text-primary pointer-events-none">
-              Last Name
+              Nachname
             </label>
             @if(registerForm.controls.last_name.invalid && registerForm.controls.last_name.touched) {
-              <p class="absolute -bottom-4 left-2 text-xs text-error font-medium">Required</p>
+              <p class="absolute -bottom-4 left-2 text-xs text-error font-medium">benötigt</p>
             }
           </div>
         </div>
@@ -60,12 +60,12 @@
           <input formControlName="username" id="username" type="text" placeholder="Username" 
                  class="peer w-full h-14 bg-base-200/50 text-base-content border border-base-content/10 rounded-2xl px-4 pt-5 pb-1 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary focus:bg-base-100 transition-all placeholder-transparent shadow-inner" />
           <label for="username" class="absolute left-4 top-2 text-[10px] font-bold uppercase tracking-wider text-base-content/50 transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:top-4 peer-placeholder-shown:normal-case peer-placeholder-shown:tracking-normal peer-focus:top-2 peer-focus:text-[10px] peer-focus:uppercase peer-focus:tracking-wider peer-focus:text-primary pointer-events-none">
-            Username
+            Nutzername 
           </label>
           @if(registerForm.controls.username.invalid && registerForm.controls.username.touched) {
             <p class="absolute -bottom-5 left-2 text-xs text-error font-medium flex items-center gap-1">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-              Min. 3 characters required
+              Mindestens 3 Zeichen benötigt
             </p>
           }
         </div>
@@ -74,7 +74,7 @@
           <input formControlName="password" id="password" [type]="showPassword ? 'text' : 'password'" placeholder="Password" 
                  class="peer w-full h-14 bg-base-200/50 text-base-content border border-base-content/10 rounded-2xl pl-4 pr-12 pt-5 pb-1 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary focus:bg-base-100 transition-all placeholder-transparent shadow-inner" />
           <label for="password" class="absolute left-4 top-2 text-[10px] font-bold uppercase tracking-wider text-base-content/50 transition-all peer-placeholder-shown:text-sm peer-placeholder-shown:top-4 peer-placeholder-shown:normal-case peer-placeholder-shown:tracking-normal peer-focus:top-2 peer-focus:text-[10px] peer-focus:uppercase peer-focus:tracking-wider peer-focus:text-primary pointer-events-none">
-            Password
+            Passwort
           </label>
           
           <button type="button" (click)="togglePasswordVisibility()" class="absolute right-4 top-1/2 -translate-y-1/2 text-base-content/40 hover:text-primary transition-colors focus:outline-none">
@@ -88,7 +88,7 @@
           @if(registerForm.controls.password.invalid && registerForm.controls.password.touched) {
             <p class="absolute -bottom-5 left-2 text-xs text-error font-medium flex items-center gap-1">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
-              Min. 6 characters required
+              Mindestens 6 Zeichen
             </p>
           }
         </div>
@@ -100,7 +100,7 @@
             @if(isLoading) {
               <span class="loading loading-spinner loading-md"></span>
             } @else {
-              <span class="tracking-wide text-lg">Create Account</span>
+              <span class="tracking-wide text-lg">Account erstellen</span>
               <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
             }
           </button>
@@ -110,8 +110,8 @@
       
       <div class="mt-8 text-center">
         <p class="text-sm text-base-content/60 font-medium">
-          Already have an account? 
-          <a [routerLink]="['/login']" class="text-primary hover:text-primary-focus font-bold underline decoration-2 underline-offset-4 transition-all">Sign in here</a>
+          Haben sie schon ein Konto?
+          <a [routerLink]="['/login']" class="text-primary hover:text-primary-focus font-bold underline decoration-2 underline-offset-4 transition-all">Hier anmelden!</a>
         </p>
       </div>
 

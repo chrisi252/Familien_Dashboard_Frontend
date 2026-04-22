@@ -1,15 +1,19 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, input, OnInit } from '@angular/core';
 import { DecimalPipe, SlicePipe, DatePipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 import { EMPTY, Observable, catchError, retry, switchMap } from 'rxjs';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { heroPencil, heroCheck, heroXMark } from '@ng-icons/heroicons/outline';
 import { WeatherService } from '../../services/weather-service';
 import { WeatherResponse } from '../../interfaces/weather';
 import { UserStateService } from '../../services/user-state-service';
 
 @Component({
   selector: 'app-weather-widget',
-  imports: [DecimalPipe, SlicePipe, DatePipe],
+  imports: [DecimalPipe, SlicePipe, DatePipe, NgIcon, FormsModule],
+  viewProviders: [provideIcons({ heroPencil, heroCheck, heroXMark })],
   templateUrl: './weather-widget.html',
   styleUrl: './weather-widget.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -22,6 +26,11 @@ export class WeatherWidget implements OnInit {
   isDayTime = true;
   error: string | null = null;
   isLoading = true;
+
+  isEditing = false;
+  editCity = '';
+  isSaving = false;
+  saveError: string | null = null;
 
   private resolvedFamilyId: number | null = null;
 
@@ -65,6 +74,61 @@ export class WeatherWidget implements OnInit {
 
   retryWeatherLoad() {
     this.loadWeather();
+  }
+
+  openCityEdit() {
+    this.editCity = this.weatherData?.location?.city_name ?? '';
+    this.saveError = null;
+    this.isEditing = true;
+    this.changeDetectorRef.markForCheck();
+  }
+
+  cancelCityEdit() {
+    this.isEditing = false;
+    this.saveError = null;
+    this.changeDetectorRef.markForCheck();
+  }
+
+  saveCityEdit() {
+    const city = this.editCity.trim();
+    if (!city) {
+      this.saveError = 'Bitte einen gültigen Ort eingeben.';
+      this.changeDetectorRef.markForCheck();
+      return;
+    }
+    if (!this.resolvedFamilyId) {
+      this.saveError = 'Keine aktive Familie gefunden.';
+      this.changeDetectorRef.markForCheck();
+      return;
+    }
+    this.isSaving = true;
+    this.saveError = null;
+    this.changeDetectorRef.markForCheck();
+
+    this.weatherService
+      .updateLocation(this.resolvedFamilyId, city)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.isSaving = false;
+          this.isEditing = false;
+          this.changeDetectorRef.markForCheck();
+          this.loadWeather();
+        },
+        error: (error: HttpErrorResponse) => {
+          this.isSaving = false;
+          this.saveError = this.mapSaveError(error);
+          this.changeDetectorRef.markForCheck();
+        },
+      });
+  }
+
+  private mapSaveError(error: HttpErrorResponse): string {
+    if (error.status === 0) return 'Verbindungsfehler.';
+    if (error.status === 403) return 'Keine Berechtigung zum Bearbeiten.';
+    if (error.status === 404) return 'Standortdaten nicht gefunden.';
+    if (error.status >= 500) return 'Serverfehler beim Speichern.';
+    return 'Standort konnte nicht gespeichert werden.';
   }
 
   private resolveFamilyId(): Observable<number> {

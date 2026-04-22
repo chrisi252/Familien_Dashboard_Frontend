@@ -1,10 +1,56 @@
 @if (weatherData?.current && weatherData?.location) {
 <div
-    class="weather-root [container-type:size] flex h-full w-full flex-col text-center p-2 sm:p-3 rounded-xl font-sans overflow-hidden"
+    class="weather-root [container-type:size] relative flex h-full w-full flex-col text-center p-2 sm:p-3 rounded-xl font-sans overflow-hidden"
     [style.background]="isDayTime ? 'linear-gradient(to bottom, #e6f6ff, #b9e6ff)' : 'linear-gradient(to bottom, #000000, #08072a)'"
     [class.text-slate-900]="isDayTime"
     [class.text-white]="!isDayTime"
 >
+
+@if (canEdit() && !isEditing) {
+  <button
+    type="button"
+    class="absolute top-2 right-2 z-20 btn btn-circle btn-xs bg-white/20 hover:bg-white/40 border-none shadow"
+    title="Stadt bearbeiten"
+    (click)="openCityEdit()">
+    <ng-icon name="heroPencil" class="text-sm"></ng-icon>
+  </button>
+}
+
+@if (isEditing) {
+  <div class="absolute inset-0 z-30 flex flex-col items-center justify-center gap-2 px-3 rounded-xl bg-black/40 backdrop-blur-sm">
+    <input
+      type="text"
+      class="input input-sm w-full max-w-[12rem] text-center bg-white/90 text-slate-900"
+      placeholder="z.B. Berlin"
+      [(ngModel)]="editCity"
+      [disabled]="isSaving"
+      (keyup.enter)="saveCityEdit()"
+      (keyup.escape)="cancelCityEdit()" />
+    @if (saveError) {
+      <p class="text-xs text-red-300 text-center max-w-[12rem]">{{ saveError }}</p>
+    }
+    <div class="flex gap-2">
+      <button
+        type="button"
+        class="btn btn-circle btn-xs btn-success"
+        [disabled]="isSaving"
+        (click)="saveCityEdit()">
+        @if (isSaving) {
+          <span class="loading loading-spinner loading-xs"></span>
+        } @else {
+          <ng-icon name="heroCheck" class="text-sm"></ng-icon>
+        }
+      </button>
+      <button
+        type="button"
+        class="btn btn-circle btn-xs btn-error"
+        [disabled]="isSaving"
+        (click)="cancelCityEdit()">
+        <ng-icon name="heroXMark" class="text-sm"></ng-icon>
+      </button>
+    </div>
+  </div>
+}
 
 <div class="weather-sky relative w-full shrink-0 h-[clamp(2.2rem,14cqh,5.2rem)]">
 

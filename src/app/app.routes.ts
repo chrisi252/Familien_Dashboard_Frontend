@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth.guard';
 import { familyAdminGuard } from './guards/familyadmin.guard';
 import { systemAdminGuard } from './guards/systemadmin.guard';
+import { hasFamilyGuard } from './guards/has-family-guard';
 
 export const routes: Routes = [
     {
@@ -82,7 +83,7 @@ export const routes: Routes = [
     {
         path: 'dashboard',
         loadComponent: () => import('./components/dashboard-component/dashboard-component').then(m => m.DashboardComponent),
-        canActivate: [authGuard]
+        canActivate: [authGuard,hasFamilyGuard]
     },
     {
         path: 'profile',

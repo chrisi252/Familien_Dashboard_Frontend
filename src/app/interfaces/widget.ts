@@ -34,6 +34,7 @@ export interface FamilyWidgetDetailed {
   grid_col: number | null;
   grid_row: number | null;
   can_edit: boolean;
+  can_view?: boolean;
 }
 
 export interface WidgetLayoutItem {

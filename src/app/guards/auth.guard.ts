@@ -15,6 +15,7 @@ export const authGuard: CanActivateFn = () => {
   if (userState.isSessionInitialized()) {
     return router.createUrlTree(['/login']);
   }
+ 
 
   return from(userState.initializeSession()).pipe(
     switchMap(() => of(userState.currentUser() ? true : router.createUrlTree(['/login']))),

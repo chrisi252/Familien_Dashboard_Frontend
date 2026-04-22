@@ -1,17 +1,14 @@
 <app-loading-state [loading]="isLoading()" [error]="errorMessage()">
   <div class="flex flex-col gap-6">
-
     <app-alert-banner [message]="actionError()" type="error" />
     <app-alert-banner [message]="successMessage()" type="success" />
 
-    <!-- Widget-Berechtigungen -->
     <div class="flex flex-col gap-3">
-      <h2 class="text-base font-semibold">Widget-Berechtigungen</h2>
+      <h2 class="text-base font-semibold">Widget Permissions</h2>
 
       @for (widget of widgets(); track widget.id) {
         <div class="glass-wrapper h-auto">
           <div class="glass-card gap-4">
-
             <div class="flex items-center justify-between gap-2">
               <div>
                 <p class="font-medium">{{ widget.display_name ?? widget.widget_key }}</p>
@@ -21,49 +18,94 @@
               </div>
             </div>
 
-            <!-- Berechtigungen pro Mitglied -->
             @if (members().length > 0) {
               <div>
-                <p class="text-xs font-medium opacity-70 mb-2">Berechtigungen</p>
+                <p class="text-xs font-medium opacity-70 mb-2">Permissions</p>
                 <div class="overflow-x-auto">
                   <table class="table table-sm">
                     <thead>
                       <tr>
-                        <th>Mitglied</th>
-                        <th>Sehen</th>
-                        <th>Bearbeiten</th>
+                        <th>Member</th>
+                        <th>View</th>
+                        <th>Edit</th>
                         <th></th>
                       </tr>
                     </thead>
                     <tbody>
                       @for (member of members(); track member.user_id) {
+                        @let permission = getPermission(widget.id, member.user_id);
+                        @let isCurrentUser = member.user_id === currentUserId;
+
                         <tr>
-                          <td>{{ member.user_username }} <span class="opacity-50">({{ member.role_name }})</span></td>
+                          <td>
+                            {{ member.user_username }}
+                            <span class="opacity-50">({{ member.role_name }})</span>
+                          </td>
+
                           <td>
                             <input
                               type="checkbox"
                               class="checkbox checkbox-xs"
-                              [checked]="getPermission(widget.id, member.user_id).canView"
-                              (change)="updateLocalPermission(widget.id, member.user_id, 'canView', $any($event.target).checked)" />
+                              [class.opacity-50]="isCurrentUser"
+                              [class.cursor-not-allowed]="isCurrentUser"
+                              [disabled]="isCurrentUser"
+                              [checked]="permission.canView"
+                              [title]="
+                                isCurrentUser
+                                  ? 'Du kannst dein eigenes Anzeigerecht nicht entfernen'
+                                  : ''
+                              "
+                              (change)="
+                                !isCurrentUser &&
+                                  updateLocalPermission(
+                                    widget.id,
+                                    member.user_id,
+                                    'canView',
+                                    $any($event.target).checked
+                                  )
+                              "
+                            />
                           </td>
+
                           <td>
                             <input
                               type="checkbox"
                               class="checkbox checkbox-xs"
-                              [checked]="getPermission(widget.id, member.user_id).canEdit"
-                              (change)="updateLocalPermission(widget.id, member.user_id, 'canEdit', $any($event.target).checked)" />
+                              [class.opacity-50]="isCurrentUser"
+                              [class.cursor-not-allowed]="isCurrentUser"
+                              [disabled]="isCurrentUser"
+                              [checked]="permission.canEdit"
+                              [title]="
+                                isCurrentUser
+                                  ? 'Du kannst dein eigenes Bearbeitungsrecht nicht entfernen'
+                                  : ''
+                              "
+                              (change)="
+                                !isCurrentUser &&
+                                  updateLocalPermission(
+                                    widget.id,
+                                    member.user_id,
+                                    'canEdit',
+                                    $any($event.target).checked
+                                  )
+                              "
+                            />
                           </td>
+
                           <td>
-                            <button
-                              class="btn btn-xs btn-primary"
-                              [disabled]="savingPermission() === widget.id + '-' + member.user_id"
-                              (click)="savePermission(widget.id, member.user_id)">
-                              @if (savingPermission() === widget.id + '-' + member.user_id) {
-                                <span class="loading loading-spinner loading-xs"></span>
-                              } @else {
-                                Speichern
-                              }
-                            </button>
+                            @if (!isCurrentUser) {
+                              <button
+                                class="btn btn-xs btn-primary"
+                                [disabled]="savingPermission() === widget.id + '-' + member.user_id"
+                                (click)="savePermission(widget.id, member.user_id)"
+                              >
+                                @if (savingPermission() === widget.id + '-' + member.user_id) {
+                                  <span class="loading loading-spinner loading-xs"></span>
+                                } @else {
+                                  Speichern
+                                }
+                              </button>
+                            }
                           </td>
                         </tr>
                       }
@@ -72,13 +114,11 @@
                 </div>
               </div>
             }
-
           </div>
         </div>
       } @empty {
-        <p class="text-sm opacity-60">Keine Widgets verfügbar.</p>
+        <p class="text-sm opacity-60">No widgets available.</p>
       }
     </div>
-
   </div>
 </app-loading-state>

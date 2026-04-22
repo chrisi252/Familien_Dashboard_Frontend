@@ -177,6 +177,7 @@ export class DashboardService {
         for (const backendWidget of response.widgets) {
           const widget = this.mapBackendWidget(backendWidget);
           if (!widget) continue;
+          if (!widget.permissions.read) continue;
 
           allWidgets.push(widget);
 
@@ -208,7 +209,7 @@ export class DashboardService {
       label: backendWidget.display_name ?? registry.label,
       content: registry.content,
       permissions: {
-        read: true,
+        read: backendWidget.can_view ?? true,
         write: backendWidget.can_edit
       },
       rows: backendWidget.grid_row ?? registry.defaultRows,
