@@ -1,5 +1,4 @@
-import { Component, signal } from '@angular/core';
-import { User } from '../../interfaces/user';
+import { Component } from '@angular/core';
 import { HeaderComponent } from '../header-component/header-component';
 import { Sidebar } from './sidebar/sidebar';
 import { RouterOutlet } from '@angular/router';

@@ -66,7 +66,7 @@
 }
 
 html {
-  font-size: clamp(15px, 1.1vw + 0.4rem, 19px);
+  font-size: clamp(16px, 1.1vw + 0.4rem, 19px);
 }
 
 :root,

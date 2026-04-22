@@ -33,14 +33,6 @@ export class UserStateService {
     }
   }
 
-  loadCurrentUser() {
-    this.profileService.getProfile().subscribe(u => this.currentUser.set(u));
-  }
-
-  loadFamilyRole() {
-    this.refreshFamilyContext().subscribe();
-  }
-
   refreshFamilyContext(): Observable<void> {
     return this.familyService.getFamilies().pipe(
       tap((res: unknown) => {

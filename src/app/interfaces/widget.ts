@@ -12,7 +12,6 @@ export interface Widget {
   permissions: WidgetPermissions;
   rows?: number;
   cols?: number;
-  backgroundColor?: string;
   color?: string;
 }
 

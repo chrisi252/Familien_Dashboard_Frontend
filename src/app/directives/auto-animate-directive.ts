@@ -6,7 +6,7 @@ import autoAnimate from '@formkit/auto-animate';
   standalone: true
 })
 export class AutoAnimateDirective implements OnInit {
-private el = inject(ElementRef);
+  private el = inject(ElementRef);
 
   ngOnInit() {
     autoAnimate(this.el.nativeElement, {
@@ -14,7 +14,4 @@ private el = inject(ElementRef);
       easing: 'ease-in-out'
     });
   }
-  constructor(elementRef: ElementRef) {
-    }
-
 }
