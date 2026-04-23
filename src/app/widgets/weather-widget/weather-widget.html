@@ -1,9 +1,9 @@
 @if (weatherData()?.current && weatherData()?.location) {
 <div
     class="weather-root [container-type:size] relative flex h-full w-full flex-col text-center p-2 sm:p-3 rounded-xl font-sans overflow-hidden"
-    [style.background]="isDayTime() ? 'linear-gradient(to bottom, #e6f6ff, #b9e6ff)' : 'linear-gradient(to bottom, #000000, #08072a)'"
-    [class.text-slate-900]="isDayTime()"
-    [class.text-white]="!isDayTime()"
+    [style.background]="isLightBackground() ? 'linear-gradient(to bottom, #e6f6ff, #b9e6ff)' : 'linear-gradient(to bottom, #000000, #08072a)'"
+    [class.text-slate-900]="isLightBackground()"
+    [class.text-white]="!isLightBackground()"
 >
 
 @if (canEdit() && !isEditing()) {
@@ -90,20 +90,51 @@
     <div class="weather-minmax text-[clamp(0.62rem,3.9cqh,1.05rem)] opacity-90">
         {{ weatherData()?.current?.weather_description }}
     </div>
-    <div class="weather-feels text-[clamp(0.62rem,3.9cqh,1.05rem)] opacity-90">Feels Like: {{ weatherData()?.current?.apparent_temperature | number:'1.1-1' }}°</div>
+    <div class="weather-feels text-[clamp(0.62rem,3.9cqh,1.05rem)] opacity-90">Gefühlt: {{ weatherData()?.current?.apparent_temperature | number:'1.1-1' }}°</div>
     <div class="weather-city text-[clamp(0.88rem,6.8cqh,2.1rem)] font-semibold leading-tight">
         {{ weatherData()?.location?.city_name }}
     </div>
-    <div class="weather-humidity text-[clamp(0.62rem,3.9cqh,1.05rem)] opacity-90">Humidity: {{ weatherData()?.current?.humidity }}%</div>
+    <div class="weather-humidity text-[clamp(0.62rem,3.9cqh,1.05rem)] opacity-90">Luftfeuchtigkeit: {{ weatherData()?.current?.humidity }}%</div>
     </div>
 
-   <div class="weather-details shrink-0 mt-2 pt-2 border-t border-white/10 w-full text-[clamp(0.56rem,3.4cqh,1rem)] grid grid-cols-2 gap-x-2 gap-y-1 opacity-80">
-    <span>Wind: {{ weatherData()?.current?.wind_speed }}m/s</span>
-    <span>Code: {{ weatherData()?.current?.weather_code }}</span>
-    @for (day of (weatherData()?.forecast ?? []) | slice:0:2; track day.date) {
-    <span>{{ day.date | date:'EEE' }}: {{ day.temperature_min | number:'1.0-0' }}°/{{ day.temperature_max | number:'1.0-0' }}°</span>
+  <div class="weather-details shrink-0 mt-2 pt-2 border-t border-white/10 w-full text-[clamp(0.56rem,3.4cqh,1rem)] opacity-80">
+    <span>Wind: {{ weatherData()?.current?.wind_speed }} m/s</span>
+
+    @if ((weatherData()?.forecast?.length ?? 0) > 0) {
+      <div class="flex items-center gap-1 mt-1">
+        <button
+          class="btn btn-xs btn-circle bg-white/15 hover:bg-white/30 border-none shrink-0 min-h-0 h-[clamp(1.1rem,6cqh,1.6rem)] w-[clamp(1.1rem,6cqh,1.6rem)]"
+          [disabled]="selectedForecastIndex() === 0"
+          (click)="prevForecast()">
+          <ng-icon name="heroChevronLeft"></ng-icon>
+        </button>
+
+        <div class="flex-1 text-center leading-snug">
+          <div class="font-medium">{{ selectedForecast()?.date | date:'EEE, dd.MM.' }}</div>
+          <div>{{ selectedForecast()?.temperature_min | number:'1.0-0' }}° / {{ selectedForecast()?.temperature_max | number:'1.0-0' }}°</div>
+          <div class="opacity-70 truncate">{{ selectedForecast()?.weather_description }}</div>
+        </div>
+
+        <button
+          class="btn btn-xs btn-circle bg-white/15 hover:bg-white/30 border-none shrink-0 min-h-0 h-[clamp(1.1rem,6cqh,1.6rem)] w-[clamp(1.1rem,6cqh,1.6rem)]"
+          [disabled]="selectedForecastIndex() === (weatherData()?.forecast?.length ?? 1) - 1"
+          (click)="nextForecast()">
+          <ng-icon name="heroChevronRight"></ng-icon>
+        </button>
+      </div>
+
+      <div class="flex justify-center gap-[clamp(0.18rem,1cqw,0.35rem)] mt-1">
+        @for (day of (weatherData()?.forecast ?? []); track day.date; let i = $index) {
+          <span
+            class="rounded-full bg-white transition-opacity cursor-pointer"
+            style="width: clamp(0.25rem, 1.2cqw, 0.4rem); height: clamp(0.25rem, 1.2cqw, 0.4rem);"
+            [style.opacity]="i === selectedForecastIndex() ? '1' : '0.3'"
+            (click)="selectedForecastIndex.set(i)">
+          </span>
+        }
+      </div>
     }
-</div>
+  </div>
 
 </div>
 } @else if (error()) {

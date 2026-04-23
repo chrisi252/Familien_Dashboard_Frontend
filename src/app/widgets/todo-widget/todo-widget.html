@@ -1,14 +1,13 @@
 <div class="flex flex-col h-full gap-3 overflow-hidden">
-
   <app-loading-state [loading]="isLoading()" [error]="errorMessage()">
-
     <!-- Progress -->
     @if (totalCount() > 0) {
       <div class="flex items-center gap-2">
-        <progress class="progress progress-primary flex-1 h-1.5"
+        <progress
+          class="progress progress-primary flex-1 h-1.5"
           [value]="completedCount()"
-          [max]="totalCount()">
-        </progress>
+          [max]="totalCount()"
+        ></progress>
         <span class="text-xs opacity-50 shrink-0">{{ completedCount() }}/{{ totalCount() }}</span>
       </div>
     }
@@ -20,34 +19,43 @@
           class="input input-sm flex-1 bg-base-200/70 border-base-content/10 rounded-xl focus:border-primary focus:ring-1 focus:ring-primary"
           placeholder="Neue Aufgabe hinzufügen..."
           #newTodoInput
-          (keyup.enter)="addTodoItem(newTodoInput.value); newTodoInput.value = '';" />
+          (keyup.enter)="addTodoItem(newTodoInput.value); newTodoInput.value = ''"
+        />
         <button
           class="btn btn-sm btn-primary rounded-xl px-3"
-          (click)="addTodoItem(newTodoInput.value); newTodoInput.value = '';">
+          (click)="addTodoItem(newTodoInput.value); newTodoInput.value = ''"
+        >
           <ng-icon name="heroCheck" class="text-base" />
         </button>
       </div>
     }
 
     <div class="flex flex-col gap-1.5 overflow-y-auto flex-1 -mr-1 pr-1">
-
       <!-- Open todos -->
       @for (todo of openTodos(); track todo.id) {
-        <div class="flex items-center gap-2 rounded-xl bg-base-200/60 px-3 py-2 hover:bg-base-200/90 transition-colors group">
+        <div
+          class="flex items-center gap-2 rounded-xl bg-base-200/60 px-3 py-2 hover:bg-base-200/90 transition-colors group"
+        >
           <input
             type="checkbox"
             [checked]="false"
             class="checkbox checkbox-primary checkbox-sm shrink-0"
             [disabled]="!canEdit()"
-            (change)="toggleComplete(todo)" />
+            (change)="toggleComplete(todo)"
+          />
           @if (editingId() === todo.id && canEdit()) {
             <input
               class="input input-xs flex-1 bg-base-100"
               [value]="editingText()"
               (input)="editingText.set($any($event.target).value)"
               (keyup.enter)="saveEdit(todo.id)"
-              (keyup.escape)="cancelEdit()" />
-            <button class="btn btn-xs btn-success rounded-lg" title="Speichern" (click)="saveEdit(todo.id)">
+              (keyup.escape)="cancelEdit()"
+            />
+            <button
+              class="btn btn-xs btn-success rounded-lg"
+              title="Speichern"
+              (click)="saveEdit(todo.id)"
+            >
               <ng-icon name="heroCheck" class="text-sm" />
             </button>
             <button class="btn btn-xs rounded-lg" title="Abbrechen" (click)="cancelEdit()">
@@ -56,10 +64,19 @@
           } @else {
             <span class="flex-1 text-sm">{{ todo.title }}</span>
             @if (canEdit()) {
-              <button class="btn btn-xs btn-ghost rounded-lg opacity-0 group-hover:opacity-100 transition-opacity" title="Bearbeiten" (click)="startEdit(todo.id, todo.title)">
+              <button
+                class="btn btn-xs btn-ghost rounded-lg opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
+                title="Bearbeiten"
+                (click)="startEdit(todo.id, todo.title)"
+              >
                 <ng-icon name="heroPencil" class="text-sm" />
               </button>
-              <button class="btn btn-xs btn-ghost text-error rounded-lg opacity-0 group-hover:opacity-100 transition-opacity" title="Entfernen" (click)="removeTodoItem(todo.id)">
+
+              <button
+                class="btn btn-xs btn-ghost text-error rounded-lg opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
+                title="Entfernen"
+                (click)="removeTodoItem(todo.id)"
+              >
                 <ng-icon name="heroTrash" class="text-sm" />
               </button>
             }
@@ -87,25 +104,29 @@
           <div class="flex-1 h-px bg-base-content/10"></div>
         </div>
         @for (todo of completedTodos(); track todo.id) {
-          <div class="flex items-center gap-2 rounded-xl px-3 py-2 opacity-50 hover:opacity-70 transition-opacity group">
+          <div
+            class="flex items-center gap-2 rounded-xl px-3 py-2 opacity-50 hover:opacity-70 transition-opacity group"
+          >
             <input
               type="checkbox"
               [checked]="true"
               class="checkbox checkbox-success checkbox-sm shrink-0"
               [disabled]="!canEdit()"
-              (change)="toggleComplete(todo)" />
+              (change)="toggleComplete(todo)"
+            />
             <span class="flex-1 text-sm line-through">{{ todo.title }}</span>
             @if (canEdit()) {
-              <button class="btn btn-xs btn-ghost text-error rounded-lg opacity-0 group-hover:opacity-100 transition-opacity" title="Entfernen" (click)="removeTodoItem(todo.id)">
+              <button
+                class="btn btn-xs btn-ghost text-error rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                title="Entfernen"
+                (click)="removeTodoItem(todo.id)"
+              >
                 <ng-icon name="heroTrash" class="text-sm" />
               </button>
             }
           </div>
         }
       }
-
     </div>
-
   </app-loading-state>
-
 </div>

@@ -30,12 +30,24 @@
   </div>
 </div>
 
-<button class="btn btn-circle btn-ghost btn-sm absolute left-2 top-1/2 -translate-y-1/2"
-  (click)="store.moveWidgetToLeft(widget().id)">
-  <ng-icon name="heroChevronLeft" class="text-xl"></ng-icon>
-</button>
+@if (store.isMobile()) {
+  <button class="btn btn-circle btn-ghost btn-sm absolute left-1/2 -translate-x-1/2 top-10"
+    (click)="store.moveWidgetUp(widget().id)">
+    <ng-icon name="heroChevronUp" class="text-xl"></ng-icon>
+  </button>
 
-<button class="btn btn-circle btn-ghost btn-sm absolute right-2 top-1/2 -translate-y-1/2"
-  (click)="store.moveWidgetToRight(widget().id)">
-  <ng-icon name="heroChevronRight" class="text-xl"></ng-icon>
-</button>
+  <button class="btn btn-circle btn-ghost btn-sm absolute left-1/2 -translate-x-1/2 bottom-2"
+    (click)="store.moveWidgetDown(widget().id)">
+    <ng-icon name="heroChevronDown" class="text-xl"></ng-icon>
+  </button>
+} @else {
+  <button class="btn btn-circle btn-ghost btn-sm absolute left-2 top-1/2 -translate-y-1/2"
+    (click)="store.moveWidgetToLeft(widget().id)">
+    <ng-icon name="heroChevronLeft" class="text-xl"></ng-icon>
+  </button>
+
+  <button class="btn btn-circle btn-ghost btn-sm absolute right-2 top-1/2 -translate-y-1/2"
+    (click)="store.moveWidgetToRight(widget().id)">
+    <ng-icon name="heroChevronRight" class="text-xl"></ng-icon>
+  </button>
+}

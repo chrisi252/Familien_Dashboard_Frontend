@@ -43,10 +43,6 @@ export const routes: Routes = [
                 loadComponent: () => import('./components/admin-component/edit-users/edit-users').then(m => m.EditUsers)
             },
             {
-                path: 'editdashboard',
-                loadComponent: () => import('./components/admin-component/edit-dashboard/edit-dashboard').then(m => m.EditDashboard)
-            },
-            {
                 path: 'editwidgets',
                 loadComponent: () => import('./components/admin-component/edit-widgets/edit-widgets').then(m => m.EditWidgets)
             },

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, input, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, input, OnInit, signal } from '@angular/core';
 import { DecimalPipe, SlicePipe, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -9,6 +9,7 @@ import { heroPencil, heroCheck, heroXMark } from '@ng-icons/heroicons/outline';
 import { WeatherService } from '../../services/weather-service';
 import { WeatherResponse } from '../../interfaces/weather';
 import { UserStateService } from '../../services/user-state-service';
+import { ThemeService } from '../../services/theme-service';
 
 @Component({
   selector: 'app-weather-widget',
@@ -26,6 +27,13 @@ export class WeatherWidget implements OnInit {
   isDayTime = signal(true);
   error = signal<string | null>(null);
   isLoading = signal(true);
+  selectedForecastIndex = signal(0);
+
+  selectedForecast = computed(() => {
+    const forecast = this.weatherData()?.forecast;
+    if (!forecast?.length) return null;
+    return forecast[this.selectedForecastIndex()] ?? null;
+  });
 
   isEditing = signal(false);
   editCity = signal('');
@@ -37,6 +45,9 @@ export class WeatherWidget implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly userState = inject(UserStateService);
   private readonly weatherService = inject(WeatherService);
+  private readonly themeService = inject(ThemeService);
+
+  isLightBackground = computed(() => this.isDayTime() && !this.themeService.isDarkMode());
 
   ngOnInit() {
     this.loadWeather();
@@ -64,6 +75,7 @@ export class WeatherWidget implements OnInit {
       .subscribe((data) => {
         this.weatherData.set(data);
         this.isDayTime.set(this.checkDayTime(data.current.icon));
+        this.selectedForecastIndex.set(0);
         this.error.set(null);
         this.isLoading.set(false);
       });
@@ -140,6 +152,15 @@ export class WeatherWidget implements OnInit {
     }
 
     return error.message || 'Wetterdaten konnten nicht geladen werden.';
+  }
+
+  nextForecast() {
+    const max = (this.weatherData()?.forecast?.length ?? 1) - 1;
+    if (this.selectedForecastIndex() < max) this.selectedForecastIndex.update(i => i + 1);
+  }
+
+  prevForecast() {
+    if (this.selectedForecastIndex() > 0) this.selectedForecastIndex.update(i => i - 1);
   }
 
   private checkDayTime(icon: string): boolean {

@@ -137,6 +137,14 @@ export class DashboardService {
     this.saveLayoutToBackend();
   }
 
+  moveWidgetUp(id: number) {
+    this.moveWidgetToLeft(id);
+  }
+
+  moveWidgetDown(id: number) {
+    this.moveWidgetToRight(id);
+  }
+
   removeWidget(id: number) {
     this.addedWidgets.update(widgets => widgets.filter(w => w.id !== id));
     this.saveLayoutToBackend();

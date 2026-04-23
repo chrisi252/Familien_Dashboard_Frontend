@@ -54,7 +54,7 @@ export class RegisterComponent {
         if (error.error?.error) {
           this.errorMessage.set(error.error.error);
         } else {
-          this.errorMessage.set('Registration failed. Please try again.');
+          this.errorMessage.set('Registrierung fehlgeschlagen. Bitte versuche es erneut.');
         }
       },
     });
