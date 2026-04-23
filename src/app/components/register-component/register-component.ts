@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { ThemeSwitchComponent } from '../theme-switch-component/theme-switch-component';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -18,10 +18,9 @@ export class RegisterComponent {
   private authService = inject(AuthService);
   private userState = inject(UserStateService);
   private fb = inject(FormBuilder);
-  private cdr = inject(ChangeDetectorRef);
 
-  errorMessage = '';
-  isLoading = false;
+  errorMessage = signal('');
+  isLoading = signal(false);
   showPassword = false;
 
   registerForm = this.fb.nonNullable.group({
@@ -31,9 +30,7 @@ export class RegisterComponent {
     password: ['', [Validators.required, Validators.minLength(6)]],
   });
 
-  togglePasswordVisibility() {
-    this.showPassword = !this.showPassword;
-  }
+ 
 
   register() {
     if (this.registerForm.invalid) {
@@ -41,8 +38,8 @@ export class RegisterComponent {
       return;
     }
 
-    this.errorMessage = '';
-    this.isLoading = true;
+    this.errorMessage.set('');
+    this.isLoading.set(true);
     const credentials = this.registerForm.getRawValue();
 
     this.authService.register(credentials).subscribe({
@@ -53,13 +50,12 @@ export class RegisterComponent {
       },
       error: (error) => {
         console.error('Registration failed:', error);
-        this.isLoading = false;
+        this.isLoading.set(false);
         if (error.error?.error) {
-          this.errorMessage = error.error.error;
+          this.errorMessage.set(error.error.error);
         } else {
-          this.errorMessage = 'Registration failed. Please try again.';
+          this.errorMessage.set('Registration failed. Please try again.');
         }
-        this.cdr.markForCheck();
       },
     });
   }

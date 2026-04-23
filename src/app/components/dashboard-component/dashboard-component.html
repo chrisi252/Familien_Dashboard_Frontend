@@ -12,6 +12,12 @@
       }
 
       <div class="pt-5 sm:pt-5 px-4 pb-2 sm:pb-4 flex justify-stretch sm:justify-end gap-2">
+        @if (store.isSaving()) {
+          <div class="flex items-center gap-1.5 text-sm opacity-60 self-center mr-auto sm:mr-0">
+            <span class="loading loading-spinner loading-xs"></span>
+            <span class="hidden sm:inline">Speichert…</span>
+          </div>
+        }
         <button class="btn btn-ghost btn-sm sm:btn-md" (click)="store.loadWidgetsFromBackend()" title="Aktualisieren">
           <span class="text-lg">↻</span>
           <span class="hidden sm:inline">Aktualisieren</span>

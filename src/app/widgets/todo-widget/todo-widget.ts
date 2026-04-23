@@ -3,7 +3,8 @@ import { NgIcon, provideIcons } from '@ng-icons/core';
 import { heroPencil, heroCheck, heroXMark, heroTrash, heroCheckCircle } from '@ng-icons/heroicons/outline';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { switchMap } from 'rxjs';
-import { Todo, TodoService } from '../../services/todo-service';
+import { TodoService } from '../../services/todo-service';
+import { Todo } from '../../interfaces/todo';
 import { UserStateService } from '../../services/user-state-service';
 import { LoadingStateComponent } from '../../shared/loading-state/loading-state.component';
 

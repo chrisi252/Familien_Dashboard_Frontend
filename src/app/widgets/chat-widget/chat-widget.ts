@@ -16,7 +16,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { heroPaperAirplane } from '@ng-icons/heroicons/outline';
 import { switchMap } from 'rxjs';
-import { ChatMessage, ChatService, OnlineMember } from '../../services/chat-service';
+import { ChatService } from '../../services/chat-service';
+import { ChatMessage, OnlineMember } from '../../interfaces/chat';
 import { UserStateService } from '../../services/user-state-service';
 import { LoadingStateComponent } from '../../shared/loading-state/loading-state.component';
 

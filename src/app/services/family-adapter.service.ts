@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
-import { FamilyMembership } from '../interfaces/user';
-
-type FamilyRoleName = 'Familyadmin' | 'Guest' | 'SystemAdmin';
+import { FamilyMembership, FamilyRoleName } from '../interfaces/user';
 
 @Injectable({ providedIn: 'root' })
 export class FamilyAdapterService {

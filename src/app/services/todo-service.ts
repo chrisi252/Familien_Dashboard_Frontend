@@ -1,16 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from '../core/api.service';
-
-export interface Todo {
-  id: number;
-  family_id: number;
-  title: string;
-  description: string | null;
-  is_completed: boolean;
-  created_at: string;
-  updated_at: string;
-}
+import { Todo } from '../interfaces/todo';
 
 @Injectable({ providedIn: 'root' })
 export class TodoService {

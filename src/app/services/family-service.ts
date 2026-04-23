@@ -3,14 +3,7 @@ import { Observable } from 'rxjs';
 import { FamiliesResponse, FamilyDetailResponse, FamilyMember, FamilyRoleName } from '../interfaces/user';
 import { FamilyWidgetDetailed, WidgetLayoutItem, WidgetLayoutResponse, WidgetUserPermission } from '../interfaces/widget';
 import { ApiService } from '../core/api.service';
-
-export interface FamilyInviteCode {
-  id: number;
-  family_id: number;
-  code: string;
-  created_at: string;
-  expires_at: string;
-}
+import { FamilyInviteCode } from '../interfaces/family';
 
 @Injectable({
   providedIn: 'root',

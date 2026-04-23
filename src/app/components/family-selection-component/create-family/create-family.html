@@ -8,9 +8,9 @@
         <div class="glass-card">
             <h2 class="text-3xl font-bold mb-2 text-base-content">Bennenen sie ihre Familie</h2>
             <p class="text-base-content mb-6">Erstellen sie eine neue Familie und laden sie andere Mitglieder ein.</p>
-            @if (errorMessage) {
+            @if (errorMessage()) {
               <div class="mb-4">
-                <app-alert-banner [message]="errorMessage" type="error" />
+                <app-alert-banner [message]="errorMessage()" type="error" />
               </div>
             }
 
@@ -26,9 +26,9 @@
                 </div>
                 <button
                     (click)="tryCreateFamily()"
-                    [disabled]="isLoading"
+                    [disabled]="isLoading()"
                     class="btn-premium">
-                    @if(isLoading) {
+                    @if(isLoading()) {
                         <span class="loading loading-spinner loading-sm"></span>
                     }
                     Familie erstellen

@@ -2,22 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
 import { ApiService } from '../core/api.service';
-
-export interface ChatMessage {
-  id: number;
-  family_id: number;
-  user_id: number;
-  first_name: string;
-  last_name: string;
-  text: string;
-  created_at: string;
-}
-
-export interface OnlineMember {
-  user_id: number;
-  first_name: string;
-  last_name: string;
-}
+import { ChatMessage } from '../interfaces/chat';
 
 @Injectable({ providedIn: 'root' })
 export class ChatService {

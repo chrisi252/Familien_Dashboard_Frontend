@@ -20,6 +20,12 @@ if (fs.existsSync(envPath)) {
 const target = process.env['BACKEND_URL'] ;
 
 module.exports = {
+  '/socket.io': {
+    target,
+    secure: false,
+    changeOrigin: true,
+    ws: true,
+  },
   '/api': {
     target,
     secure: false,
@@ -27,3 +33,4 @@ module.exports = {
     logLevel: 'debug',
   },
 };
+
