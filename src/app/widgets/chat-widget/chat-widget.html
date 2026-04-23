@@ -1,0 +1,50 @@
+<div class="flex flex-col h-full gap-2 overflow-hidden">
+  <app-loading-state [loading]="isLoading()" [error]="errorMessage()">
+
+    <!-- Message list -->
+    <div #messageList class="flex flex-col gap-2 overflow-y-auto flex-1 min-h-0 -mr-1 pr-1">
+
+      @if (messages().length === 0) {
+        <div class="flex flex-col items-center gap-2 opacity-30 py-6">
+          <ng-icon name="heroPaperAirplane" class="text-4xl" />
+          <span class="text-sm">Noch keine Nachrichten</span>
+        </div>
+      }
+
+      @for (msg of messages(); track msg.id) {
+        <div class="flex w-full" [class.justify-end]="isOwnMessage(msg)" [class.justify-start]="!isOwnMessage(msg)">
+          <div class="flex flex-col gap-0.5 max-w-[75%]"
+               [class.items-end]="isOwnMessage(msg)"
+               [class.items-start]="!isOwnMessage(msg)">
+            <div class="rounded-2xl px-3 py-1.5 text-sm break-words w-fit"
+                 [class.bg-primary]="isOwnMessage(msg)"
+                 [class.text-primary-content]="isOwnMessage(msg)"
+                 [class.bg-base-200]="!isOwnMessage(msg)">
+              {{ msg.text }}
+            </div>
+            <span class="text-xs opacity-40 px-1">
+              @if (!isOwnMessage(msg)) {<span>{{ msg.first_name }} · </span>}{{ formatTime(msg.created_at) }}
+            </span>
+          </div>
+        </div>
+      }
+
+    </div>
+
+    <!-- Input -->
+    <div class="flex gap-2 items-center shrink-0">
+      <input
+        #input
+        class="input input-sm flex-1 bg-base-200/70 border-base-content/10 rounded-xl focus:border-primary focus:ring-1 focus:ring-primary"
+        placeholder="Nachricht schreiben..."
+        maxlength="1000"
+        (keyup.enter)="sendMessage(input.value)" />
+      <button
+        class="btn btn-sm btn-primary rounded-xl px-3"
+        (click)="sendMessage(input.value)">
+        <ng-icon name="heroPaperAirplane" class="text-base" />
+      </button>
+    </div>
+
+  </app-loading-state>
+</div>

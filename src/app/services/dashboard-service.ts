@@ -6,6 +6,7 @@ import { TimetableWidget } from '../widgets/timetable-widget/timetable-widget';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { debounceTime, map, Subject, switchMap } from 'rxjs';
 import { WeatherWidget } from '../widgets/weather-widget/weather-widget';
+import { ChatWidget } from '../widgets/chat-widget/chat-widget';
 import { FamilyService } from './family-service';
 import { UserStateService } from './user-state-service';
 import { FamilyWidgetDetailed, WidgetLayoutItem } from '../interfaces/widget';
@@ -16,6 +17,7 @@ const WIDGET_REGISTRY: Record<string, { content: Type<unknown>; label: string; d
   todo: { content: TodoWidget, label: 'Aufgaben', defaultRows: 2, defaultCols: 1 },
   weather: { content: WeatherWidget, label: 'Wetter', defaultRows: 2, defaultCols: 1 },
   timetable: { content: TimetableWidget, label: 'Stundenplan', defaultRows: 3, defaultCols: 2 },
+  chat: { content: ChatWidget, label: 'Familien-Chat', defaultRows: 2, defaultCols: 1 },
 };
 
 @Injectable({ providedIn: 'root' })

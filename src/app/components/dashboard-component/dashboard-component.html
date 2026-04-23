@@ -24,7 +24,7 @@
 
       <app-loading-state [loading]="store.isLoading()">
         <div
-          class="relative z-10 px-4 pb-4 sm:pb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-6 auto-rows-[minmax(14rem,auto)] sm:auto-rows-[minmax(16rem,auto)] items-stretch"
+          class="relative z-10 px-4 pb-4 sm:pb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-6 auto-rows-[14rem] sm:auto-rows-[16rem] items-stretch"
           appAutoAnimate
           cdkDropListGroup
         >@for (item of store.addedWidgets(); track item.id) {
