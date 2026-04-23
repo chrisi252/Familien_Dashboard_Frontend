@@ -35,13 +35,18 @@ export class ChatWidget implements OnInit, OnDestroy {
   widgetId = input<number>(0);
   canEdit = input<boolean>(false);
 
-  messages = signal<ChatMessage[]>([]);
+  private _messages = signal<ChatMessage[]>([]);
   isLoading = signal(true);
   errorMessage = signal('');
 
   private familyId: number | null = null;
 
-  currentUserId = computed(() => this.userState.currentUser()?.id ?? null);
+  private currentUserId = computed(() => this.userState.currentUser()?.id ?? null);
+
+  messages = computed(() => {
+    const uid = this.currentUserId();
+    return this._messages().map(msg => ({ ...msg, isOwn: msg.user_id === uid }));
+  });
 
   @ViewChild('messageList') private messageList?: ElementRef<HTMLElement>;
   @ViewChild('input') private inputRef?: ElementRef<HTMLInputElement>;
@@ -67,7 +72,7 @@ export class ChatWidget implements OnInit, OnDestroy {
       )
       .subscribe({
         next: (res) => {
-          this.messages.set(res.messages);
+          this._messages.set(res.messages);
           this.isLoading.set(false);
         },
         error: () => {
@@ -90,10 +95,6 @@ export class ChatWidget implements OnInit, OnDestroy {
     }
   }
 
-  isOwnMessage(msg: ChatMessage): boolean {
-    return msg.user_id === this.currentUserId();
-  }
-
   formatTime(isoString: string): string {
     const date = new Date(isoString);
     return date.toLocaleString('de-DE', {
@@ -109,7 +110,7 @@ export class ChatWidget implements OnInit, OnDestroy {
     const socket = this.chatService.connect(familyId);
 
     socket.on('new_message', (msg: ChatMessage) => {
-      this.messages.update((msgs) => {
+      this._messages.update((msgs) => {
         const updated = [...msgs, msg];
         return updated.slice(-10);
       });
