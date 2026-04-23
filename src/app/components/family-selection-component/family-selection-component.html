@@ -12,31 +12,17 @@
         <h2 class="text-3xl font-bold mb-2 text-base-content">Family Setup</h2>
         <p class="text-base-content mb-6">Was möchtest du tun?</p>
 
-        @if (errorMessage) {
-          <div class="mb-4">
-            <app-alert-banner [message]="errorMessage" type="error" />
-          </div>
-        }
-
         <div class="flex flex-col gap-4">
 
           <button
             (click)="onJoinFamily()"
-            [disabled]="isLoading"
             class="btn-premium">
-            @if(isLoading) {
-              <span class="loading loading-spinner loading-sm"></span>
-            }
             <span>Einer Familie beitreten</span>
           </button>
 
           <button
             (click)="onCreateFamily()"
-            [disabled]="isLoading"
             class="btn btn-lg btn-secondary w-full">
-            @if(isLoading) {
-              <span class="loading loading-spinner loading-sm"></span>
-            }
             <span>Neue Familie erstellen</span>
           </button>
         </div>

@@ -12,6 +12,12 @@
       }
 
       <div class="pt-5 sm:pt-5 px-4 pb-2 sm:pb-4 flex justify-stretch sm:justify-end gap-2">
+        @if (store.isSaving()) {
+          <div class="flex items-center gap-1.5 text-sm opacity-60 self-center mr-auto sm:mr-0">
+            <span class="loading loading-spinner loading-xs"></span>
+            <span class="hidden sm:inline">Speichert…</span>
+          </div>
+        }
         <button class="btn btn-ghost btn-sm sm:btn-md" (click)="store.loadWidgetsFromBackend()" title="Aktualisieren">
           <span class="text-lg">↻</span>
           <span class="hidden sm:inline">Aktualisieren</span>
@@ -24,7 +30,7 @@
 
       <app-loading-state [loading]="store.isLoading()">
         <div
-          class="relative z-10 px-4 pb-4 sm:pb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-6 auto-rows-[minmax(14rem,auto)] sm:auto-rows-[minmax(16rem,auto)] items-stretch"
+          class="relative z-10 px-4 pb-4 sm:pb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-6 auto-rows-[14rem] sm:auto-rows-[16rem] items-stretch"
           appAutoAnimate
           cdkDropListGroup
         >@for (item of store.addedWidgets(); track item.id) {

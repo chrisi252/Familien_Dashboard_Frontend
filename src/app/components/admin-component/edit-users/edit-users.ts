@@ -1,6 +1,7 @@
 import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { switchMap, take } from 'rxjs';
-import { FamilyInviteCode, FamilyService } from '../../../services/family-service';
+import { FamilyService } from '../../../services/family-service';
+import { FamilyInviteCode } from '../../../interfaces/family';
 import { FamilyMember, FamilyRoleName } from '../../../interfaces/user';
 import { UserStateService } from '../../../services/user-state-service';
 import { AlertBannerComponent } from '../../../shared/alert-banner/alert-banner.component';

@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ThemeSwitchComponent } from '../theme-switch-component/theme-switch-component';
@@ -18,10 +18,9 @@ export class LoginComponent {
   private authService = inject(AuthService);
   private userState = inject(UserStateService);
   private fb = inject(FormBuilder);
-  private cdr = inject(ChangeDetectorRef);
 
-  errorMessage = '';
-  isLoading = false;
+  errorMessage = signal('');
+  isLoading = signal(false);
   showPassword = false;
 
   loginForm = this.fb.nonNullable.group({
@@ -29,9 +28,7 @@ export class LoginComponent {
     password: ['', [Validators.required, Validators.minLength(6)]]
   });
 
-  togglePasswordVisibility() {
-    this.showPassword = !this.showPassword;
-  }
+
 
   submit() {
     if (this.loginForm.invalid) {
@@ -39,8 +36,8 @@ export class LoginComponent {
       return;
     }
 
-    this.errorMessage = '';
-    this.isLoading = true;
+    this.errorMessage.set('');
+    this.isLoading.set(true);
     const payload = this.loginForm.getRawValue();
 
     this.authService.login(payload).subscribe({
@@ -55,9 +52,8 @@ export class LoginComponent {
       },
       error: (error: { error?: { error?: string } }) => {
         console.error('Login failed:', error);
-        this.errorMessage = 'Login fehlgeschlagen. Bitte prüfe deine Daten.';
-        this.isLoading = false;
-        this.cdr.markForCheck();
+        this.errorMessage.set('Login fehlgeschlagen. Bitte prüfe deine Daten.');
+        this.isLoading.set(false);
       }
     });
   }

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, input, OnInit, signal } from '@angular/core';
 import { DecimalPipe, SlicePipe, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -22,30 +22,29 @@ export class WeatherWidget implements OnInit {
   widgetId = input<number>(0);
   canEdit = input<boolean>(false);
 
-  weatherData: WeatherResponse | null = null;
-  isDayTime = true;
-  error: string | null = null;
-  isLoading = true;
+  weatherData = signal<WeatherResponse | null>(null);
+  isDayTime = signal(true);
+  error = signal<string | null>(null);
+  isLoading = signal(true);
 
-  isEditing = false;
-  editCity = '';
-  isSaving = false;
-  saveError: string | null = null;
+  isEditing = signal(false);
+  editCity = signal('');
+  isSaving = signal(false);
+  saveError = signal<string | null>(null);
 
   private resolvedFamilyId: number | null = null;
 
   private readonly destroyRef = inject(DestroyRef);
   private readonly userState = inject(UserStateService);
   private readonly weatherService = inject(WeatherService);
-  private readonly changeDetectorRef = inject(ChangeDetectorRef);
 
   ngOnInit() {
     this.loadWeather();
   }
 
   loadWeather() {
-    this.isLoading = true;
-    this.error = null;
+    this.isLoading.set(true);
+    this.error.set(null);
 
     this.resolveFamilyId()
       .pipe(
@@ -54,21 +53,19 @@ export class WeatherWidget implements OnInit {
           return this.weatherService.getWeather(familyId);
         }),
         retry(1),
-        catchError((error: HttpErrorResponse | Error) => {
-          this.weatherData = null;
-          this.error = this.mapLoadError(error);
-          this.isLoading = false;
-          this.changeDetectorRef.markForCheck();
+        catchError((err: HttpErrorResponse | Error) => {
+          this.weatherData.set(null);
+          this.error.set(this.mapLoadError(err));
+          this.isLoading.set(false);
           return EMPTY;
         }),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe((data) => {
-        this.weatherData = data;
-        this.isDayTime = this.checkDayTime(data.current.icon);
-        this.error = null;
-        this.isLoading = false;
-        this.changeDetectorRef.markForCheck();
+        this.weatherData.set(data);
+        this.isDayTime.set(this.checkDayTime(data.current.icon));
+        this.error.set(null);
+        this.isLoading.set(false);
       });
   }
 
@@ -77,48 +74,41 @@ export class WeatherWidget implements OnInit {
   }
 
   openCityEdit() {
-    this.editCity = this.weatherData?.location?.city_name ?? '';
-    this.saveError = null;
-    this.isEditing = true;
-    this.changeDetectorRef.markForCheck();
+    this.editCity.set(this.weatherData()?.location?.city_name ?? '');
+    this.saveError.set(null);
+    this.isEditing.set(true);
   }
 
   cancelCityEdit() {
-    this.isEditing = false;
-    this.saveError = null;
-    this.changeDetectorRef.markForCheck();
+    this.isEditing.set(false);
+    this.saveError.set(null);
   }
 
   saveCityEdit() {
-    const city = this.editCity.trim();
+    const city = this.editCity().trim();
     if (!city) {
-      this.saveError = 'Bitte einen gültigen Ort eingeben.';
-      this.changeDetectorRef.markForCheck();
+      this.saveError.set('Bitte einen gültigen Ort eingeben.');
       return;
     }
     if (!this.resolvedFamilyId) {
-      this.saveError = 'Keine aktive Familie gefunden.';
-      this.changeDetectorRef.markForCheck();
+      this.saveError.set('Keine aktive Familie gefunden.');
       return;
     }
-    this.isSaving = true;
-    this.saveError = null;
-    this.changeDetectorRef.markForCheck();
+    this.isSaving.set(true);
+    this.saveError.set(null);
 
     this.weatherService
       .updateLocation(this.resolvedFamilyId, city)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          this.isSaving = false;
-          this.isEditing = false;
-          this.changeDetectorRef.markForCheck();
+          this.isSaving.set(false);
+          this.isEditing.set(false);
           this.loadWeather();
         },
-        error: (error: HttpErrorResponse) => {
-          this.isSaving = false;
-          this.saveError = this.mapSaveError(error);
-          this.changeDetectorRef.markForCheck();
+        error: (err: HttpErrorResponse) => {
+          this.isSaving.set(false);
+          this.saveError.set(this.mapSaveError(err));
         },
       });
   }
