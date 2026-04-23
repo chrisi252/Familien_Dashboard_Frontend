@@ -112,6 +112,10 @@ input:-webkit-autofill:active {
   opacity: 0.95;
 }
 
+.cdk-drag {
+  touch-action: none;
+}
+
 @layer components {
   .glass-wrapper {
     @apply w-full h-full p-[1px] rounded-[2rem] bg-gradient-to-b from-base-content/5 via-base-content/2 to-transparent shadow-[0_8px_30px_rgb(0,0,0,0.06)] backdrop-blur-3xl;
