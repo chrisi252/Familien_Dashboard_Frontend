@@ -97,7 +97,11 @@ export class ChatWidget implements OnInit, OnDestroy {
   }
 
   formatTime(isoString: string): string {
-    const date = new Date(isoString);
+    // Backend sends UTC timestamps without timezone suffix; appending 'Z' forces
+    // the browser to parse as UTC instead of local time.
+    const hasTimezone = /Z$|[+-]\d{2}:?\d{2}$/.test(isoString);
+    const normalized = hasTimezone ? isoString : isoString.replace(' ', 'T') + 'Z';
+    const date = new Date(normalized);
     return date.toLocaleString('de-DE', {
       day: '2-digit',
       month: '2-digit',

@@ -3,6 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { AdminService } from '../../../services/admin-service';
 import { AlertBannerComponent } from '../../../shared/alert-banner/alert-banner.component';
+import { ToastService } from '../../../shared/toast/toast.service';
 
 @Component({
   selector: 'app-systemadmin-accounts',
@@ -12,6 +13,7 @@ import { AlertBannerComponent } from '../../../shared/alert-banner/alert-banner.
 export class SystemadminAccounts {
   private adminService = inject(AdminService);
   private destroyRef = inject(DestroyRef);
+  private toast = inject(ToastService);
 
   username = signal('');
   password = signal('');
@@ -36,7 +38,9 @@ export class SystemadminAccounts {
       last_name: this.lastName(),
     }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (res) => {
-        this.successMessage.set(`Admin-Account "${res.user.username}" wurde erstellt.`);
+        const msg = `Admin-Account "${res.user.username}" wurde erstellt.`;
+        this.successMessage.set(msg);
+        this.toast.success(msg);
         this.username.set('');
         this.password.set('');
         this.firstName.set('');
@@ -44,7 +48,9 @@ export class SystemadminAccounts {
         this.isSaving.set(false);
       },
       error: (err) => {
-        this.errorMessage.set(err.error?.error ?? 'Fehler beim Erstellen des Accounts.');
+        const msg = err.error?.error ?? 'Fehler beim Erstellen des Accounts.';
+        this.errorMessage.set(msg);
+        this.toast.error(msg);
         this.isSaving.set(false);
       },
     });

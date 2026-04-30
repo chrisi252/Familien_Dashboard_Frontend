@@ -5,6 +5,7 @@ import { switchMap } from 'rxjs';
 import { UserStateService } from '../../../services/user-state-service';
 import { WeatherService } from '../../../services/weather-service';
 import { AlertBannerComponent } from '../../../shared/alert-banner/alert-banner.component';
+import { ToastService } from '../../../shared/toast/toast.service';
 
 @Component({
   selector: 'app-edit-dashboard',
@@ -16,6 +17,7 @@ export class EditDashboard implements OnInit {
   private readonly weatherService = inject(WeatherService);
   private readonly userState = inject(UserStateService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly toast = inject(ToastService);
 
   city = signal('');
   isLoading = signal(true);
@@ -60,10 +62,13 @@ export class EditDashboard implements OnInit {
         next: (res) => {
           this.city.set(res.location.city_name ?? city);
           this.success.set('Standort erfolgreich aktualisiert.');
+          this.toast.success('Standort erfolgreich aktualisiert.');
           this.isSaving.set(false);
         },
         error: (error: HttpErrorResponse) => {
-          this.error.set(this.mapError(error));
+          const msg = this.mapError(error);
+          this.error.set(msg);
+          this.toast.error(msg);
           this.isSaving.set(false);
         },
       });

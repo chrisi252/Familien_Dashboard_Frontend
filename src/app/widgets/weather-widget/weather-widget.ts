@@ -46,9 +46,9 @@ export class WeatherWidget implements OnInit {
   private readonly userState = inject(UserStateService);
   private readonly weatherService = inject(WeatherService);
   private readonly themeService = inject(ThemeService);
-
   isLightBackground = computed(() => this.isDayTime() && !this.themeService.isDarkMode());
 
+  
   ngOnInit() {
     this.loadWeather();
   }

@@ -1,0 +1,17 @@
+@if (toasts().length > 0) {
+  <div class="toast-stack" role="status" aria-live="polite">
+    @for (toast of toasts(); track toast.id) {
+      <div [class]="alertClass(toast.type) + ' toast-item shadow-lg'">
+        <span class="flex-1">{{ toast.message }}</span>
+        <button
+          type="button"
+          class="btn btn-ghost btn-sm btn-circle"
+          aria-label="Schliessen"
+          (click)="dismiss(toast.id)"
+        >
+          ✕
+        </button>
+      </div>
+    }
+  </div>
+}

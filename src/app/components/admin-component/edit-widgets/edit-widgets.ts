@@ -8,6 +8,7 @@ import { UserStateService } from '../../../services/user-state-service';
 import { FormsModule } from '@angular/forms';
 import { AlertBannerComponent } from '../../../shared/alert-banner/alert-banner.component';
 import { LoadingStateComponent } from '../../../shared/loading-state/loading-state.component';
+import { ToastService } from '../../../shared/toast/toast.service';
 
 interface PermissionState {
   canView: boolean;
@@ -24,6 +25,7 @@ export class EditWidgets implements OnInit {
   private familyService = inject(FamilyService);
   private userState = inject(UserStateService);
   private destroyRef = inject(DestroyRef);
+  private toast = inject(ToastService);
 
   currentUserId = this.userState.currentUser()?.id ?? null;
 
@@ -138,11 +140,12 @@ export class EditWidgets implements OnInit {
     ).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.savingPermission.set(null);
-        this.successMessage.set('Berechtigung gespeichert!');
-        setTimeout(() => this.successMessage.set(''), 2000);
+        this.toast.success('Berechtigung gespeichert!');
       },
       error: (err) => {
-        this.actionError.set(err?.error?.error ?? 'Berechtigung konnte nicht gespeichert werden.');
+        const msg = err?.error?.error ?? 'Berechtigung konnte nicht gespeichert werden.';
+        this.actionError.set(msg);
+        this.toast.error(msg);
         this.savingPermission.set(null);
       },
     });

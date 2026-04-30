@@ -1,10 +1,11 @@
 @if (weatherData()?.current && weatherData()?.location) {
 <div
     class="weather-root [container-type:size] relative flex h-full w-full flex-col text-center p-2 sm:p-3 rounded-xl font-sans overflow-hidden"
-    [style.background]="isLightBackground() ? 'linear-gradient(to bottom, #e6f6ff, #b9e6ff)' : 'linear-gradient(to bottom, #000000, #08072a)'"
-    [class.text-slate-900]="isLightBackground()"
-    [class.text-white]="!isLightBackground()"
+    [style.background]="themeservice.isDarkMode() ? 'linear-gradient(to bottom, #000000, #08072a)' : 'linear-gradient(to bottom, #e6f6ff, #b9e6ff)'"
+    [class.text-white]="themeservice.isDarkMode()"
+    [class.text-slate-900]="!themeservice.isDarkMode()"
 >
+
 
 @if (canEdit() && !isEditing()) {
   <button

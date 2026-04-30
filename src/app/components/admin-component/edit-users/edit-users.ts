@@ -5,6 +5,7 @@ import { FamilyInviteCode } from '../../../interfaces/family';
 import { FamilyMember, FamilyRoleName } from '../../../interfaces/user';
 import { UserStateService } from '../../../services/user-state-service';
 import { AlertBannerComponent } from '../../../shared/alert-banner/alert-banner.component';
+import { ToastService } from '../../../shared/toast/toast.service';
 
 @Component({
   selector: 'app-edit-users',
@@ -15,6 +16,7 @@ import { AlertBannerComponent } from '../../../shared/alert-banner/alert-banner.
 export class EditUsers implements OnInit, OnDestroy {
   private familyService = inject(FamilyService);
   private userState = inject(UserStateService);
+  private toast = inject(ToastService);
 
   private countdownInterval: ReturnType<typeof setInterval> | null = null;
 
@@ -71,7 +73,9 @@ export class EditUsers implements OnInit, OnDestroy {
         this.startCountdown(new Date(dateString));
       },
       error: (err) => {
-        this.inviteError.set(err.error?.error ?? 'Code konnte nicht generiert werden.');
+        const msg = err.error?.error ?? 'Code konnte nicht generiert werden.';
+        this.inviteError.set(msg);
+        this.toast.error(msg);
         this.isGenerating.set(false);
       },
     });
@@ -102,9 +106,12 @@ export class EditUsers implements OnInit, OnDestroy {
         );
         this.actionLoading.set(false);
         this.editingMemberId.set(null);
+        this.toast.success('Rolle aktualisiert.');
       },
       error: (err) => {
-        this.actionError.set(err.error?.error ?? 'Rolle konnte nicht geändert werden.');
+        const msg = err.error?.error ?? 'Rolle konnte nicht geändert werden.';
+        this.actionError.set(msg);
+        this.toast.error(msg);
         this.actionLoading.set(false);
       },
     });
@@ -132,9 +139,12 @@ export class EditUsers implements OnInit, OnDestroy {
         this.members.update(list => list.filter(m => m.user_id !== member.user_id));
         this.actionLoading.set(false);
         this.editingMemberId.set(null);
+        this.toast.success('Mitglied entfernt.');
       },
       error: (err) => {
-        this.actionError.set(err.error?.error ?? 'Mitglied konnte nicht entfernt werden.');
+        const msg = err.error?.error ?? 'Mitglied konnte nicht entfernt werden.';
+        this.actionError.set(msg);
+        this.toast.error(msg);
         this.actionLoading.set(false);
       },
     });
