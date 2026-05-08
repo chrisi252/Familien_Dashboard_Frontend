@@ -45,7 +45,7 @@ export class WeatherWidget implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
   private readonly userState = inject(UserStateService);
   private readonly weatherService = inject(WeatherService);
-  private readonly themeService = inject(ThemeService);
+  themeService = inject(ThemeService);
   isLightBackground = computed(() => this.isDayTime() && !this.themeService.isDarkMode());
 
   
