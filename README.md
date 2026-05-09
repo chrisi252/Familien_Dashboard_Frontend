@@ -1,6 +1,6 @@
 # Familiendashboard — Frontend
 
-Web-basiertes Familien-Dashboard (SPA) mit konfigurierbaren Widgets für Stundenplan, Wetter und To-Dos. Rollenkonzept (System-Admin / Familien-Admin / Nutzer), Drag-&-Drop-Layout und Mobile-First-UI.
+Web-basiertes Familien-Dashboard (SPA) mit konfigurierbaren Widgets für Stundenplan, Live-Chat, Wetter und To-Dos. Rollenkonzept (System-Admin / Familien-Admin / Nutzer).
 
 Akademisches Projekt im Kurs **WWI24 SEA**.
 
@@ -11,9 +11,7 @@ Akademisches Projekt im Kurs **WWI24 SEA**.
 - **Framework:** Angular 21 (Standalone Components, Signals, Functional Guards)
 - **Sprache:** TypeScript 5.9 (strict)
 - **Styling:** Tailwind CSS 4 + DaisyUI 5
-- **Drag & Drop:** Angular CDK
 - **Runtime/Deploy:** Docker, Nginx 1.27-alpine
-- **Tests:** Vitest
 
 ---
 
@@ -22,20 +20,17 @@ Akademisches Projekt im Kurs **WWI24 SEA**.
 ```
 src/
 ├── app/
-│   ├── core/                  # ApiService, API-Base-URL-Token
-│   ├── guards/                # authGuard, familyAdminGuard, systemAdminGuard
-│   ├── services/              # Domain-Services (Auth, UserState, Dashboard, …)
-│   ├── interfaces/            # TypeScript-Interfaces / DTOs
-│   ├── shared/                # Alert-Banner, Loading-State, Modal
-│   ├── directives/            # auto-animate
-│   ├── components/            # Feature-Komponenten (Dashboard, Admin, Login, …)
-│   └── widgets/               # Widget-Implementierungen (todo, weather, timetable)
-├── environments/              # env.ts / env.production.ts
+│   ├── core/                  # ApiService, API-Konfiguration
+│   ├── guards/                # Auth-, FamilyAdmin-, SystemAdmin-Guards
+│   ├── services/              # Auth, Dashboard, Family, Theme, Chat, Weather, …
+│   ├── interfaces/            # DTOs (User, Family, Widget, Chat, …)
+│   ├── shared/                # Alert-Banner, Loading-State, Modal, Toast
+│   ├── directives/            # auto-animate für List-Animationen
+│   ├── components/            # Dashboard, Admin, Login, Profile, …
+│   └── widgets/               # Chat, Timetable, Todo, Weather
+├── environments/              # environment.ts / environment.production.ts
 └── main.ts
 ```
-
-Architekturdetails (C4, Design-Entscheidungen): siehe [`docs/`](./docs).
-
 ---
 
 ## Lokales Setup
@@ -55,15 +50,10 @@ npm start
 Der Dev-Server proxied Requests auf `/api` an das Backend (siehe `proxy.conf.js`).
 Standardziel: `http://localhost:5000` — überschreibbar per Env-Variable `BACKEND_URL`.
 
-### Tests
-```bash
-npm test       # Unit-Tests (Vitest)
-```
-
 ### Production-Build
 ```bash
 npm run build
-# Output: dist/familiendashboard/browser
+# Output: dist/familiendashboard
 ```
 
 ---
@@ -124,32 +114,42 @@ entsprechend aus.
 
 ## Widget-System erweitern
 
-Neue Widgets werden **zentral registriert** — der Widget-Container muss nicht
-angepasst werden:
+Neue Widgets sind schnell hinzugefügt — **ohne den Widget-Container anzupassen**:
 
-1. Neue Component unter `src/app/widgets/<name>-widget/` anlegen.
-2. In `src/app/services/dashboard-service.ts` die `WIDGET_REGISTRY` um einen
-   Eintrag ergänzen:
-   ```ts
-   notes: { content: NotesWidget, label: 'Notizen', defaultRows: 2, defaultCols: 1 },
+### Schritt-für-Schritt:
+
+1. **Neue Widget-Komponente anlegen**
+   ```bash
+   ng generate component widgets/my-widget-widget --skip-tests
    ```
-3. Backend muss einen passenden `widget_key` liefern.
 
-Die Komponente erhält per `NgComponentOutletInputs` automatisch:
-- `widgetId: number`
-- `canEdit: boolean`
+2. **Input-Properties definieren**
+   ```typescript
+   @Input() widgetId!: number;
+   @Input() canEdit!: boolean;
+   ```
+   Diese Inputs erhält die Komponente automatisch vom Container.
+
+3. **Widget in der Registry eintragen**
+   In `src/app/services/dashboard-service.ts` → `WIDGET_REGISTRY`:
+   ```typescript
+   'my-widget': MyWidgetComponent,
+   ```
+   Der Key muss dem `widget_key` aus der Backend-Response entsprechen.
+
+4. **Backend synchronisieren**
+   Das Backend muss in der Widget-Response den passenden `widget_key` liefern.
+
+**Tipp:** Bestehende Widgets unter `src/app/widgets/` als Vorlage nutzen (z.B. `todo-widget/`).
 
 ---
 
 ## Weiterführende Dokumentation
 
 - [Benutzerhandbuch](./docs/user-guide.md) — Anleitung für Endnutzer
-- [Architektur & Design-Entscheidungen](./docs/architecture.md) *(TODO)*
-- [KI-Nutzung](./docs/ai-usage.md) *(TODO)*
-- [Beitragsdokument](./docs/contributions.md) *(TODO)*
 
 ---
 
 ## Lizenz
 
-Siehe [`LICENSE`](./LICENSE) *(noch nicht vorhanden)*.
+Siehe [`LICENSE`](./LICENSE) 
