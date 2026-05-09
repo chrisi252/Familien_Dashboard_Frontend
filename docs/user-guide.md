@@ -81,6 +81,14 @@ Gemeinsame Aufgabenliste der Familie.
 
 Nur berechtigte Nutzer sehen Bearbeitungs-Buttons.
 
+### 💬 Chat-Widget
+Gemeinsamer Familien-Chat für schnelle Kommunikation.
+
+- **Nachricht schreiben:** Text in das Eingabefeld am unteren Rand tippen und **Enter** oder das **Sende-Icon** drücken.
+- **Nachrichtenverlauf:** Alle bisherigen Nachrichten sind sichtbar mit Absender und Zeitstempel.
+- **Automatisch aktualisiert:** Neue Nachrichten von Familienmitgliedern erscheinen live im Chat.
+- **Scrolling:** Bei vielen Nachrichten kann nach oben gescrollt werden, um ältere Einträge zu sehen.
+
 ---
 
 ## 5. Familien-Administration *(nur Familien-Admin)*
@@ -105,16 +113,27 @@ Nur berechtigte Nutzer sehen Bearbeitungs-Buttons.
 ## 6. System-Administration *(nur System-Admin)*
 
 Unter `/systemadmin` können System-Admins:
-- Alle Familien anzeigen
+- **Alle Familien anzeigen:** Übersicht aller im System registrierten Familien mit deren Mitgliedern.
+- **Benutzerkonten verwalten:** Systemweit Benutzer einsehen, bei Bedarf deaktivieren oder Rollen ändern.
+- **Systemweite Einstellungen:** Backend-Konfigurationen und globale Parameter anpassen (sofern verfügbar).
+
+*Hinweis:* Der System-Admin hat die höchsten Berechtigungen. Diesen Account sollte daher besonders geschützt werden.
 
 ---
 
-## 7. Profil & Abmelden
+## 7. Profil & Accountverwaltung
 
 Klick auf den **Avatar oben rechts** öffnet ein Dropdown:
 - **Profil** — Profilseite mit Accountdaten und Familien-Mitgliedschaften.
-- **Admin** *(nur Admin)* — Schnellzugriff.
+- **Admin** *(nur Admin)* — Schnellzugriff zur Verwaltung.
 - **Abmelden** — Session beenden und zurück zum Login.
+
+### 7.1 Profilseite
+Auf deiner Profilseite kannst du:
+- Deine **Accountinformationen** einsehen und bearbeiten (Name, E-Mail, falls vorhanden).
+- Deine **Familien-Mitgliedschaften** sehen.
+- Zur **Familien-Auswahl** zurückkehren (falls mehrere Familien).
+- **Passwort ändern** oder **Konto löschen** (je nach System-Konfiguration).
 
 ---
 
@@ -124,7 +143,37 @@ Oben links neben dem Dashboard-Titel kannst du zwischen hellem und dunklem Desig
 
 ---
 
-## 9. Häufige Probleme
+## 9. Tastenkombinationen & Shortcuts
+
+| Tastenkombination | Funktion                          |
+|-------------------|-----------------------------------|
+| **Enter**         | Aufgabe/Nachricht absenden (in To-Do oder Chat) |
+| **Escape**        | Modal oder Dialog schließen       |
+| **Tab**           | Zur nächsten Schaltfläche navigieren |
+
+---
+
+## 10. Anforderungen & Kompatibilität
+
+### Browser
+Die Familien-Dashboard-App läuft auf:
+- **Chrome / Chromium** (ab Version 90)
+- **Firefox** (ab Version 88)
+- **Safari** (ab Version 14)
+- **Edge** (ab Version 90)
+
+### Geräte
+- **Desktop / Laptop:** Vollständige Funktionalität mit optimalem Layout.
+- **Tablet:** Angepasstes Layout, Touch-Gesten für Drag & Drop unterstützt.
+- **Smartphone:** Mobile-optimiertes Interface, Landscape- und Portrait-Modus werden unterstützt.
+
+### Internetverbindung
+- Eine **stabile, ständige Internetverbindung** wird für optimale Funktion empfohlen.
+- Ohne Verbindung können bereits geladene Daten angezeigt werden, neue Daten können aber nicht synchronisiert werden.
+
+---
+
+## 11. Häufige Probleme
 
 | Problem                                         | Lösung                                                                   |
 |-------------------------------------------------|--------------------------------------------------------------------------|
@@ -136,7 +185,7 @@ Oben links neben dem Dashboard-Titel kannst du zwischen hellem und dunklem Desig
 
 ---
 
-## 10. Datenschutz & Sicherheit (Kurzfassung)
+## 12. Datenschutz & Sicherheit (Kurzfassung)
 
 - Passwörter werden ausschließlich **gehasht** im Backend gespeichert.
 - Session-Cookies sind **HttpOnly** — andere Skripte können sie nicht auslesen.
