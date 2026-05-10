@@ -1,101 +1,118 @@
-# Familiendashboard — Frontend
+# Familiendashboard Frontend
 
-Web-basiertes Familien-Dashboard (SPA) mit konfigurierbaren Widgets für Stundenplan, Live-Chat, Wetter und To-Dos. Rollenkonzept (System-Admin / Familien-Admin / Nutzer).
+Web-Oberfläche für ein familienbasiertes Dashboard mit rollenbasierter Navigation, dynamischen Widgets und getrennten Admin-Bereichen. Das Frontend ist als Angular-SPA umgesetzt und erwartet ein erreichbares Backend für Authentifizierung, Familienverwaltung, Widgets und Chat.
 
-Akademisches Projekt im Kurs **WWI24 SEA**.
+## Überblick
 
----
+- Angular 21 mit Standalone Components, Router und Functional Guards
+- TypeScript 5.9
+- Tailwind CSS 4 und DaisyUI 5
+- Angular CDK für Drag & Drop und Layout-Interaktion
+- Socket.IO Client für Live-Kommunikation
+- Runtime-Konfiguration über `public/env.js` und `window.__env.API_URL`
 
-## Tech-Stack
+## Funktionen
 
-- **Framework:** Angular 21 (Standalone Components, Signals, Functional Guards)
-- **Sprache:** TypeScript 5.9 (strict)
-- **Styling:** Tailwind CSS 4 + DaisyUI 5
-- **Runtime/Deploy:** Docker, Nginx 1.27-alpine
+- Login und Registrierung
+- Familienauswahl sowie Familie beitreten oder neu anlegen
+- Dashboard mit verschiebbaren Widgets
+- Widgets für Stundenplan, Wetter, To-Dos und Chat
+- Profilseite für angemeldete Nutzer
+- Familien-Admin-Bereich für Benutzer und Widgets
+- System-Admin-Bereich für systemweite Verwaltung
 
----
+## Wichtige Routen
+
+- `/login`
+- `/register`
+- `/family-selection`
+- `/family-selection/join`
+- `/family-selection/create`
+- `/dashboard`
+- `/profile`
+- `/widgets`
+- `/familyadmin`
+- `/familyadmin/editusers`
+- `/familyadmin/editwidgets`
+- `/familyadmin/dashboard`
+- `/systemadmin`
+- `/systemadmin/users`
+- `/systemadmin/families`
+- `/systemadmin/accounts`
+
+Nicht gefundene Seiten werden über `/not-found` bzw. die Wildcard-Route abgefangen.
 
 ## Projektstruktur
 
 ```
 src/
 ├── app/
-│   ├── core/                  # ApiService, API-Konfiguration
-│   ├── guards/                # Auth-, FamilyAdmin-, SystemAdmin-Guards
-│   ├── services/              # Auth, Dashboard, Family, Theme, Chat, Weather, …
-│   ├── interfaces/            # DTOs (User, Family, Widget, Chat, …)
-│   ├── shared/                # Alert-Banner, Loading-State, Modal, Toast
-│   ├── directives/            # auto-animate für List-Animationen
-│   ├── components/            # Dashboard, Admin, Login, Profile, …
-│   └── widgets/               # Chat, Timetable, Todo, Weather
-├── environments/              # environment.ts / environment.production.ts
+│   ├── components/   # Login, Dashboard, Admin, Profile, Selection, Not Found
+│   ├── widgets/      # Weather, Todo, Timetable, Chat
+│   ├── services/     # API- und Zustandsservices
+│   ├── guards/       # Auth-, FamilyAdmin-, SystemAdmin-, Has-Family-Guards
+│   ├── shared/       # Banner, Loading, Modal, Toast
+│   ├── directives/   # Auto-animate directive
+│   ├── interfaces/   # DTOs und View-Model-Typen
+│   └── core/         # API-Konfiguration und HTTP-Basis
+├── environments/      # environment.ts / environment.production.ts
 └── main.ts
 ```
----
 
-## Lokales Setup
+## Voraussetzungen
 
-### Voraussetzungen
-- Node.js **24.x** (im Dockerfile gepinnt auf `node:24.12.0-alpine`)
-- npm **11.x**
-- Backend erreichbar unter `http://localhost:5000` (oder via `BACKEND_URL` konfiguriert)
+- Node.js 24.x
+- npm 11.x
+- ein erreichbares Backend für die API und Socket.IO-Endpunkte
 
-### Installation & Start
+## Lokal starten
+
+Die Dev-Umgebung liest das Proxy-Ziel aus `BACKEND_URL`. Optional kann dafür eine lokale `.env`-Datei verwendet werden, die auf der Vorlage [`.env.example`](./.env.example) basiert.
+
 ```bash
 npm ci
 npm start
-# App: http://localhost:4200
 ```
 
-Der Dev-Server proxied Requests auf `/api` an das Backend (siehe `proxy.conf.js`).
-Standardziel: `http://localhost:5000` — überschreibbar per Env-Variable `BACKEND_URL`.
+Danach läuft die App standardmäßig unter `http://localhost:4200`.
 
-### Production-Build
-```bash
-npm run build
-# Output: dist/familiendashboard
-```
+### Verfügbare Scripts
 
----
+- `npm start` - Angular Dev-Server
+- `npm run build` - Production-Build
+- `npm run watch` - Build im Watch-Modus
+- `npm test` - Unit-Tests
+
+## API- und Runtime-Konfiguration
+
+- Der Angular-Dev-Server proxyt `/api` und `/socket.io` an `BACKEND_URL` aus der lokalen Umgebung oder `.env`-Datei.
+- Für Builds und Container-Deployments liest die App zur Laufzeit `window.__env.API_URL` aus `public/env.js`.
+- Wenn keine Runtime-URL gesetzt ist, wird in der App `/api` als Fallback verwendet.
 
 ## Docker
 
-### Production-Image (Nginx + gebaute SPA)
+### Development mit Docker Compose
+
+```bash
+docker compose up
+```
+
+Das startet den Dev-Container auf Port `4200`.
+
+### Production mit Docker Compose
+
+```bash
+docker compose --profile prod up angular-prod
+```
+
+Die gebaute SPA wird dabei über Nginx auf Port `8080` ausgeliefert.
+
+### Direkter Build
+
 ```bash
 docker build --target production -t familiendashboard-frontend .
 docker run --rm -p 8080:80 familiendashboard-frontend
-# App: http://localhost:8080
 ```
-
-### Development-Image (Live-Reload)
-```bash
-docker build --target dev -t familiendashboard-frontend:dev .
-docker run --rm -p 4200:4200 -v "$(pwd):/app" familiendashboard-frontend:dev
-```
-
-### Docker Compose
-```bash
-docker-compose up
-```
-
----
-
-## Environment-Konfiguration
-
-Die API-Base-URL wird **zur Laufzeit** aus `window.__env.API_URL` gelesen
-(Fallback: `/api`, siehe `src/environments/environment.ts`). Damit kann das
-gleiche Production-Image in verschiedenen Umgebungen mit unterschiedlichen
-Backend-URLs betrieben werden, ohne neu gebaut zu werden.
-
-Variablen für den Dev-Server stehen in `.env` (nicht ins Git einchecken).
-Vorlage: [`.env.example`](./.env.example).
-
-| Variable      | Zweck                                   | Default                         |
-|---------------|-----------------------------------------|---------------------------------|
-| `BACKEND_URL` | Proxy-Ziel des Angular-Dev-Servers      | `http://localhost:5000`         |
-| `window.__env.API_URL` (Runtime) | API-Base-URL im Browser | `/api` (Fallback)               |
-
----
 
 ## Rollenkonzept
 
@@ -120,7 +137,7 @@ Neue Widgets sind schnell hinzugefügt — **ohne den Widget-Container anzupasse
 
 1. **Neue Widget-Komponente anlegen**
    ```bash
-   ng generate component widgets/my-widget-widget --skip-tests
+   ng generate component widgets/my-widget-widget 
    ```
 
 2. **Input-Properties definieren**
@@ -140,16 +157,13 @@ Neue Widgets sind schnell hinzugefügt — **ohne den Widget-Container anzupasse
 4. **Backend synchronisieren**
    Das Backend muss in der Widget-Response den passenden `widget_key` liefern.
 
-**Tipp:** Bestehende Widgets unter `src/app/widgets/` als Vorlage nutzen (z.B. `todo-widget/`).
 
 ---
 
 ## Weiterführende Dokumentation
 
-- [Benutzerhandbuch](./docs/user-guide.md) — Anleitung für Endnutzer
-
----
+- [Benutzerhandbuch](./docs/user-guide.md)
 
 ## Lizenz
 
-Siehe [`LICENSE`](./LICENSE) 
+Siehe [LICENSE](./LICENSE)
